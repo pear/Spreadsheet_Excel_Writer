@@ -62,6 +62,7 @@ define('SPREADSHEET_EXCEL_WRITER_CLOSE',")");
 */
 define('SPREADSHEET_EXCEL_WRITER_COMA',",");
 
+
 require_once('PEAR.php');
 
 /**
@@ -522,6 +523,11 @@ class Parser extends PEAR
         {
             return($this->_convertRange2d($token));
         }
+        // match external ranges like Sheet1!A1:B2
+        elseif(preg_match("/^([A-Za-z0-9]+\![A-I]?[A-Z])(\d+)\:([A-I]?[A-Z])(\d+)$/",$token))
+        {
+            return($this->_convertRange3d($token));
+        }
         elseif(isset($this->ptg[$token])) // operators (including parentheses)
         {
             return(pack("C", $this->ptg[$token]));
@@ -602,6 +608,7 @@ class Parser extends PEAR
         }
         elseif(preg_match("/^([A-I]?[A-Z])(\d+)\.\.([A-I]?[A-Z])(\d+)$/",$range)) {
             list($cell1, $cell2) = split('\.\.', $range);
+        
         }
         else {
             // TODO: use real error codes
@@ -636,7 +643,59 @@ class Parser extends PEAR
         }
         return($ptgArea . $row1 . $row2 . $col1. $col2);
     }
-    
+ 
+    /**
+    * Convert an Excel 3d range such as "Sheet1!A1:D4" or "Sheet1:Sheet2!A1:D4" to
+    * a ptgArea3dV.
+    *
+    * @access private
+    * @param string $token An Excel range in the Sheet1!A1:A2 format.
+    */
+    function _convertRange3d($token)
+    {
+        $class = 2; // as far as I know, this is magick.
+ 
+        // Split the ref at the ! symbol
+        list($ext_ref, $range) = split('!', $token);
+ 
+        // Convert the external reference part
+        $ext_ref = $this->_packExtRef($ext_ref);
+        if ($this->isError($ext_ref)) {
+            return $ext_ref;
+        }
+ 
+        // Split the range into 2 cell refs
+        list($cell1, $cell2) = split(':', $range);
+ 
+        // Convert the cell references
+        $cell_array1 = $this->_cellToPackedRowcol($cell1);
+        if ($this->isError($cell_array1)) {
+            return $cell_array1;
+        }
+        list($row1, $col1) = $cell_array1;
+        $cell_array2 = $this->_cellToPackedRowcol($cell2);
+        if ($this->isError($cell_array2)) {
+            return $cell_array2;
+        }
+        list($row2, $col2) = $cell_array2;
+ 
+        // The ptg value depends on the class of the ptg.
+        if ($class == 0) {
+            $ptgArea = pack("C", $this->ptg['ptgArea3d']);
+        }
+        elseif ($class == 1) {
+            $ptgArea = pack("C", $this->ptg['ptgArea3dV']);
+        }
+        elseif ($class == 2) {
+            $ptgArea = pack("C", $this->ptg['ptgArea3dA']);
+        }
+        else {
+            $this->raiseError("Unknown class $class", 0, PEAR_ERROR_DIE);
+        }
+ 
+        return $ptgArea . $ext_ref . $row1 . $row2 . $col1. $col2;
+    }
+
     /**
     * Convert an Excel reference such as A1, $B2, C$3 or $D$4 to a ptgRefV.
     *
@@ -880,7 +939,9 @@ class Parser extends PEAR
                 $this->_current_token = $token;
                 return(1);
             }
-            $this->_lookahead = $this->_formula{$i+2};
+            if ($i < strlen($this->_formula) - 2) {
+                $this->_lookahead = $this->_formula{$i+2};
+            }
             $i++;
         }
         //die("Lexical error ".$this->_current_char);
@@ -940,6 +1001,12 @@ class Parser extends PEAR
                 }
                 // if it's a range (A1..A2)
                 elseif(eregi("^[A-I]?[A-Z][0-9]+\.\.[A-I]?[A-Z][0-9]+$",$token) and 
+                       !ereg("[0-9]",$this->_lookahead))
+                {
+                    return($token);
+                }
+                // If it's a external range
+                elseif(eregi("^[A-Za-z0-9]+\![A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$",$token) and
                        !ereg("[0-9]",$this->_lookahead))
                 {
                     return($token);
@@ -1105,6 +1172,13 @@ class Parser extends PEAR
         // if it's a range
         elseif (eregi("^[A-Z]?[A-Z][0-9]+:[A-Z]?[A-Z][0-9]+$",$this->_current_token) or 
                 eregi("^[A-Z]?[A-Z][0-9]+\.\.[A-Z]?[A-Z][0-9]+$",$this->_current_token))
+        {
+            $result = $this->_current_token;
+            $this->_advance();
+            return($result);
+        }
+        // If it's an external range (Sheet1!A1:B2)
+        elseif(eregi("^[A-Za-z0-9]+\![A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
