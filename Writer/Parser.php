@@ -5,7 +5,7 @@
 *  License Information:
 *
 *    Spreadsheet_Excel_Writer:  A library for generating Excel Spreadsheets
-*    Copyright (C) 2002 Xavier Noguer xnoguer@rezebra.com
+*    Copyright (c) 2002-2003 Xavier Noguer xnoguer@rezebra.com
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Lesser General Public
