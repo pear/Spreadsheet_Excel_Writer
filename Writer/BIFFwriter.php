@@ -1,6 +1,6 @@
 <?php
 /*
-*  Module written/ported by Xavier Noguer <xnoguer@rezebra.com>
+*  Module written/ported by Xavier Noguer <xnoguer@php.net>
 *
 *  The majority of this is _NOT_ my code.  I simply ported it from the
 *  PERL Spreadsheet::WriteExcel module.
@@ -15,7 +15,7 @@
 *  License Information:
 *
 *    Spreadsheet_Excel_Writer:  A library for generating Excel Spreadsheets
-*    Copyright (c) 2002-2003 Xavier Noguer xnoguer@rezebra.com
+*    Copyright (c) 2002-2003 Xavier Noguer xnoguer@php.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,7 @@ require_once('PEAR.php');
 * formula entered into a cell; one describes the size and location of a 
 * window into a document; another describes a picture format.
 *
-* @author   Xavier Noguer <xnoguer@rezebra.com>
+* @author   Xavier Noguer <xnoguer@php.net>
 * @category FileFormats
 * @package  Spreadsheet_Excel_Writer
 */
@@ -99,40 +99,37 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $this->_setByteOrder();
     }
 
-/**
-* Determine the byte order and store it as class data to avoid
-* recalculating it for each call to new().
-*
-* @access private
-*/
+    /**
+    * Determine the byte order and store it as class data to avoid
+    * recalculating it for each call to new().
+    *
+    * @access private
+    */
     function _setByteOrder()
     {
-        if ($this->_byte_order == '')
-        {
-            // Check if "pack" gives the required IEEE 64bit float
-            $teststr = pack("d", 1.2345);
-            $number  = pack("C8", 0x8D, 0x97, 0x6E, 0x12, 0x83, 0xC0, 0xF3, 0x3F);
-            if ($number == $teststr) {
-                $byte_order = 0;    // Little Endian
-            }
-            elseif ($number == strrev($teststr)){
-                $byte_order = 1;    // Big Endian
-            }
-            else {
-                // Give up. I'll fix this in a later version.
-                $this->raiseError("Required floating point format not supported ".
-                    "on this platform.");
-            }
+        // Check if "pack" gives the required IEEE 64bit float
+        $teststr = pack("d", 1.2345);
+        $number  = pack("C8", 0x8D, 0x97, 0x6E, 0x12, 0x83, 0xC0, 0xF3, 0x3F);
+        if ($number == $teststr) {
+            $byte_order = 0;    // Little Endian
+        }
+        elseif ($number == strrev($teststr)){
+            $byte_order = 1;    // Big Endian
+        }
+        else {
+            // Give up. I'll fix this in a later version.
+            return $this->raiseError("Required floating point format ".
+                                     "not supported on this platform.");
         }
         $this->_byte_order = $byte_order;
     }
 
-/**
-* General storage function
-*
-* @param string $data binary data to prepend
-* @access private
-*/
+    /**
+    * General storage function
+    *
+    * @param string $data binary data to prepend
+    * @access private
+    */
     function _prepend($data)
     {
         if (strlen($data) > $this->_limit) {
@@ -142,12 +139,12 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $this->_datasize += strlen($data);
     }
 
-/**
-* General storage function
-*
-* @param string $data binary data to append
-* @access private
-*/
+    /**
+    * General storage function
+    *
+    * @param string $data binary data to append
+    * @access private
+    */
     function _append($data)
     {
         if (strlen($data) > $this->_limit) {
@@ -157,13 +154,14 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $this->_datasize += strlen($data);
     }
 
-/**
-* Writes Excel BOF record to indicate the beginning of a stream or
-* sub-stream in the BIFF file.
-*
-* @param  integer $type type of BIFF file to write: 0x0005 Workbook, 0x0010 Worksheet.
-* @access private
-*/
+    /**
+    * Writes Excel BOF record to indicate the beginning of a stream or
+    * sub-stream in the BIFF file.
+    *
+    * @param  integer $type Type of BIFF file to write: 0x0005 Workbook,
+    *                       0x0010 Worksheet.
+    * @access private
+    */
     function _storeBof($type)
     {
         $record  = 0x0809;        // Record identifier
@@ -181,11 +179,11 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $this->_prepend($header.$data);
     }
 
-/**
-* Writes Excel EOF record to indicate the end of a BIFF stream.
-*
-* @access private
-*/
+    /**
+    * Writes Excel EOF record to indicate the end of a BIFF stream.
+    *
+    * @access private
+    */
     function _storeEof() 
     {
         $record    = 0x000A;   // Record identifier
@@ -194,18 +192,18 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $this->_append($header);
     }
 
-/**
-* Excel limits the size of BIFF records. In Excel 5 the limit is 2084 bytes. In
-* Excel 97 the limit is 8228 bytes. Records that are longer than these limits
-* must be split up into CONTINUE blocks.
-*
-* This function takes a long BIFF record and inserts CONTINUE records as
-* necessary.
-*
-* @param  string  $data The original binary data to be written
-* @return string        A very convenient string of continue blocks
-* @access private
-*/
+    /**
+    * Excel limits the size of BIFF records. In Excel 5 the limit is 2084 bytes. In
+    * Excel 97 the limit is 8228 bytes. Records that are longer than these limits
+    * must be split up into CONTINUE blocks.
+    *
+    * This function takes a long BIFF record and inserts CONTINUE records as
+    * necessary.
+    *
+    * @param  string  $data The original binary data to be written
+    * @return string        A very convenient string of continue blocks
+    * @access private
+    */
     function _addContinue($data)
     {
         $limit      = $this->_limit;
@@ -229,7 +227,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $tmp    .= $header;
         $tmp    .= substr($data,$i,strlen($data) - $i);
  
-        return($tmp);
+        return $tmp;
     }
 }
 ?>
