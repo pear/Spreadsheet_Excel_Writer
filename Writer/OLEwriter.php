@@ -240,7 +240,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     *
     * @param string $data string of bytes to be written
     */
-    function write($data) //por ahora sólo a STDOUT
+    function write($data)
     {
         fwrite($this->_filehandle,$data,strlen($data));
     }
