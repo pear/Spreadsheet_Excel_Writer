@@ -974,7 +974,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         while($i < strlen($this->_formula))
         {
             $token .= $this->_formula{$i};
-            if($this->_match($token))
+            if($this->_match($token) != false)
             {
                 if($i < strlen($this->_formula) - 1) {
                     $this->_lookahead = $this->_formula{$i+1};
@@ -986,6 +986,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             if ($i < strlen($this->_formula) - 2) {
                 $this->_lookahead = $this->_formula{$i+2};
             }
+            // if we run out of characters _lookahead becomes empty
+            else {
+                $this->_lookahead = '';
+            }
             $i++;
         }
         //die("Lexical error ".$this->_current_char);
@@ -996,6 +1000,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     *
     * @access private
     * @param mixed $token The token to check.
+    * @return mixed       The checked token or false on failure
     */
     function _match($token)
     {
@@ -1095,7 +1100,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 {
                     return($token);
                 }
-                return(0);
+                return false;
         }
     }
     
@@ -1198,7 +1203,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         // If it's a string return a string node
         if (ereg("^\"[^\"]{0,255}\"$", $this->_current_token))
         {
-            $result = $this->_current_token;
+            $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
             return($result);
         }
@@ -1309,14 +1314,14 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         // if it's a reference
         if (eregi("^[A-I]?[A-Z][0-9]+$",$this->_current_token))
         {
-            $result = $this->_current_token;
+            $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
             return($result);
         }
         // If it's an external reference (Sheet1!A1)
         elseif(eregi("^[A-Za-z0-9]+\![A-I]?[A-Z][0-9]+$",$this->_current_token))
         {
-            $result = $this->_current_token;
+            $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
             return($result);
         }
@@ -1337,7 +1342,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         }
         elseif (is_numeric($this->_current_token))
         {
-            $result = $this->_current_token;
+            $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
             return($result);
         }
