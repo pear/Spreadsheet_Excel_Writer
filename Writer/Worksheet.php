@@ -285,7 +285,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
     /**
     * Whether to use outline.
-    * @var bool
+    * @var integer
     */
     var $_outline_on;
   
@@ -340,13 +340,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   &$firstsheet  The first worksheet in the workbook we belong to 
     * @param mixed   &$url_format  The default format for hyperlinks
     * @param mixed   &$parser      The formula parser created for the Workbook
+    * @access private
     */
-    function Spreadsheet_Excel_Writer_Worksheet($name, $index, &$activesheet,
+    function Spreadsheet_Excel_Writer_Worksheet($BIFF_version, $name,
+                                                $index, &$activesheet,
                                                 &$firstsheet, &$url_format,
                                                 &$parser)
     {
         // It needs to call its parent's constructor explicitly
         $this->Spreadsheet_Excel_Writer_BIFFwriter();
+        $this->_BIFF_version   = $BIFF_version;
         $rowmax                = 65536; // 16384 in Excel 5
         $colmax                = 256;
     
@@ -512,7 +515,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_storeWsbool();
  
         //  Prepend GUTS
-        $this->_storeGuts();
+        //$this->_storeGuts();
    
         // Prepend GRIDSET
         $this->_storeGridset();
@@ -524,14 +527,14 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_storePrintHeaders();
     
         // Prepend EXTERNSHEET references
-        for ($i = $num_sheets; $i > 0; $i--)
+        /*for ($i = $num_sheets; $i > 0; $i--)
         {
             $sheetname = $sheetnames[$i-1];
             $this->_storeExternsheet($sheetname);
-        }
+        }*/
     
         // Prepend the EXTERNCOUNT of external references.
-        $this->_storeExterncount($num_sheets);
+        //$this->_storeExterncount($num_sheets);
     
         // Prepend the COLINFO records if they exist
         if (!empty($this->_colinfo))
@@ -556,7 +559,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $this->_storePanes($this->_panes);
         }
         $this->_storeSelection($this->_selection);
-        $this->_storeDataValidity();
+        /* TODO: add data validity */
+        //$this->_storeDataValidity();
         $this->_storeEof();
     }
     
@@ -1326,7 +1330,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Ensure this is a boolean vale for Window2
         if ($this->_outline_on) {
-            $this->_outline_on = true;
+            $this->_outline_on = 1;
         }
      }
 
@@ -2052,22 +2056,23 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     function storeDimensions()
     {
         $record    = 0x0200;               // Record identifier
-        $length    = 0x000A;               // Number of bytes to follow
         $row_min   = $this->_dim_rowmin;   // First row
         $row_max   = $this->_dim_rowmax;   // Last row plus 1
         $col_min   = $this->_dim_colmin;   // First column
         $col_max   = $this->_dim_colmax;   // Last column plus 1
         $reserved  = 0x0000;               // Reserved by Excel
     
-        $header    = pack("vv",    $record, $length);
         if ($this->_BIFF_version == 0x0500) {
+            $length    = 0x000A;               // Number of bytes to follow
             $data      = pack("vvvvv", $row_min, $row_max,
                                        $col_min, $col_max, $reserved);
         }
         elseif ($this->_BIFF_version == 0x0600) {
+            $length    = 0x000E;
             $data      = pack("VVvvv", $row_min, $row_max,
                                        $col_min, $col_max, $reserved);
         }
+        $header = pack("vv", $record, $length);
         $this->_prepend($header.$data);
     }
     
@@ -2089,7 +2094,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $grbit          = 0x00B6;     // Option flags
         $rwTop          = 0x0000;     // Top row visible in window
         $colLeft        = 0x0000;     // Leftmost column visible in window
-        $rgbHdr         = 0x00000000; // Row/column heading and gridline color
+        
     
         // The options flags that comprise $grbit
         $fDspFmla       = 0;                     // 0 - bit
@@ -2118,13 +2123,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         $header  = pack("vv",   $record, $length);
         $data    = pack("vvv", $grbit, $rwTop, $colLeft);
+        // FIXME !!!
         if ($this->_BIFF_version == 0x0500) {
+            $rgbHdr         = 0x00000000; // Row/column heading and gridline color
             $data .= pack("V", $rgbHdr);
         }
         elseif ($this->_BIFF_version == 0x0600) {
+            $rgbHdr       = 0x0040; // Row/column heading and gridline color index
             $zoom_factor_page_break = 0x0000;
             $zoom_factor_normal     = 0x0000;
-            $data .= pack("vvvvV", 0x0001, 0x0000, $zoom_factor_page_break, $zoom_factor_normal, 0x00000000);
+            $data .= pack("vvvvV", $rgbHdr, 0x0000, $zoom_factor_page_break, $zoom_factor_normal, 0x00000000);
         }
         $this->_append($header.$data);
     }
@@ -2465,12 +2473,13 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     {
         $record  = 0x0014;               // Record identifier
     
-        $str     = $this->_header;       // header string
-        $cch     = strlen($str);         // Length of header string
-        $length  = 1 + $cch;             // Bytes to follow
+        $str      = $this->_header;       // header string
+        $cch      = strlen($str);         // Length of header string
+        $encoding = 0x0;                  // TODO: Unicode support
+        $length   = 3 + $cch;             // Bytes to follow
     
-        $header    = pack("vv", $record, $length);
-        $data      = pack("C",  $cch);
+        $header   = pack("vv", $record, $length);
+        $data     = pack("vC",  $cch, $encoding);
     
         $this->_append($header.$data.$str);
     }
@@ -2484,12 +2493,13 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     {
         $record  = 0x0015;               // Record identifier
     
-        $str     = $this->_footer;       // Footer string
-        $cch     = strlen($str);         // Length of footer string
-        $length  = 1 + $cch;             // Bytes to follow
+        $str      = $this->_footer;       // Footer string
+        $cch      = strlen($str);         // Length of footer string
+        $encoding = 0x0;                  // TODO: Unicode support
+        $length   = 3 + $cch;             // Bytes to follow
     
         $header    = pack("vv", $record, $length);
-        $data      = pack("C",  $cch);
+        $data      = pack("vC",  $cch, $encoding);
     
         $this->_append($header.$data.$str);
     }
@@ -2808,21 +2818,21 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         // Sort and filter array of page breaks
         $breaks = $this->_hbreaks;
-        sort($breaks,SORT_NUMERIC);
+        sort($breaks, SORT_NUMERIC);
         if ($breaks[0] == 0) { // don't use first break if it's 0
             array_shift($breaks);
         }
     
         $record  = 0x001b;               // Record identifier
         $cbrk    = count($breaks);       // Number of page breaks
-        $length  = ($cbrk + 1) * 2;      // Bytes to follow
+        $length  = 2 + 6*$cbrk;          // Bytes to follow
     
         $header  = pack("vv", $record, $length);
         $data    = pack("v",  $cbrk);
     
         // Append each page break
         foreach($breaks as $break) {
-            $data .= pack("v", $break);
+            $data .= pack("vvv", $break, 0x0000, 0x00ff);
         }
     
         $this->_prepend($header.$data);
@@ -2846,21 +2856,21 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $breaks = array_slice($this->_vbreaks,0,1000);
     
         // Sort and filter array of page breaks
-        sort($breaks,SORT_NUMERIC);
+        sort($breaks, SORT_NUMERIC);
         if ($breaks[0] == 0) { // don't use first break if it's 0
             array_shift($breaks);
         }
     
         $record  = 0x001a;               // Record identifier
         $cbrk    = count($breaks);       // Number of page breaks
-        $length  = ($cbrk + 1) * 2;      // Bytes to follow
+        $length  = 2 + 6*$cbrk;          // Bytes to follow
     
         $header  = pack("vv",  $record, $length);
         $data    = pack("v",   $cbrk);
     
         // Append each page break
         foreach ($breaks as $break) {
-            $data .= pack("v", $break);
+            $data .= pack("vvv", $break, 0x0000, 0xffff);
         }
     
         $this->_prepend($header.$data);

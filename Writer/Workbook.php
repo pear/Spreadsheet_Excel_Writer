@@ -148,6 +148,12 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     var $_url_format;
 
     /**
+    * The codepage indicates the text encoding used for strings
+    * @var integer
+    */
+    var $_codepage;
+
+    /**
     * Class constructor
     *
     * @param string filename for storing the workbook. "-" for writing to stdout.
@@ -173,6 +179,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_sheetnames       = array();
         $this->_formats          = array();
         $this->_palette          = array();
+        $this->_codepage         = 0x04E4; // FIXME: should change for BIFF8
     
         // Add the default format for hyperlinks
         $this->_url_format =& $this->addFormat(array('color' => 'blue', 'underline' => 1));
@@ -227,8 +234,10 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     }
  
     /**
-    * Sets the BIFF version. 
-    * Possible values are 5 (Excel 5.0), or 8 (Excel 97/2000).
+    * Sets the BIFF version.
+    * This method exists just to access experimental functionality
+    * from BIFF8. It will be deprecated !
+    * Only possible value is 8 (Excel 97/2000).
     * For any other value it fails silently.
     *
     * @access public
@@ -236,18 +245,21 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     function setVersion($version)
     {
-        if (($version == 5) or ($version == 8)) {
-            if ($version == 5) {
-                $version = 0x0500;
-            }
-            elseif ($version == 8) {
-                $version = 0x0600;
-            }
+        if ($version == 8) { // only accept version 8
+            $version = 0x0600;
             $this->_BIFF_version = $version;
+            $this->_tmp_format->_BIFF_version = $version;
+            $this->_url_format->_BIFF_version = $version;
+            $this->_parser->_BIFF_version = $version;
             $total_worksheets = count($this->_worksheets);
             // change version for all worksheets too
             for ($i = 0; $i < $total_worksheets; $i++) {
                 $this->_worksheets[$i]->_BIFF_version = $version;
+            }
+            $total_formats = count($this->_formats);
+            // change version for all formats too
+            for ($i = 0; $i < $total_formats; $i++) {
+                $this->_formats[$i]->_BIFF_version = $version;
             }
         }
     }
@@ -285,7 +297,8 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             }
         }
     
-        $worksheet = new Spreadsheet_Excel_Writer_Worksheet($name, $index,
+        $worksheet = new Spreadsheet_Excel_Writer_Worksheet($this->_BIFF_version,
+                                   $name, $index,
                                    $this->_activesheet, $this->_firstsheet,
                                    $this->_url_format, $this->_parser);
 
@@ -459,6 +472,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         // Add Workbook globals
         $this->_storeBof(0x0005);
         if ($this->_BIFF_version == 0x0600) {
+            $this->_storeCodepage();
             $this->_storeWindow1();
         }
         if ($this->_BIFF_version == 0x0500) {
@@ -484,15 +498,16 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         /* TODO: store COUNTRY record? */
 
         if ($this->_BIFF_version == 0x0600) {
-            $this->_storeSupbookInternal();
+            //$this->_storeSupbookInternal();
         /*
         TODO: store external SUPBOOK records and XCT and CRN records 
         in case of external references for BIFF8
         */
-            $this->_storeExternsheetBiff8();
+            //$this->_storeExternsheetBiff8();
         }
 
         /* TODO: store SST for BIFF8 */
+        $this->_storeSharedStringsTable();
         // End Workbook globals
         $this->_storeEof();
     
@@ -791,6 +806,23 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     
     /**
+    * Stores the CODEPAGE biff record.
+    *
+    * @access private
+    */
+    function _storeCodepage()
+    {
+        $record          = 0x0042;             // Record identifier
+        $length          = 0x0002;             // Number of bytes to follow
+        $cv              = $this->_codepage;   // The code page
+ 
+        $header          = pack('vv', $record, $length);
+        $data            = pack('v',  $cv);
+ 
+        $this->_append($header.$data);
+    }
+
+    /**
     * Write Excel BIFF WINDOW1 record.
     *
     * @access private
@@ -822,6 +854,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
     /**
     * Writes Excel BIFF BOUNDSHEET record.
+    * FIXME: inconsistent with BIFF documentation
     *
     * @param string  $sheetname Worksheet name
     * @param integer $offset    Location of worksheet BOF
@@ -830,13 +863,13 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     function _storeBoundsheet($sheetname,$offset)
     {
         $record    = 0x0085;                    // Record identifier
-        $length    = 0x07 + strlen($sheetname); // Number of bytes to follow
+        $length    = 0x08 + strlen($sheetname); // Number of bytes to follow
     
-        $grbit     = 0x0000;                    // Sheet identifier
+        $grbit     = 0x0000;                    // Visibility and sheet type
         $cch       = strlen($sheetname);        // Length of sheet name
     
         $header    = pack("vv",  $record, $length);
-        $data      = pack("VvC", $offset, $grbit, $cch);
+        $data      = pack("Vvv", $offset, $grbit, $cch);
         $this->_append($header.$data.$sheetname);
     }
  
@@ -907,12 +940,24 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     function _storeNumFormat($format,$ifmt)
     {
         $record    = 0x041E;                      // Record identifier
-        $length    = 0x03 + strlen($format);      // Number of bytes to follow
-    
+
+        if ($this->_BIFF_version == 0x0600) {
+            $length    = 5 + strlen($format);      // Number of bytes to follow
+            $encoding = 0x0;
+        }
+        elseif ($this->_BIFF_version == 0x0500) {
+            $length    = 3 + strlen($format);      // Number of bytes to follow
+        }
+
         $cch       = strlen($format);             // Length of format string
     
         $header    = pack("vv", $record, $length);
-        $data      = pack("vC", $ifmt, $cch);
+        if ($this->_BIFF_version == 0x0600) {
+            $data      = pack("vvC", $ifmt, $cch, $encoding);
+        }
+        elseif ($this->_BIFF_version == 0x0500) {
+            $data      = pack("vC", $ifmt, $cch);
+        }
         $this->_append($header.$data.$format);
     }
     
@@ -1155,6 +1200,32 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
         $header = pack("vvv",  $record, $length, $ccv);
         $this->_append($header.$data);
+    }
+
+    /**
+    * Write all of the workbooks strings into an indexed array.
+    * See the comments in _calculate_shared_string_sizes() for more information.
+    *
+    * The Excel documentation says that the SST record should be followed by an
+    * EXTSST record. The EXTSST record is a hash table that is used to optimise
+    * access to SST. However, despite the documentation it doesn't seem to be
+    * required so we will ignore it.
+    *
+    * @access private
+    */
+    function _storeSharedStringsTable()
+    {
+        $record          = 0x00fc;  // Record identifier
+        $length          = 8;       // Number of bytes to follow
+
+        $this->_str_total = 0;
+        $this->_str_unique = 0;
+
+        // Write the SST block header information
+        $header      = pack("vv", $record, $length);
+        $data        = pack("VV", $this->_str_total, $this->_str_unique);
+        $this->_append($header.$data);
+
     }
 }
 ?>

@@ -176,7 +176,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         }
         elseif ($this->_BIFF_version == 0x0600) {
             $length  = 0x0010;
-            $unknown = pack("VV", 0x00000000, 0x00000006); //unknown last 8 bytes for BIFF8
+            $unknown = pack("VV", 0x00000041, 0x00000006); //unknown last 8 bytes for BIFF8
             $build   = 0x0DBB;
             $year    = 0x07CC;
         }

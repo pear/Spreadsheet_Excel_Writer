@@ -624,13 +624,24 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     * Convert a string token to ptgStr
     *
     * @access private
-    * @param string $string A string for conversion to its ptg value
+    * @param string $string A string for conversion to its ptg value. 
+    * @return mixed the converted token on success. PEAR_Error if the string
+    *               is longer than 255 characters.
     */
     function _convertString($string)
     {
         // chop away beggining and ending quotes
         $string = substr($string, 1, strlen($string) - 2);
-        return pack("CC", $this->ptg['ptgStr'], strlen($string)).$string;
+        if (strlen($string) > 255) {
+            return $this->raiseError("String is too long");
+        }
+        if ($this->_BIFF_version == 0x0500) {
+            return pack("CC", $this->ptg['ptgStr'], strlen($string)).$string;
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $encoding = 0;   // TODO: Unicode support
+            return pack("CCC", $this->ptg['ptgStr'], strlen($string), $encoding).$string;
+        }
     }
  
     /**

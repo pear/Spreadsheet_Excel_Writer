@@ -245,11 +245,11 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     /**
     * Constructor
     *
-    * @access public
+    * @access private
     * @param integer $index the XF index for the format.
     * @param array   $properties array with properties to be set on initialization.
     */
-    function Spreadsheet_Excel_Writer_Format($BIFF_version, $index = 0,$properties =  array())
+    function Spreadsheet_Excel_Writer_Format($BIFF_version, $index = 0, $properties =  array())
     {
         $this->_xf_index       = $index;
         $this->_BIFF_version   = $BIFF_version;
@@ -349,6 +349,9 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         }
         if ($this->_left == 0) {
             $this->_left_color = 0;
+        }
+        if ($this->_diag == 0) {
+            $this->_diag_color = 0;
         }
     
         $record         = 0x00E0;              // Record identifier
@@ -455,11 +458,16 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $uls        = $this->_underline;    // Underline
         $bFamily    = $this->_font_family;  // Font family
         $bCharSet   = $this->_font_charset; // Character set
-        $rgch       = $this->_font_name;    // Font name
+        $encoding   = 0;                    // TODO: Unicode support
     
-        $cch        = strlen($rgch);       // Length of font name
-        $record     = 0x31;                // Record identifier
-        $length     = 0x0F + $cch;         // Record length
+        $cch        = strlen($this->_font_name); // Length of font name
+        $record     = 0x31;                      // Record identifier
+        if ($this->_BIFF_version == 0x0500) {
+            $length     = 0x0F + $cch;            // Record length
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $length     = 0x10 + $cch;
+        }
         $reserved   = 0x00;                // Reserved
         $grbit      = 0x00;                // Font attributes
         if ($this->_italic) {
@@ -476,9 +484,16 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         }
     
         $header  = pack("vv",         $record, $length);
-        $data    = pack("vvvvvCCCCC", $dyHeight, $grbit, $icv, $bls,
-                                      $sss, $uls, $bFamily,
-                                      $bCharSet, $reserved, $cch);
+        if ($this->_BIFF_version == 0x0500) {
+            $data    = pack("vvvvvCCCCC", $dyHeight, $grbit, $icv, $bls,
+                                          $sss, $uls, $bFamily,
+                                          $bCharSet, $reserved, $cch);
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $data    = pack("vvvvvCCCCCC", $dyHeight, $grbit, $icv, $bls,
+                                           $sss, $uls, $bFamily,
+                                           $bCharSet, $reserved, $cch, $encoding);
+        }
         return($header . $data. $this->_font_name);
     }
     
