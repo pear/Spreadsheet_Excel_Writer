@@ -2,9 +2,11 @@
 <!DOCTYPE package SYSTEM "../package.dtd">
 <package version="1.0">
   <name>Spreadsheet_Excel_Writer</name>
-  <summary>Spreadsheet_Excel_Writer generates Excel files</summary>
-  <description>
-    Spreadsheet_Excel_Writer generates Excel files without the need for COM objects.</description>
+  <summary>Package for generating Excel spreadsheets</summary>
+  <description> Spreadsheet_Excel_Writer was born as a porting of the Spreadsheet::WriteExcel Perl module to PHP. 
+ It allows writing of Excel spreadsheets without the need for COM objects.
+ It supports formulas, images (BMP) and all kinds of formatting for text and cells.
+ It currently supports the BIFF5 format (Excel 5.0), so functionality appeared in the latest Excel versions is not yet available.</description>
   <license>LGPL</license>
   <maintainers>
     <maintainer>
@@ -13,10 +15,16 @@
       <email>xnoguer@rezebra.com</email>
       <role>lead</role>
     </maintainer>
+    <maintainer>
+      <user>tuupola</user>
+      <name>Mika Tuupola</name>
+      <email>tuupola@appelsiini.net</email>
+      <role>developer</role>
+    </maintainer>
   </maintainers>
   <release>
     <version>0.1</version>
-    <date>2002-11-26</date>
+    <date>2003-01-03</date>
     <notes>This is the initial release of the package.</notes>
     <state>devel</state>
     <filelist>
