@@ -48,6 +48,18 @@ class Format extends PEAR
     var $_xf_index;
 
     /**
+    * Index to the FONT record.
+    * @var integer
+    */
+    var $font_index;
+
+    /**
+    * The font name (ASCII).
+    * @var string
+    */
+    var $_font_name;
+
+    /**
     * Height of font (1/20 of a point)
     * @var integer
     */
@@ -84,6 +96,42 @@ class Format extends PEAR
     var $_font_strikeout;
 
     /**
+    * Bit specifiying if the font has outline.
+    * @var integer
+    */
+    var $_font_outline;
+
+    /**
+    * Bit specifiying if the font has shadow.
+    * @var integer
+    */
+    var $_font_shadow;
+
+    /**
+    * 2 bytes specifiying the script type for the font.
+    * @var integer
+    */
+    var $_font_script;
+
+    /**
+    * Byte specifiying the font family.
+    * @var integer
+    */
+    var $_font_family;
+
+    /**
+    * Byte specifiying the font charset.
+    * @var integer
+    */
+    var $_font_charset;
+
+    /**
+    * An index (2 bytes) to a FORMAT record (number format).
+    * @var integer
+    */
+    var $_num_format;
+
+    /**
     * The two bits specifying the text rotation.
     * @var integer
     */
@@ -100,6 +148,12 @@ class Format extends PEAR
     * @var integer
     */
     var $_bg_color;
+
+    /**
+    * The cell's background fill pattern.
+    * @var integer
+    */
+    var $_pattern;
 
     /**
     * Style of the bottom border of the cell
@@ -161,34 +215,34 @@ class Format extends PEAR
         $this->_xf_index       = $index;
                                
         $this->font_index      = 0;
-        $this->font            = 'Arial';
+        $this->_font_name      = 'Arial';
         $this->_size           = 10;
         $this->_bold           = 0x0190;
         $this->_italic         = 0;
         $this->_color          = 0x7FFF;
         $this->_underline      = 0;
         $this->_font_strikeout = 0;
-        $this->font_outline    = 0;
-        $this->font_shadow     = 0;
-        $this->font_script     = 0;
-        $this->font_family     = 0;
-        $this->font_charset    = 0;
+        $this->_font_outline   = 0;
+        $this->_font_shadow    = 0;
+        $this->_font_script    = 0;
+        $this->_font_family    = 0;
+        $this->_font_charset   = 0;
                                
         $this->_num_format     = 0;
                                
         $this->_hidden         = 0;
         $this->_locked         = 1;
                                
-        $this->_text_h_align   = 0;
-        $this->_text_wrap      = 0;
-        $this->_text_v_align   = 2;
-        $this->_text_justlast  = 0;
+        $this->_text_h_align   = 0;  // no declarada
+        $this->_text_wrap      = 0;  // no declarada
+        $this->_text_v_align   = 2;  // no declarada
+        $this->_text_justlast  = 0;  // no declarada
         $this->_rotation       = 0;
                                
         $this->_fg_color       = 0x40;
         $this->_bg_color       = 0x41;
                                
-        $this->pattern         = 0;
+        $this->_pattern        = 0;
                                
         $this->_bottom         = 0;
         $this->_top            = 0;
@@ -239,7 +293,7 @@ class Format extends PEAR
                         $this->_right)?1:0;
         $atr_pat     = (($this->_fg_color != 0x40) ||
                         ($this->_bg_color != 0x41) ||
-                        $this->pattern)?1:0;
+                        $this->_pattern)?1:0;
         $atr_prot    = 0;
     
         // Zero the default border colour if the border has not been set.
@@ -277,7 +331,7 @@ class Format extends PEAR
         $icv            = $this->_fg_color;           // fg and bg pattern colors
         $icv           |= $this->_bg_color      << 7;
     
-        $fill           = $this->pattern;            // Fill and border line style
+        $fill           = $this->_pattern;            // Fill and border line style
         $fill          |= $this->_bottom        << 6;
         $fill          |= $this->_bottom_color  << 9;
     
@@ -304,14 +358,14 @@ class Format extends PEAR
     */
     function getFont()
     {
-        $dyHeight   = $this->_size * 20;   // Height of font (1/20 of a point)
-        $icv        = $this->_color;       // Index to color palette
-        $bls        = $this->_bold;        // Bold style
-        $sss        = $this->font_script;  // Superscript/subscript
-        $uls        = $this->_underline;   // Underline
-        $bFamily    = $this->font_family;  // Font family
-        $bCharSet   = $this->font_charset; // Character set
-        $rgch       = $this->font;         // Font name
+        $dyHeight   = $this->_size * 20;    // Height of font (1/20 of a point)
+        $icv        = $this->_color;        // Index to color palette
+        $bls        = $this->_bold;         // Bold style
+        $sss        = $this->_font_script;  // Superscript/subscript
+        $uls        = $this->_underline;    // Underline
+        $bFamily    = $this->_font_family;  // Font family
+        $bCharSet   = $this->_font_charset; // Character set
+        $rgch       = $this->_font_name;    // Font name
     
         $cch        = strlen($rgch);       // Length of font name
         $record     = 0x31;                // Record identifier
@@ -324,10 +378,10 @@ class Format extends PEAR
         if ($this->_font_strikeout) {
             $grbit     |= 0x08;
         }
-        if ($this->font_outline) {
+        if ($this->_font_outline) {
             $grbit     |= 0x10;
         }
-        if ($this->font_shadow) {
+        if ($this->_font_shadow) {
             $grbit     |= 0x20;
         }
     
@@ -335,7 +389,7 @@ class Format extends PEAR
         $data    = pack("vvvvvCCCCC", $dyHeight, $grbit, $icv, $bls,
                                       $sss, $uls, $bFamily,
                                       $bCharSet, $reserved, $cch);
-        return($header . $data. $this->font);
+        return($header . $data. $this->_font_name);
     }
     
     /**
@@ -349,11 +403,11 @@ class Format extends PEAR
     */
     function getFontKey()
     {
-        $key  = "$this->font$this->_size";
-        $key .= "$this->font_script$this->_underline";
-        $key .= "$this->_font_strikeout$this->_bold$this->font_outline";
-        $key .= "$this->font_family$this->font_charset";
-        $key .= "$this->font_shadow$this->_color$this->_italic";
+        $key  = "$this->_font_name$this->_size";
+        $key .= "$this->_font_script$this->_underline";
+        $key .= "$this->_font_strikeout$this->_bold$this->_font_outline";
+        $key .= "$this->_font_family$this->_font_charset";
+        $key .= "$this->_font_shadow$this->_color$this->_italic";
         $key  = str_replace(" ","_",$key);
         return ($key);
     }
@@ -487,7 +541,8 @@ class Format extends PEAR
     * 0x190 is normal. 0x2BC is bold.
     *
     * @access public
-    * @param integer $weight Weight for the text, 0 maps to 0x190, 1 maps to 0x2BC. 
+    * @param integer $weight Weight for the text, 0 maps to 400 (normal text),
+                             1 maps to 700 (bold text). Valid range is: 100-1000.
                              It's Optional, default is 1 (bold).
     */
     function setBold($weight = 1)
@@ -677,14 +732,15 @@ class Format extends PEAR
     }
     
     /**
-    * Sets the pattern attribute of a cell
+    * Sets the fill pattern attribute of a cell
     *
     * @access public
-    * @param integer $arg Optional. Defaults to 1.
+    * @param integer $arg Optional. Defaults to 1. Meaningful values are: 0-18,
+    *                     0 meaning no background.
     */
     function setPattern($arg = 1)
     {
-        $this->pattern = $arg;
+        $this->_pattern = $arg;
     }
     
     /**
@@ -718,17 +774,6 @@ class Format extends PEAR
     function setSize($size)
     {
         $this->_size = $size;
-    }
-    
-    /**
-    * Sets the num format
-    *
-    * @access public
-    * @param integer $num_format The num format.
-    */
-    function setNumFormat($num_format)
-    {
-        $this->_num_format = $num_format;
     }
     
     /**
@@ -776,15 +821,56 @@ class Format extends PEAR
     }
 
     /**
-    * Sets Font Strikeout.
+    * Sets the num format
     *
     * @access public
-    * @param integer $strikeout Optional. 0 => no font strikeout, 1 => font strikeout. 
-    *                           Defaults to 1.
+    * @param integer $num_format The num format.
     */
-    function setStrikeOut($strikeout = 1)
+    function setNumFormat($num_format)
     {
-        $this->_font_strikeout = $strikeout;
+        $this->_num_format = $num_format;
+    }
+
+    /**
+    * Sets font as strikeout.
+    *
+    * @access public
+    */
+    function setStrikeOut()
+    {
+        $this->_font_strikeout = 1;
+    }
+
+    /**
+    * Sets font as outLine.
+    *
+    * @access public
+    */
+    function setOutLine()
+    {
+        $this->_font_outline = 1;
+    }
+
+    /**
+    * Sets font as shadow.
+    *
+    * @access public
+    */
+    function setShadow()
+    {
+        $this->_font_shadow = 1;
+    }
+
+    /**
+    * Sets the script type of the text
+    *
+    * @access public
+    * @param integer $script The value for script type. Possible values are:
+    *                        1 => superscript, 2 => subscript.
+    */
+    function setScript($script)
+    {
+        $this->_font_script = $script;
     }
 }
 ?>
