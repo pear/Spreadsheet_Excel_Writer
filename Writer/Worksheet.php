@@ -423,6 +423,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_outline_right     = 1;
         $this->_outline_on        = 1;
 
+        $this->_dv                = array();
+
         $this->_initialize();
     }
     
@@ -508,12 +510,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         // Prepend WSBOOL
         $this->_storeWsbool();
-    
-        // Prepend GRIDSET
-        $this->_storeGridset();
-
+ 
         //  Prepend GUTS
         $this->_storeGuts();
+   
+        // Prepend GRIDSET
+        $this->_storeGridset();
  
         // Prepend PRINTGRIDLINES
         $this->_storePrintGridlines();
@@ -554,6 +556,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $this->_storePanes($this->_panes);
         }
         $this->_storeSelection($this->_selection);
+        $this->_storeDataValidity();
         $this->_storeEof();
     }
     
@@ -2048,7 +2051,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function storeDimensions()
     {
-        $record    = 0x0000;               // Record identifier
+        $record    = 0x0200;               // Record identifier
         $length    = 0x000A;               // Number of bytes to follow
         $row_min   = $this->_dim_rowmin;   // First row
         $row_max   = $this->_dim_rowmax;   // Last row plus 1
@@ -2057,8 +2060,14 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $reserved  = 0x0000;               // Reserved by Excel
     
         $header    = pack("vv",    $record, $length);
-        $data      = pack("vvvvv", $row_min, $row_max,
-                                   $col_min, $col_max, $reserved);
+        if ($this->_BIFF_version == 0x0500) {
+            $data      = pack("vvvvv", $row_min, $row_max,
+                                       $col_min, $col_max, $reserved);
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $data      = pack("VVvvv", $row_min, $row_max,
+                                       $col_min, $col_max, $reserved);
+        }
         $this->_prepend($header.$data);
     }
     
@@ -2070,8 +2079,13 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     function _storeWindow2()
     {
         $record         = 0x023E;     // Record identifier
-        $length         = 0x000A;     // Number of bytes to follow
-    
+        if ($this->_BIFF_version == 0x0500) {
+            $length         = 0x000A;     // Number of bytes to follow
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $length         = 0x0012;
+        }
+
         $grbit          = 0x00B6;     // Option flags
         $rwTop          = 0x0000;     // Top row visible in window
         $colLeft        = 0x0000;     // Leftmost column visible in window
@@ -2103,7 +2117,15 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $grbit            |= $fPaged         << 10;
     
         $header  = pack("vv",   $record, $length);
-        $data    = pack("vvvV", $grbit, $rwTop, $colLeft, $rgbHdr);
+        $data    = pack("vvv", $grbit, $rwTop, $colLeft);
+        if ($this->_BIFF_version == 0x0500) {
+            $data .= pack("V", $rgbHdr);
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $zoom_factor_page_break = 0x0000;
+            $zoom_factor_normal     = 0x0000;
+            $data .= pack("vvvvV", 0x0001, 0x0000, $zoom_factor_page_break, $zoom_factor_normal, 0x00000000);
+        }
         $this->_append($header.$data);
     }
     
@@ -3275,6 +3297,48 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $header      = pack("vv", $record, $length);
         $data        = pack("vv", $this->_zoom, 100);
         $this->_append($header.$data);
+    }
+
+    /**
+    * FIXME: add comments
+    */
+    function setValidation($row1, $col1, $row2, $col2, &$validator)
+    {
+        $this->_dv[] = $validator->_getData() .
+                       pack("vvvvv", 1, $row1, $row2, $col1, $col2);
+    }
+   
+    /**
+    * Store the DVAL and DV records.
+    *
+    * @access private
+    */
+    function _storeDataValidity()
+    {
+        $record      = 0x01b2;      // Record identifier
+        $length      = 0x0012;      // Bytes to follow
+   
+        $grbit       = 0x0002;      // Prompt box at cell, no cached validity data at DV records
+        $horPos      = 0x00000000;  // Horizontal position of prompt box, if fixed position
+        $verPos      = 0x00000000;  // Vertical position of prompt box, if fixed position
+        $objId       = 0xffffffff;  // Object identifier of drop down arrow object, or -1 if not visible
+      
+        $header      = pack("vv", $record, $length);
+        $data        = pack("v", $grbit);
+        $data       .= pack("V", $horPos);
+        $data       .= pack("V", $verPos);
+        $data       .= pack("V", $objId);
+        $data       .= pack("V", count($this->_dv));
+      
+        $this->_append($header.$data);
+      
+        $record = 0x01be;              // Record identifier
+        foreach($this->_dv as $dv)
+        {
+            $length = strlen($dv);      // Bytes to follow
+            $header = pack("vv", $record, $length);
+            $this->_append($header.$dv);
+        }
     }
 }
 ?>
