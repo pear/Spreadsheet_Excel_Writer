@@ -6,7 +6,9 @@
   <description> Spreadsheet_Excel_Writer was born as a porting of the Spreadsheet::WriteExcel Perl module to PHP. 
  It allows writing of Excel spreadsheets without the need for COM objects.
  It supports formulas, images (BMP) and all kinds of formatting for text and cells.
- It currently supports the BIFF5 format (Excel 5.0), so functionality appeared in the latest Excel versions is not yet available.</description>
+ It currently supports the BIFF5 format (Excel 5.0), so functionality appeared in the latest Excel versions is not yet available.
+
+ Documentation can be found at: http://www.dcc.uchile.cl/~xnoguer/peardoc2/package.fileformats.html</description>
   <license>LGPL</license>
   <maintainers>
     <maintainer>
@@ -23,10 +25,18 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.1</version>
-    <date>2003-01-03</date>
-    <notes>This is the initial release of the package.</notes>
-    <state>devel</state>
+    <version>0.2</version>
+    <date>2003-03-17</date>
+    <notes>
+      -added several formatting methods: setTextRotation(), setStrikeOut(), 
+      setOutLine(), setShadow(), setScript().
+      -fixed bug in Workbook::sheets() (Björn Schotte).
+      -fixed range for references in formulas (Edward).
+      -added support for external references in formulas.
+      -added support for comparisons in formulas.
+      -added support for strings in formulas.
+    </notes>
+    <state>beta</state>
     <filelist>
       <dir name="/" baseinstalldir="Spreadsheet/Excel/">
         <file role="php">Writer.php</file>
@@ -41,4 +51,20 @@
       </dir>
     </filelist>
   </release>
+  <changelog>
+    <release>
+      <version>0.2</version>
+      <state>beta</state>
+      <date>2003-03-17</date>
+      <notes>
+      -added several formatting methods: setTextRotation(), setStrikeOut(), 
+      setOutLine(), setShadow(), setScript().
+      -fixed bug in Workbook::sheets() (Björn Schotte).
+      -fixed range for references in formulas (Edward).
+      -added support for external references in formulas.
+      -added support for comparisons in formulas.
+      -added support for strings in formulas.
+      </notes>
+    </release>
+  </changelog>
 </package>
