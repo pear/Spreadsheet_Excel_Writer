@@ -332,6 +332,24 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     var $_fit_height;
 
     /**
+    * Reference to the total number of strings in the workbook
+    * @var integer
+    */
+    var $_str_total;
+
+    /**
+    * Reference to the number of unique strings in the workbook
+    * @var integer
+    */
+    var $_str_unique;
+
+    /**
+    * Reference to the array containing all the unique strings in the workbook
+    * @var array
+    */
+    var $_str_table;
+
+    /**
     * Constructor
     *
     * @param string  $name         The name of the new worksheet
@@ -344,8 +362,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function Spreadsheet_Excel_Writer_Worksheet($BIFF_version, $name,
                                                 $index, &$activesheet,
-                                                &$firstsheet, &$url_format,
-                                                &$parser)
+                                                &$firstsheet, &$str_total,
+                                                &$str_unique, &$str_table,
+                                                &$url_format, &$parser)
     {
         // It needs to call its parent's constructor explicitly
         $this->Spreadsheet_Excel_Writer_BIFFwriter();
@@ -357,6 +376,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->index           = $index;
         $this->activesheet     = &$activesheet;
         $this->firstsheet      = &$firstsheet;
+        $this->_str_total      = &$str_total;
+        $this->_str_unique     = &$str_unique;
+        $this->_str_table      = &$str_table;
         $this->_url_format     = &$url_format;
         $this->_parser         = &$parser;
     
@@ -514,12 +536,14 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         // Prepend WSBOOL
         $this->_storeWsbool();
- 
-        //  Prepend GUTS
-        //$this->_storeGuts();
    
         // Prepend GRIDSET
         $this->_storeGridset();
+
+         //  Prepend GUTS
+        if ($this->_BIFF_version == 0x0500) {
+            $this->_storeGuts();
+        }
  
         // Prepend PRINTGRIDLINES
         $this->_storePrintGridlines();
@@ -528,14 +552,17 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_storePrintHeaders();
     
         // Prepend EXTERNSHEET references
-        /*for ($i = $num_sheets; $i > 0; $i--)
-        {
-            $sheetname = $sheetnames[$i-1];
-            $this->_storeExternsheet($sheetname);
-        }*/
+        if ($this->_BIFF_version == 0x0500) {
+            for ($i = $num_sheets; $i > 0; $i--) {
+                $sheetname = $sheetnames[$i-1];
+                $this->_storeExternsheet($sheetname);
+            }
+        }
     
         // Prepend the EXTERNCOUNT of external references.
-        //$this->_storeExterncount($num_sheets);
+        if ($this->_BIFF_version == 0x0500) {
+            $this->_storeExterncount($num_sheets);
+        }
     
         // Prepend the COLINFO records if they exist
         if (!empty($this->_colinfo))
@@ -561,7 +588,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
         $this->_storeSelection($this->_selection);
         /* TODO: add data validity */
-        //$this->_storeDataValidity();
+        /*if ($this->_BIFF_version == 0x0600) {
+            $this->_storeDataValidity();
+        }*/
         $this->_storeEof();
     }
     
@@ -1419,6 +1448,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function writeString($row, $col, $str, $format = 0)
     {
+        if ($this->_BIFF_version == 0x0600) {
+            return $this->writeStringBIFF8($row, $col, $str, $format);
+        }
         $strlen    = strlen($str);
         $record    = 0x0204;                   // Record identifier
         $length    = 0x0008 + $strlen;         // Bytes to follow
@@ -1464,6 +1496,68 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $data      = pack("vvvv", $row, $col, $xf, $strlen);
         $this->_append($header.$data.$str);
         return($str_error);
+    }
+
+    function writeStringBIFF8($row, $col, $str, $format = 0)
+    {
+        $strlen    = strlen($str);
+        $record    = 0x00FD;                   // Record identifier
+        $length    = 0x000A;                   // Bytes to follow
+        $xf        = $this->_XF($format);      // The cell format
+        $encoding  = 0x0;
+        
+        $str_error = 0;
+    
+        // Check that row and col are valid and store max and min values
+        if ($this->_checkRowCol($row, $col) == false) {
+            return -2;
+        }
+
+        $str = pack('vC', $strlen, $encoding).$str;
+
+        /* check if string is already present */
+        if (!isset($this->_str_table[$str])) {
+            $this->_str_table[$str] = $this->_str_unique++;
+        }
+        $this->_str_total++;
+    
+        $header    = pack('vv',   $record, $length);
+        $data      = pack('vvvV', $row, $col, $xf, $this->_str_table[$str]);
+        $this->_append($header.$data);
+        return $str_error;
+    }
+
+    /**
+    * Check row and col before writing to a cell, and update the sheet's
+    * dimensions accordingly
+    *
+    * @access private
+    * @param integer $row    Zero indexed row
+    * @param integer $col    Zero indexed column
+    * @return boolean true for success, false if row and/or col are grester
+    *                 then maximums allowed.
+    */
+    function _checkRowCol($row, $col)
+    {
+        if ($row >= $this->_xls_rowmax) {
+            return false;
+        }
+        if ($col >= $this->_xls_colmax) {
+            return false;
+        }
+        if ($row <  $this->_dim_rowmin) {
+            $this->_dim_rowmin = $row;
+        }
+        if ($row >  $this->_dim_rowmax) {
+            $this->_dim_rowmax = $row;
+        }
+        if ($col <  $this->_dim_colmin) {
+            $this->_dim_colmin = $col;
+        }
+        if ($col >  $this->_dim_colmax) {
+            $this->_dim_colmax = $col;
+        }
+        return true;
     }
 
     /**
@@ -1614,33 +1708,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $xf        = $this->_XF($format); // The cell format
         $num       = 0x00;                // Current value of formula
         $grbit     = 0x03;                // Option flags
-        $chn       = 0x0000;              // Must be zero
+        $unknown   = 0x0000;              // Must be zero
     
     
         // Check that row and col are valid and store max and min values
-        if ($row >= $this->_xls_rowmax)
-        {
-            return(-2);
-        }
-        if ($col >= $this->_xls_colmax)
-        {
-            return(-2);
-        }
-        if ($row <  $this->_dim_rowmin) 
-        {
-            $this->_dim_rowmin = $row;
-        }
-        if ($row >  $this->_dim_rowmax) 
-        {
-            $this->_dim_rowmax = $row;
-        }
-        if ($col <  $this->_dim_colmin) 
-        {
-            $this->_dim_colmin = $col;
-        }
-        if ($col >  $this->_dim_colmax) 
-        {
-            $this->_dim_colmax = $col;
+        if ($this->_checkRowCol($row, $col) == false) {
+            return -2;
         }
     
         // Strip the '=' or '@' sign at the beginning of the formula string
@@ -1677,7 +1750,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         $header    = pack("vv",      $record, $length);
         $data      = pack("vvvdvVv", $row, $col, $xf, $num,
-                                     $grbit, $chn, $formlen);
+                                     $grbit, $unknown, $formlen);
     
         $this->_append($header.$data.$formula);
         return 0;
@@ -2038,9 +2111,13 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // collapsed. The zero height flag, 0x20, is used to collapse a row.
 
         $grbit |= $level;
-        if($hidden) $grbit |= 0x0020;
-        $grbit |= 0x0040; # fUnsynced
-        if($format) $grbit |= 0x0080;
+        if ($hidden) {
+            $grbit |= 0x0020;
+        }
+        $grbit |= 0x0040; // fUnsynced
+        if ($format) {
+            $grbit |= 0x0080;
+        }
         $grbit |= 0x0100;
 
         $header   = pack("vv",       $record, $length);
@@ -2476,11 +2553,20 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         $str      = $this->_header;       // header string
         $cch      = strlen($str);         // Length of header string
-        $encoding = 0x0;                  // TODO: Unicode support
-        $length   = 3 + $cch;             // Bytes to follow
-    
+        if ($this->_BIFF_version == 0x0600) {
+            $encoding = 0x0;                  // TODO: Unicode support
+            $length   = 3 + $cch;             // Bytes to follow
+        }
+        else {
+            $length  = 1 + $cch;             // Bytes to follow
+        }
         $header   = pack("vv", $record, $length);
-        $data     = pack("vC",  $cch, $encoding);
+        if ($this->_BIFF_version == 0x0600) {
+            $data     = pack("vC",  $cch, $encoding);
+        }
+        else {
+            $data      = pack("C",  $cch);
+        }
     
         $this->_append($header.$data.$str);
     }
@@ -2496,11 +2582,20 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         $str      = $this->_footer;       // Footer string
         $cch      = strlen($str);         // Length of footer string
-        $encoding = 0x0;                  // TODO: Unicode support
-        $length   = 3 + $cch;             // Bytes to follow
-    
+        if ($this->_BIFF_version == 0x0600) {
+            $encoding = 0x0;                  // TODO: Unicode support
+            $length   = 3 + $cch;             // Bytes to follow
+        }
+        else {
+            $length  = 1 + $cch;
+        }
         $header    = pack("vv", $record, $length);
-        $data      = pack("vC",  $cch, $encoding);
+        if ($this->_BIFF_version == 0x0600) {
+            $data      = pack("vC",  $cch, $encoding);
+        }
+        else {
+            $data      = pack("C",  $cch);
+        }
     
         $this->_append($header.$data.$str);
     }
@@ -3334,13 +3429,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $verPos      = 0x00000000;  // Vertical position of prompt box, if fixed position
         $objId       = 0xffffffff;  // Object identifier of drop down arrow object, or -1 if not visible
       
-        $header      = pack("vv", $record, $length);
-        $data        = pack("v", $grbit);
-        $data       .= pack("V", $horPos);
-        $data       .= pack("V", $verPos);
-        $data       .= pack("V", $objId);
-        $data       .= pack("V", count($this->_dv));
-      
+        $header      = pack('vv', $record, $length);
+        $data        = pack('vVVVV', $grbit, $horPos, $verPos, $objId,
+                                     count($this->_dv));
         $this->_append($header.$data);
       
         $record = 0x01be;              // Record identifier

@@ -183,7 +183,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
         // Add the default format for hyperlinks
         $this->_url_format =& $this->addFormat(array('color' => 'blue', 'underline' => 1));
-    
+        $this->_str_total       = 0;
+        $this->_str_unique      = 0;
+        $this->_str_table       = array();
         $this->_setPaletteXl97();
     }
     
@@ -248,6 +250,8 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         if ($version == 8) { // only accept version 8
             $version = 0x0600;
             $this->_BIFF_version = $version;
+            // change BIFFwriter limit for CONTINUE records
+            $this->_limit = 8224;
             $this->_tmp_format->_BIFF_version = $version;
             $this->_url_format->_BIFF_version = $version;
             $this->_parser->_BIFF_version = $version;
@@ -300,7 +304,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $worksheet = new Spreadsheet_Excel_Writer_Worksheet($this->_BIFF_version,
                                    $name, $index,
                                    $this->_activesheet, $this->_firstsheet,
-                                   $this->_url_format, $this->_parser);
+                                   $this->_str_total, $this->_str_unique,
+                                   $this->_str_table, $this->_url_format,
+                                   $this->_parser);
 
         $this->_worksheets[$index] = &$worksheet;    // Store ref for iterator
         $this->_sheetnames[$index] = $name;          // Store EXTERNSHEET names
@@ -453,16 +459,14 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     function _storeWorkbook()
     {
         // Ensure that at least one worksheet has been selected.
-        if ($this->_activesheet == 0)
-        {
+        if ($this->_activesheet == 0) {
             $this->_worksheets[0]->selected = 1;
         }
     
         // Calculate the number of selected worksheet tabs and call the finalization
         // methods for each worksheet
         $total_worksheets = count($this->_worksheets);
-        for ($i=0; $i < $total_worksheets; $i++)
-        {
+        for ($i=0; $i < $total_worksheets; $i++) {
             if ($this->_worksheets[$i]->selected) {
                 $this->_selected++;
             }
@@ -499,15 +503,12 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
         if ($this->_BIFF_version == 0x0600) {
             //$this->_storeSupbookInternal();
-        /*
-        TODO: store external SUPBOOK records and XCT and CRN records 
-        in case of external references for BIFF8
-        */
+            /* TODO: store external SUPBOOK records and XCT and CRN records 
+            in case of external references for BIFF8 */
             //$this->_storeExternsheetBiff8();
+            $this->_storeSharedStringsTable();
         }
 
-        /* TODO: store SST for BIFF8 */
-        $this->_storeSharedStringsTable();
         // End Workbook globals
         $this->_storeEof();
     
@@ -555,14 +556,22 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     function _calcSheetOffsets()
     {
-        $boundsheet_length = 12;  // fixed length for a BOUNDSHEET record
+        if ($this->_BIFF_version == 0x0600) {
+            $boundsheet_length = 12;  // fixed length for a BOUNDSHEET record
+        }
+        else {
+            $boundsheet_length = 11;
+        }
         $EOF               = 4;
         $offset            = $this->_datasize;
 
-        // add the length of the SST
-        $offset += 12; // FIXME: update when updating _storeSharedStringsTable()
-        // add the lenght of SUPBOOK, EXTERNSHEET and NAME records
-        $offset += 0; // FIXME: calculate real value when storing the records
+        if ($this->_BIFF_version == 0x0600) {
+            // add the length of the SST
+            /* TODO: check this works for a lot of strings (> 8224 bytes) */
+            $offset += $this->_calculateSharedStringsSizes();
+            // add the lenght of SUPBOOK, EXTERNSHEET and NAME records
+            //$offset += 8; // FIXME: calculate real value when storing the records
+        }
         $total_worksheets = count($this->_worksheets);
         // add the length of the BOUNDSHEET records 
         for ($i=0; $i < $total_worksheets; $i++) {
@@ -870,13 +879,23 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     function _storeBoundsheet($sheetname,$offset)
     {
         $record    = 0x0085;                    // Record identifier
-        $length    = 0x08 + strlen($sheetname); // Number of bytes to follow
+        if ($this->_BIFF_version == 0x0600) {
+            $length    = 0x08 + strlen($sheetname); // Number of bytes to follow
+        }
+        else {
+            $length = 0x07 + strlen($sheetname); // Number of bytes to follow
+        }
     
         $grbit     = 0x0000;                    // Visibility and sheet type
         $cch       = strlen($sheetname);        // Length of sheet name
     
         $header    = pack("vv",  $record, $length);
-        $data      = pack("Vvv", $offset, $grbit, $cch);
+        if ($this->_BIFF_version == 0x0600) {
+            $data      = pack("Vvv", $offset, $grbit, $cch);
+        }
+        else {
+            $data      = pack("VvC", $offset, $grbit, $cch);
+        }
         $this->_append($header.$data.$sheetname);
     }
  
@@ -908,7 +927,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $record   = 0x0017;                     // Record identifier
         $length   = 2 + 6 * $total_references;  // Number of bytes to follow
 
-        $supbook_index = 0;                  // only using internal SUPBOOK record
+        $supbook_index = 0;           // FIXME: only using internal SUPBOOK record
         $header           = pack("vv",  $record, $length);
         $data             = pack('v', $total_references);
         for ($i = 0; $i < $total_references; $i++) {
@@ -1210,6 +1229,126 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     }
 
     /**
+    * Calculate
+    * Handling of the SST continue blocks is complicated by the need to include an
+    * additional continuation byte depending on whether the string is split between
+    * blocks or whether it starts at the beginning of the block. (There are also
+    * additional complications that will arise later when/if Rich Strings are
+    * supported).
+    *
+    * @access private
+    */
+    function _calculateSharedStringsSizes()
+    {
+        /* Iterate through the strings to calculate the CONTINUE block sizes.
+         The SST blocks requires a specialised CONTINUE block, so we have to
+         ensure that the maximum data block size is less than the limit used by
+         _add_continue() in BIFFwriter.pm. For simplicity we use the same size
+         for the SST and CONTINUE records:
+           8228 : Maximum Excel97 block size
+             -4 : Length of block header
+             -8 : Length of additional SST header information
+             -8 : Arbitrary number to keep within _add_continue() limit
+         = 8208
+        */
+        $total_offset       = 12;
+        $continue_limit     = 8208;
+        $block_length       = 0;
+        $written            = 0;
+        $this->_block_sizes = array();
+        $continue           = 0;
+
+        foreach (array_keys($this->_str_table) as $string) {
+            $string_length = strlen($string);
+ 
+            // Block length is the total length of the strings that will be
+            // written out in a single SST or CONTINUE block.
+            $block_length += $string_length;
+ 
+            // We can write the string if it doesn't cross a CONTINUE boundary
+            if ($block_length < $continue_limit) {
+                $written      += $string_length;
+                $total_offset += $string_length;
+                continue;
+            }
+ 
+            // Deal with the cases where the next string to be written will exceed
+            // the CONTINUE boundary. If the string is very long it may need to be
+            // written in more than one CONTINUE record.
+            while ($block_length >= $continue_limit) {
+ 
+                // We need to avoid the case where a string is continued in the first
+                // n bytes that contain the string header information.
+                $header_length   = 3; // Min string + header size -1
+                $space_remaining = $continue_limit - $written - $continue;
+ 
+ 
+                /* TODO: Unicode data should only be split on char (2 byte)
+                boundaries. Therefore, in some cases we need to reduce the
+                amount of available
+                */
+ 
+                if ($space_remaining > $header_length) {
+                    // Write as much as possible of the string in the current block
+                    $written      += $space_remaining;
+ 
+                    // Reduce the current block length by the amount written
+                    $block_length -= $continue_limit + $continue;
+ 
+                    // Store the max size for this block
+                    $this->_block_sizes[] = $continue_limit;
+ 
+                    // If the current string was split then the next CONTINUE block
+                    // should have the string continue flag (grbit) set unless the
+                    // split string fits exactly into the remaining space.
+                    if ($block_length > 0) {
+                        $continue = 1;
+                    }
+                    else {
+                        $continue = 0;
+                    }
+ 
+                }
+                else {
+                    // Store the max size for this block
+                    $this->_block_sizes[] = $written + $continue;
+ 
+                    // Not enough space to start the string in the current block
+                    $block_length -= $continue_limit - $space_remaining - $continue;
+                    $continue = 0;
+ 
+                }
+ 
+                // If the string (or substr) is small enough we can write it in the
+                // new CONTINUE block. Else, go through the loop again to write it in
+                // one or more CONTINUE blocks
+                if ($block_length < $continue_limit) {
+                    $written = $block_length;
+                }
+                else {
+                    $written = 0;
+                }
+            }
+        }
+
+        // Store the max size for the last block unless it is empty
+        if ($written + $continue) {
+            $this->_block_sizes[] = $written + $continue;
+        }
+ 
+ 
+        /* Calculate the total length of the SST and associated CONTINUEs (if any).
+         The SST record will have a length even if it contains no strings.
+         This length is required to set the offsets in the BOUNDSHEET records since
+         they must be written before the SST records
+        */
+        if (!empty($this->_block_sizes)) {
+            $total_offset += (count($this->_block_sizes) - 1) * 4; // add CONTINUE headers
+        }
+        return $total_offset;
+    }
+
+    /**
     * Write all of the workbooks strings into an indexed array.
     * See the comments in _calculate_shared_string_sizes() for more information.
     *
@@ -1223,17 +1362,112 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     /* FIXME: update _calcSheetOffsets() when updating this method */
     function _storeSharedStringsTable()
     {
-        $record          = 0x00fc;  // Record identifier
-        $length          = 8;       // Number of bytes to follow
-
-        $this->_str_total = 0;
-        $this->_str_unique = 0;
+        $record  = 0x00fc;  // Record identifier
+        $length  = 8 + array_sum($this->_block_sizes); // Number of bytes to follow
 
         // Write the SST block header information
         $header      = pack("vv", $record, $length);
         $data        = pack("VV", $this->_str_total, $this->_str_unique);
         $this->_append($header.$data);
 
+
+        // Iterate through the strings to calculate the CONTINUE block sizes
+        $continue_limit = 8208;
+        $block_length   = 0;
+        $written        = 0;
+        $continue       = 0;
+
+
+        /* TODO: not good for performance */
+        foreach (array_keys($this->_str_table) as $string) {
+
+            $string_length = strlen($string);
+            $encoding      = 0; // assume there are no Unicode strings
+            $split_string  = 0;
+ 
+            // Block length is the total length of the strings that will be
+            // written out in a single SST or CONTINUE block.
+            //
+            $block_length += $string_length;
+ 
+ 
+            // We can write the string if it doesn't cross a CONTINUE boundary
+            if ($block_length < $continue_limit) {
+                $this->_append($string);
+                $written += $string_length;
+                continue;
+            }
+ 
+            // Deal with the cases where the next string to be written will exceed
+            // the CONTINUE boundary. If the string is very long it may need to be
+            // written in more than one CONTINUE record.
+            // 
+            while ($block_length >= $continue_limit) {
+ 
+                // We need to avoid the case where a string is continued in the first
+                // n bytes that contain the string header information.
+                //
+                $header_length   = 3; // Min string + header size -1
+                $space_remaining = $continue_limit - $written - $continue;
+ 
+ 
+                // Unicode data should only be split on char (2 byte) boundaries.
+                // Therefore, in some cases we need to reduce the amount of available
+ 
+                if ($space_remaining > $header_length) {
+                    // Write as much as possible of the string in the current block
+                    $tmp = substr($string, 0, $space_remaining);
+                    $this->_append($tmp);
+ 
+                    // The remainder will be written in the next block(s)
+                    $string = substr($string, $space_remaining);
+ 
+                    // Reduce the current block length by the amount written
+                    $block_length -= $continue_limit - $continue;
+ 
+                    // If the current string was split then the next CONTINUE block
+                    // should have the string continue flag (grbit) set unless the
+                    // split string fits exactly into the remaining space.
+                    //
+                    if ($block_length > 0) {
+                        $continue = 1;
+                    }
+                    else {
+                        $continue = 0;
+                    }
+                }
+                else {
+                    // Not enough space to start the string in the current block
+                    $block_length -= $continue_limit - $space_remaining - $continue;
+                    $continue = 0;
+                }
+ 
+                // Write the CONTINUE block header
+                if (!empty($this->_block_sizes)) {
+                    $record  = 0x003C;
+                    $length  = array_push($this->_block_sizes);
+ 
+                    $header  = pack('vv', $record, $length);
+                    if ($continue) {
+                        $header .= pack('C', $encoding);
+                    }
+                    $this->_append($header);
+                }
+ 
+                // If the string (or substr) is small enough we can write it in the
+                // new CONTINUE block. Else, go through the loop again to write it in
+                // one or more CONTINUE blocks
+                //
+                if ($block_length < $continue_limit) {
+                    $this->_append($string);
+ 
+                    $written = $block_length;
+                }
+                else {
+                    $written = 0;
+                }
+            }
+        }
     }
 }
 ?>
