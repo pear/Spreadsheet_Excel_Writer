@@ -463,6 +463,7 @@ class Format extends PEAR
     * string into a number. Color range is 0..63 but we will restrict it
     * to 8..63 to comply with Gnumeric. Colors 0..7 are repeated in 8..15.
     *
+    * @access private
     * @param string $name_color name of the color (i.e.: 'blue', 'red', etc..). Optional.
     * @return integer The color index
     */

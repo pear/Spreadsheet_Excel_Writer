@@ -99,7 +99,7 @@ class OLEwriter extends PEAR
     var $_root_start;
 
     /**
-    * Class for creating an OLEwriter
+    * Constructor for the OLEwriter class
     *
     * @param string $OLEfilename the name of the file for the OLE stream
     */
@@ -120,10 +120,12 @@ class OLEwriter extends PEAR
         $this->_initialize();
     }
 
-/**
-* Check for a valid filename and store the filehandle.
-* Filehandle "-" writes to STDOUT
-*/
+    /**
+    * Check for a valid filename and store the filehandle.
+    * Filehandle "-" writes to STDOUT
+    *
+    * @access private
+    */
     function _initialize()
     {
         $OLEfile = $this->_OLEfilename;
@@ -185,6 +187,8 @@ class OLEwriter extends PEAR
 
     /**
     * Calculate various sizes needed for the OLE stream
+    *
+    * @access private
     */
     function _calculateSizes()
     {
@@ -288,6 +292,8 @@ class OLEwriter extends PEAR
 
     /**
     * Write big block depot.
+    *
+    * @access private
     */
     function _writeBigBlockDepot()
     {
@@ -316,9 +322,11 @@ class OLEwriter extends PEAR
         }
     }
 
-/**
-* Write property storage. TODO: add summary sheets
-*/
+    /**
+    * Write property storage. TODO: add summary sheets
+    *
+    * @access private
+    */
     function _writePropertyStorage()
     {
         //$rootsize = -2;
@@ -395,6 +403,8 @@ class OLEwriter extends PEAR
 
     /**
     * Pad the end of the file
+    *
+    * @access private
     */
     function _writePadding()
     {

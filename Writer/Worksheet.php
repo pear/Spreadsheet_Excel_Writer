@@ -372,6 +372,8 @@ class Worksheet extends BIFFwriter
     * Open a tmp file to store the majority of the Worksheet data. If this fails,
     * for example due to write permissions, store the data in memory. This can be
     * slow for large files.
+    *
+    * @access private
     */
     function _initialize()
     {
@@ -429,16 +431,16 @@ class Worksheet extends BIFFwriter
         $this->_storeMarginLeft();
     
         // Prepend the page vertical centering
-        $this->storeVcenter();
+        $this->_storeVcenter();
     
         // Prepend the page horizontal centering
-        $this->storeHcenter();
+        $this->_storeHcenter();
     
         // Prepend the page footer
-        $this->storeFooter();
+        $this->_storeFooter();
     
         // Prepend the page header
-        $this->storeHeader();
+        $this->_storeHeader();
     
         // Prepend the vertical page breaks
         $this->_storeVbreak();
@@ -1050,6 +1052,7 @@ class Worksheet extends BIFFwriter
     /**
     * Returns an index to the XF record in the workbook
     *
+    * @access private
     * @param mixed &$format The optional XF format
     * @return integer The XF record index
     */
@@ -1075,6 +1078,7 @@ class Worksheet extends BIFFwriter
     * Store Worksheet data in memory using the parent's class append() or to a
     * temporary file, the default.
     *
+    * @access private
     * @param string $data The binary data to append
     */
     function _append($data)
@@ -1099,6 +1103,7 @@ class Worksheet extends BIFFwriter
     *
     * Ex: ("A4", "Hello") is converted to (3, 0, "Hello").
     *
+    * @access private
     * @param string $cell The cell reference. Or range of cells.
     * @return array
     */
@@ -1134,6 +1139,7 @@ class Worksheet extends BIFFwriter
     * Convert an Excel cell reference in A1 notation to a zero based row and column
     * reference; converts C1 to (0, 2).
     *
+    * @access private
     * @param string $cell The cell reference.
     * @return array containing (row, column)
     */
@@ -1164,6 +1170,7 @@ class Worksheet extends BIFFwriter
     /**
     * Based on the algorithm provided by Daniel Rentz of OpenOffice.
     *
+    * @access private
     * @param string $plaintext The password to be encoded in plaintext.
     * @return string The encoded password
     */
@@ -1581,8 +1588,8 @@ class Worksheet extends BIFFwriter
     * to be written. These are either, Web (http, ftp, mailto), Internal
     * (Sheet1!A1) or external ('c:\temp\foo.xls#Sheet1!A1').
     *
-    * See also writeUrl() above for a general description and return values.
-    *
+    * @access private
+    * @see writeUrl()
     * @param integer $row1   Start row
     * @param integer $col1   Start column
     * @param integer $row2   End row
@@ -1611,6 +1618,7 @@ class Worksheet extends BIFFwriter
     * The link type ($options) is 0x03 is the same as absolute dir ref without
     * sheet. However it is differentiated by the $unknown2 data stream.
     *
+    * @access private
     * @see writeUrl()
     * @param integer $row1   Start row
     * @param integer $col1   Start column
@@ -1669,6 +1677,7 @@ class Worksheet extends BIFFwriter
     /**
     * Used to write internal reference hyperlinks such as "Sheet1!A1".
     *
+    * @access private
     * @see writeUrl()
     * @param integer $row1   Start row
     * @param integer $col1   Start column
@@ -1733,6 +1742,7 @@ class Worksheet extends BIFFwriter
     * Note: Excel writes some relative links with the $dir_long string. We ignore
     * these cases for the sake of simpler code.
     *
+    * @access private
     * @see writeUrl()
     * @param integer $row1   Start row
     * @param integer $col1   Start column
@@ -1890,6 +1900,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Writes Excel DIMENSIONS to define the area in which there is data.
+    *
+    * @access private
     */
     function storeDimensions()
     {
@@ -1909,6 +1921,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Write BIFF record Window2.
+    *
+    * @access private
     */
     function _storeWindow2()
     {
@@ -1952,6 +1966,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Write BIFF record DEFCOLWIDTH if COLINFO records are in use.
+    *
+    * @access private
     */
     function _storeDefcol()
     {
@@ -1970,6 +1986,7 @@ class Worksheet extends BIFFwriter
     * Note: The SDK says the record length is 0x0B but Excel writes a 0x0C
     * length record.
     *
+    * @access private
     * @param array $col_array This is the only parameter received and is composed of the following:
     *                0 => First formatted column,
     *                1 => Last formatted column,
@@ -2021,6 +2038,7 @@ class Worksheet extends BIFFwriter
     /**
     * Write BIFF record SELECTION.
     *
+    * @access private
     * @param array $array array containing ($rwFirst,$colFirst,$rwLast,$colLast)
     * @see setSelection()
     */
@@ -2073,6 +2091,7 @@ class Worksheet extends BIFFwriter
     * complexity and eliminates the need for a two way dialogue between the formula
     * parser the worksheet objects.
     *
+    * @access private
     * @param integer $count The number of external sheet references in this worksheet
     */
     function _storeExterncount($count)
@@ -2091,6 +2110,7 @@ class Worksheet extends BIFFwriter
     * reference to all of the external worksheets the EXTERNSHEET index is the same
     * as the worksheet index.
     *
+    * @access private
     * @param string $sheetname The name of a external worksheet
     */
     function _storeExternsheet($sheetname)
@@ -2123,6 +2143,7 @@ class Worksheet extends BIFFwriter
     * Frozen panes are specified in terms of an integer number of rows and columns.
     * Thawed panes are specified in terms of Excel's units for rows and columns.
     *
+    * @access private
     * @param array $panes This is the only parameter received and is composed of the following:
     *                     0 => Vertical split position,
     *                     1 => Horizontal split position
@@ -2200,6 +2221,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the page setup SETUP BIFF record.
+    *
+    * @access private
     */
     function _storeSetup()
     {
@@ -2260,12 +2283,14 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the header caption BIFF record.
+    *
+    * @access private
     */
-    function storeHeader()
+    function _storeHeader()
     {
         $record  = 0x0014;               // Record identifier
     
-        $str     = $this->_header;        // header string
+        $str     = $this->_header;       // header string
         $cch     = strlen($str);         // Length of header string
         $length  = 1 + $cch;             // Bytes to follow
     
@@ -2277,8 +2302,10 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the footer caption BIFF record.
+    *
+    * @access private
     */
-    function storeFooter()
+    function _storeFooter()
     {
         $record  = 0x0015;               // Record identifier
     
@@ -2294,13 +2321,15 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the horizontal centering HCENTER BIFF record.
+    *
+    * @access private
     */
-    function storeHcenter()
+    function _storeHcenter()
     {
         $record   = 0x0083;              // Record identifier
         $length   = 0x0002;              // Bytes to follow
     
-        $fHCenter = $this->_hcenter;      // Horizontal centering
+        $fHCenter = $this->_hcenter;     // Horizontal centering
     
         $header    = pack("vv", $record, $length);
         $data      = pack("v",  $fHCenter);
@@ -2310,13 +2339,15 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the vertical centering VCENTER BIFF record.
+    *
+    * @access private
     */
-    function storeVcenter()
+    function _storeVcenter()
     {
         $record   = 0x0084;              // Record identifier
         $length   = 0x0002;              // Bytes to follow
     
-        $fVCenter = $this->_vcenter;      // Horizontal centering
+        $fVCenter = $this->_vcenter;     // Horizontal centering
     
         $header    = pack("vv", $record, $length);
         $data      = pack("v",  $fVCenter);
@@ -2325,6 +2356,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the LEFTMARGIN BIFF record.
+    *
+    * @access private
     */
     function _storeMarginLeft()
     {
@@ -2345,6 +2378,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the RIGHTMARGIN BIFF record.
+    *
+    * @access private
     */
     function _storeMarginRight()
     {
@@ -2365,6 +2400,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the TOPMARGIN BIFF record.
+    *
+    * @access private
     */
     function _storeMarginTop()
     {
@@ -2385,6 +2422,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Store the BOTTOMMARGIN BIFF record.
+    *
+    * @access private
     */
     function _storeMarginBottom()
     {
@@ -2438,6 +2477,8 @@ class Worksheet extends BIFFwriter
 
     /**
     * Write the PRINTHEADERS BIFF record.
+    *
+    * @access private
     */
     function _storePrintHeaders()
     {
@@ -2454,6 +2495,8 @@ class Worksheet extends BIFFwriter
     /**
     * Write the PRINTGRIDLINES BIFF record. Must be used in conjunction with the
     * GRIDSET record.
+    *
+    * @access private
     */
     function _storePrintGridlines()
     {
@@ -2470,6 +2513,8 @@ class Worksheet extends BIFFwriter
     /**
     * Write the GRIDSET BIFF record. Must be used in conjunction with the
     * PRINTGRIDLINES record.
+    *
+    * @access private
     */
     function _storeGridset()
     {
@@ -2486,6 +2531,8 @@ class Worksheet extends BIFFwriter
     /**
     * Write the WSBOOL BIFF record, mainly for fit-to-page. Used in conjunction
     * with the SETUP record.
+    *
+    * @access private
     */
     function _storeWsbool()
     {
@@ -2510,6 +2557,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Write the HORIZONTALPAGEBREAKS BIFF record.
+    *
+    * @access private
     */
     function _storeHbreak()
     {
@@ -2543,6 +2592,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Write the VERTICALPAGEBREAKS BIFF record.
+    *
+    * @access private
     */
     function _storeVbreak()
     {
@@ -2578,6 +2629,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Set the Biff PROTECT record to indicate that the worksheet is protected.
+    *
+    * @access private
     */
     function _storeProtect()
     {
@@ -2599,6 +2652,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Write the worksheet PASSWORD record.
+    *
+    * @access private
     */
     function _storePassword()
     {
@@ -2701,6 +2756,7 @@ class Worksheet extends BIFFwriter
     *               W is the width of the cell
     *               H is the height of the cell
     *
+    * @access private
     * @note  the SDK incorrectly states that the height should be expressed as a
     *        percentage of 1024.
     * @param integer $col_start Col containing upper left corner of object
@@ -2717,11 +2773,11 @@ class Worksheet extends BIFFwriter
         $row_end    = $row_start;  // Row containing bottom right corner of object
     
         // Zero the specified offset if greater than the cell dimensions
-        if ($x1 >= $this->sizeCol($col_start))
+        if ($x1 >= $this->_sizeCol($col_start))
         {
             $x1 = 0;
         }
-        if ($y1 >= $this->sizeRow($row_start))
+        if ($y1 >= $this->_sizeRow($row_start))
         {
             $y1 = 0;
         }
@@ -2730,34 +2786,34 @@ class Worksheet extends BIFFwriter
         $height     = $height + $y1 -1;
     
         // Subtract the underlying cell widths to find the end cell of the image
-        while ($width >= $this->sizeCol($col_end)) {
-            $width -= $this->sizeCol($col_end);
+        while ($width >= $this->_sizeCol($col_end)) {
+            $width -= $this->_sizeCol($col_end);
             $col_end++;
         }
     
         // Subtract the underlying cell heights to find the end cell of the image
-        while ($height >= $this->sizeRow($row_end)) {
-            $height -= $this->sizeRow($row_end);
+        while ($height >= $this->_sizeRow($row_end)) {
+            $height -= $this->_sizeRow($row_end);
             $row_end++;
         }
     
         // Bitmap isn't allowed to start or finish in a hidden cell, i.e. a cell
         // with zero eight or width.
         //
-        if ($this->sizeCol($col_start) == 0)
+        if ($this->_sizeCol($col_start) == 0)
             return;
-        if ($this->sizeCol($col_end)   == 0)
+        if ($this->_sizeCol($col_end)   == 0)
             return;
-        if ($this->sizeRow($row_start) == 0)
+        if ($this->_sizeRow($row_start) == 0)
             return;
-        if ($this->sizeRow($row_end)   == 0)
+        if ($this->_sizeRow($row_end)   == 0)
             return;
     
         // Convert the pixel values to the percentage value expected by Excel
-        $x1 = $x1     / $this->sizeCol($col_start)   * 1024;
-        $y1 = $y1     / $this->sizeRow($row_start)   *  256;
-        $x2 = $width  / $this->sizeCol($col_end)     * 1024; // Distance to right side of object
-        $y2 = $height / $this->sizeRow($row_end)     *  256; // Distance to bottom of object
+        $x1 = $x1     / $this->_sizeCol($col_start)   * 1024;
+        $y1 = $y1     / $this->_sizeRow($row_start)   *  256;
+        $x2 = $width  / $this->_sizeCol($col_end)     * 1024; // Distance to right side of object
+        $y2 = $height / $this->_sizeRow($row_end)     *  256; // Distance to bottom of object
     
         $this->_storeObjPicture( $col_start, $x1,
                                   $row_start, $y1,
@@ -2771,10 +2827,11 @@ class Worksheet extends BIFFwriter
     * the relationship is: y = 7x +5. If the width hasn't been set by the user we
     * use the default value. If the col is hidden we use a value of zero.
     *
+    * @access private
     * @param integer $col The column 
     * @return integer The width in pixels
     */
-    function sizeCol($col)
+    function _sizeCol($col)
     {
         // Look up the cell value to see if it has been changed
         if (isset($this->col_sizes[$col])) {
@@ -2796,10 +2853,11 @@ class Worksheet extends BIFFwriter
     * use the default value. If the row is hidden we use a value of zero. (Not
     * possible to hide row yet).
     *
+    * @access private
     * @param integer $row The row
     * @return integer The width in pixels
     */
-    function sizeRow($row)
+    function _sizeRow($row)
     {
         // Look up the cell value to see if it has been changed
         if (isset($this->row_sizes[$row])) {
@@ -2819,6 +2877,7 @@ class Worksheet extends BIFFwriter
     * Store the OBJ record that precedes an IMDATA record. This could be generalise
     * to support other Excel objects.
     *
+    * @access private
     * @param integer $colL Column containing upper left corner of object
     * @param integer $dxL  Distance from left side of cell
     * @param integer $rwT  Row containing top left corner of object
@@ -2899,6 +2958,7 @@ class Worksheet extends BIFFwriter
     * This is described in BITMAPCOREHEADER and BITMAPCOREINFO structures in the
     * MSDN library.
     *
+    * @access private
     * @param string $bitmap The bitmap to process
     * @return array Array with data and properties of the bitmap
     */
@@ -2983,6 +3043,8 @@ class Worksheet extends BIFFwriter
     /**
     * Store the window zoom factor. This should be a reduced fraction but for
     * simplicity we will store all fractions with a numerator of 100.
+    *
+    * @access private
     */
     function _storeZoom()
     {

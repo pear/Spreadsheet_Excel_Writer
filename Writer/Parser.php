@@ -135,6 +135,8 @@ class Parser extends PEAR
     
     /**
     * Initialize the ptg and function hashes. 
+    *
+    * @access private
     */
     function _initializeHashes()
     {
@@ -483,6 +485,7 @@ class Parser extends PEAR
     /**
     * Convert a token to the proper ptg value.
     *
+    * @access private
     * @param mixed $token The token to convert.
     */
     function _convert($token)
@@ -527,6 +530,7 @@ class Parser extends PEAR
     /**
     * Convert a number token to ptgInt or ptgNum
     *
+    * @access private
     * @param mixed $num an integer or double for conersion to its ptg value
     */
     function _convertNumber($num)
@@ -549,6 +553,7 @@ class Parser extends PEAR
     * Convert a function to a ptgFunc or ptgFuncVarV depending on the number of
     * args that it takes.
     *
+    * @access private
     * @param string  $token    The name of the function for convertion to ptg value.
     * @param integer $num_args The number of arguments the function recieves.
     */
@@ -571,6 +576,7 @@ class Parser extends PEAR
     /**
     * Convert an Excel range such as A1:D4 to a ptgRefV.
     *
+    * @access private
     * @param string $range An Excel range in the A1:A2 or A1..A2 format.
     */
     function _convertRange2d($range)
@@ -621,6 +627,7 @@ class Parser extends PEAR
     /**
     * Convert an Excel reference such as A1, $B2, C$3 or $D$4 to a ptgRefV.
     *
+    * @access private
     * @param string $cell An Excel cell reference
     * @return string The cell in packed() format with the corresponding ptg
     */
@@ -655,6 +662,7 @@ class Parser extends PEAR
     /**
     * pack() row and column into the required 3 byte format.
     *
+    * @access private
     * @param string $cell The Excel cell reference to be packed
     * @return array Array containing the row and column in packed() format
     */
@@ -683,6 +691,7 @@ class Parser extends PEAR
     * indexed row and column number. Also returns two boolean values to indicate
     * whether the row or column are relative references.
     *
+    * @access private
     * @param string $cell The Excel cell reference in A1 format.
     */
     function _cellToRowcol($cell)
@@ -711,6 +720,8 @@ class Parser extends PEAR
     
     /**
     * Advance to the next valid token.
+    *
+    * @access private
     */
     function _advance()
     {
@@ -747,6 +758,7 @@ class Parser extends PEAR
     /**
     * Checks if it's a valid token.
     *
+    * @access private
     * @param mixed $token The token to check.
     */
     function _match($token)
@@ -829,6 +841,7 @@ class Parser extends PEAR
     * It parses a expression. It assumes the following rule:
     * Expr -> Term [("+" | "-") Term]
     *
+    * @access private
     * @return mixed The parsed ptg'd tree
     */
     function _expression()
@@ -865,6 +878,7 @@ class Parser extends PEAR
     * This function just introduces a ptgParen element in the tree, so that Excel
     * doesn't get confused when working with a parenthesized formula afterwards.
     *
+    * @access private
     * @see _fact()
     * @return mixed The parsed ptg'd tree
     */
@@ -878,6 +892,7 @@ class Parser extends PEAR
     * It parses a term. It assumes the following rule:
     * Term -> Fact [("*" | "/") Fact]
     *
+    * @access private
     * @return mixed The parsed ptg'd tree
     */
     function _term()
@@ -918,6 +933,7 @@ class Parser extends PEAR
     *       | Number
     *       | Function
     *
+    * @access private
     * @return mixed The parsed ptg'd tree
     */
     function _fact()
@@ -967,6 +983,7 @@ class Parser extends PEAR
     * It parses a function call. It assumes the following rule:
     * Func -> ( Expr [,Expr]* )
     *
+    * @access private
     */
     function _func()
     {
@@ -1015,6 +1032,7 @@ class Parser extends PEAR
     * Creates a tree. In fact an array which may have one or two arrays (sub-trees)
     * as elements.
     *
+    * @access private
     * @param mixed $value The value of this node.
     * @param mixed $left  The left array (sub-tree) or a final node.
     * @param mixed $right The right array (sub-tree) or a final node.
@@ -1064,7 +1082,7 @@ class Parser extends PEAR
             if($this->isError($converted_tree)) {
                 return($converted_tree);
                 }
-            $polish .= $converted_tree; //$this->toReversePolish($tree['left']);
+            $polish .= $converted_tree;
         }
         elseif($tree['left'] != '') // It's a final node
         {
@@ -1072,7 +1090,7 @@ class Parser extends PEAR
             if($this->isError($converted_tree)) {
                 return($converted_tree);
                 }
-            $polish .= $converted_tree; //$this->_convert($tree['left']);
+            $polish .= $converted_tree;
         }
         if (is_array($tree['right']))
         {
@@ -1080,7 +1098,7 @@ class Parser extends PEAR
             if($this->isError($converted_tree)) {
                 return($converted_tree);
                 }
-            $polish .= $converted_tree; //$this->toReversePolish($tree['right']);
+            $polish .= $converted_tree;
         }
         elseif($tree['right'] != '') // It's a final node
         {
@@ -1088,13 +1106,13 @@ class Parser extends PEAR
             if($this->isError($converted_tree)) {
                 return($converted_tree);
                 }
-            $polish .= $converted_tree; //$this->_convert($tree['right']);
+            $polish .= $converted_tree;
         }
         $converted_tree = $this->_convert($tree['value']);
         if($this->isError($converted_tree)) {
             return($converted_tree);
             }
-        $polish .= $converted_tree; //$this->_convert($tree['value']);
+        $polish .= $converted_tree;
         return($polish);
     }
 }
