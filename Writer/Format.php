@@ -760,6 +760,9 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     {
         $value = $this->_getColor($color);
         $this->_fg_color = $value;
+        if ($this->_pattern == 0) { // force color to be seen
+            $this->_pattern = 1;
+        }
     }
       
     /**
@@ -772,6 +775,9 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     {
         $value = $this->_getColor($color);
         $this->_bg_color = $value;
+        if ($this->_pattern == 0) { // force color to be seen
+            $this->_pattern = 1;
+        }
     }
     
     /**
