@@ -1046,6 +1046,49 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
     }
     
+    /**
+    * Write an array of values as a row
+    *
+    * @access public
+    * @param
+    * @return 
+    */
+
+    function writeRow($row, $col, $val, $format=0)
+    {   
+        if (is_array($val)) {
+            foreach($val as $v) {
+                if (is_array($v)) {
+                    $this->writeCol($row, $col, $v, $format);
+                } else {
+                    $this->write($row, $col, $v, $format);
+                }
+                $col++;
+            }
+        } else {
+            $retval = new PEAR_Error('$val needs to be an array');
+        }
+    }
+      
+    /**
+    * Write an array of values as a column
+    *
+    * @access public
+    * @param
+    * @return 
+    */
+    
+    function writeCol($row, $col, $val, $format=0)
+    {
+        if (is_array($val)) {
+            foreach($val as $v) { 
+                $this->write($row, $col, $v, $format);
+                $row++;
+            }
+        } else {
+            $retval = new PEAR_Error('$val needs to be an array');
+        }
+    }
     
     /**
     * Returns an index to the XF record in the workbook
