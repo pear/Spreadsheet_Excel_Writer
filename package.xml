@@ -24,16 +24,17 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.7</version>
-    <date>2004-02-27</date>
+    <version>0.8</version>
+    <date>2004-06-22</date>
     <notes>
      New features:
-      - allow setting temp dir other than default using setTempDir() (using OLE 5.0 for this).
-      - added setMerge() for merging (only for experimental Excel97 generation)
-      - added setCountry() method.
-      - added setLocked() method.
+      - added hideScreenGridlines() (Paul Osman)
      Bug fixes:
-      - Fixed bug #415, typo in BIFF8 code (papercrane at reversefold dot com)
+      - Fixed SST table (long strings) (Bernd Jaenichen)
+      - Fixed bug #1218,  (boucher dot stephane at free dot fr)
+      - Fixed bug #1344,  ()
+      - Fixed bug #781, insertBitmap ignores row height
+      - Fixed bug #578, setVPageBreaks doesn't handle multiple value arrays (natel at tocquigny dot com)
     </notes>
     <deps>
       <dep type="pkg" rel="ge" version="0.5">OLE</dep>
@@ -127,6 +128,19 @@ $woorrkbook->setVersion(8);
        Bug fixes:
         - Fixed bug #225, error in writeUrl() (jamesn at tocquigny dot com)
         - Fixed bug #59, retval undefined for writeRow() (Bertrand)
+      </notes>
+    </release>
+    <release>
+      <version>0.7</version>
+      <date>2004-02-27</date>
+      <notes>
+       New features:
+        - allow setting temp dir other than default using setTempDir() (using OLE 5.0 for this).
+        - added setMerge() for merging (only for experimental Excel97 generation)
+        - added setCountry() method.
+        - added setLocked() method.
+       Bug fixes:
+        - Fixed bug #415, typo in BIFF8 code (papercrane at reversefold dot com)
       </notes>
     </release>
   </changelog>
