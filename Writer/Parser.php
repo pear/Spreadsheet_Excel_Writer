@@ -920,11 +920,12 @@ class Parser extends PEAR
     
     /**
     * Convert an Excel cell reference such as A1 or $B2 or C$3 or $D$4 to a zero
-    * indexed row and column number. Also returns two boolean values to indicate
+    * indexed row and column number. Also returns two (0,1) values to indicate
     * whether the row or column are relative references.
     *
     * @access private
     * @param string $cell The Excel cell reference in A1 format.
+    * @return array
     */
     function _cellToRowcol($cell)
     {
