@@ -33,13 +33,10 @@
 */
 
 require_once('Spreadsheet/Excel/Writer/Format.php');
-//require_once('Spreadsheet/Excel/Writer/OLEwriter.php');
+require_once('Spreadsheet/Excel/Writer/OLEwriter.php');
 require_once('Spreadsheet/Excel/Writer/BIFFwriter.php');
 require_once('Spreadsheet/Excel/Writer/Worksheet.php');
 require_once('Spreadsheet/Excel/Writer/Parser.php');
-require_once('OLE/PPS/Root.php');
-require_once('OLE/PPS/File.php');
-
 
 /**
 * Class for generating Excel Spreadsheets
@@ -433,25 +430,28 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     }
     
     /**
-    * Store the workbook in an OLE container
+    * Store the workbook in an OLE container if the total size of the workbook data
+    * is less than ~ 7MB.
     *
     * @access private
     */
     function _storeOLEFile()
     {
-        $OLE = new OLE_PPS_File(OLE::Asc2Ucs('Book'));
-        $OLE->append($this->_data);
-        foreach ($this->_worksheets as $sheet)
+        $OLE  = new Spreadsheet_Excel_Writer_OLEwriter($this->_filename);
+        $this->_tmp_filename = $OLE->_tmp_filename;
+        // Write Worksheet data if data <~ 7MB
+        if ($OLE->setSize($this->_biffsize))
         {
-            while ($tmp = $sheet->getData()) {
-                $OLE->append($tmp);
+            $OLE->writeHeader();
+            $OLE->write($this->_data);
+            foreach($this->_worksheets as $sheet) 
+            {
+                while ($tmp = $sheet->getData()) {
+                    $OLE->write($tmp);
+                }
             }
         }
-        $root = new OLE_PPS_Root(time(), time(), array($OLE));
-        $res = $root->save($this->_filename);
-        if ($this->isError($res)) {
-            die("OLE Error: ".$res->getMessage());
-        }
+        $OLE->close();
     }
     
     /**
