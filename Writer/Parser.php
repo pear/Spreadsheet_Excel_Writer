@@ -74,6 +74,48 @@ require_once('PEAR.php');
 class Parser extends PEAR
 {
     /**
+    * The index of the character we are currently looking at
+    * @var integer
+    */
+    var $_current_char;
+
+    /**
+    * The token we are working on.
+    * @var string
+    */
+    var $_current_token;
+
+    /**
+    * The formula to parse
+    * @var string
+    */
+    var $_formula;
+
+    /**
+    * The character ahead of the current char
+    * @var string
+    */
+    var $_lookahead;
+
+    /**
+    * The parse tree to be generated
+    * @var string
+    */
+    var $_parse_tree;
+
+    /**
+    * The byte order. 1 => big endian, 0 => little endian.
+    * @var integer
+    */
+    var $_byte_order;
+
+    /**
+    * Number of arguments for the current function
+    * @var integer
+    */
+    var $_func_args;
+
+    /**
     * The class constructor
     *
     * @param integer $byte_order The byte order (Little endian or Big endian) of the architecture
@@ -81,7 +123,7 @@ class Parser extends PEAR
     */
     function Parser($byte_order = 0)
     {
-        $this->_current_char  = 0;        // The index of the character we are currently looking at.
+        $this->_current_char  = 0;
         $this->_current_token = '';       // The token we are working on.
         $this->_formula       = "";       // The formula to parse.
         $this->_lookahead     = '';       // The character ahead of the current char.
@@ -89,7 +131,6 @@ class Parser extends PEAR
         $this->_initializeHashes();      // Initialize the hashes: ptg's and function's ptg's
         $this->_byte_order = $byte_order; // Little Endian or Big Endian
         $this->_func_args  = 0;           // Number of arguments for the current function
-        $this->_volatile   = 0;
     }
     
     /**
@@ -517,9 +558,6 @@ class Parser extends PEAR
         $args     = $this->_functions[$token][1];
         $volatile = $this->_functions[$token][3];
     
-        if($volatile) {
-            $this->_volatile = 1;
-        }
         // Fixed number of args eg. TIME($i,$j,$k).
         if ($args >= 0) {
             return(pack("Cv", $this->ptg['ptgFuncV'], $this->_functions[$token][0]));
