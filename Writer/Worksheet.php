@@ -438,7 +438,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_password        = NULL;
     
         $this->col_sizes        = array();
-        $this->row_sizes        = array();
+        $this->_row_sizes        = array();
     
         $this->_zoom            = 100;
         $this->_print_scale     = 100;
@@ -2125,8 +2125,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $grbit       = 0x0000;               // Option flags
         $ixfe        = $this->_XF($format);  // XF index
 
-        // set row_sizes so _sizeRow() can use it
-        $this->row_sizes[$row] = $height;
+        // set _row_sizes so _sizeRow() can use it
+        $this->_row_sizes[$row] = $height;
 
         // Use setRow($row, NULL, $XF) to set XF format without setting height
         if ($height != NULL) {
@@ -3280,12 +3280,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     function _sizeRow($row)
     {
         // Look up the cell value to see if it has been changed
-        if (isset($this->row_sizes[$row])) {
-            if ($this->row_sizes[$row] == 0) {
+        if (isset($this->_row_sizes[$row])) {
+            if ($this->_row_sizes[$row] == 0) {
                 return(0);
             }
             else {
-                return(floor(4/3 * $this->row_sizes[$row]));
+                return(floor(4/3 * $this->_row_sizes[$row]));
             }
         }
         else {
