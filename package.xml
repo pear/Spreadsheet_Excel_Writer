@@ -7,14 +7,13 @@
  It allows writing of Excel spreadsheets without the need for COM objects.
  It supports formulas, images (BMP) and all kinds of formatting for text and cells.
  It currently supports the BIFF5 format (Excel 5.0), so functionality appeared in the latest Excel versions is not yet available.
-
- Documentation can be found at: http://www.dcc.uchile.cl/~xnoguer/peardoc2/package.fileformats.html</description>
+  </description>
   <license>LGPL</license>
   <maintainers>
     <maintainer>
       <user>xnoguer</user>
       <name>Xavier Noguer</name>
-      <email>xnoguer@rezebra.com</email>
+      <email>xnoguer@php.net</email>
       <role>lead</role>
     </maintainer>
     <maintainer>
@@ -26,15 +25,16 @@
   </maintainers>
   <release>
     <version>0.3</version>
-    <date>2003-03-17</date>
+    <date>2003-05-02</date>
     <notes>
-      -added several formatting methods: setTextRotation(), setStrikeOut(), 
-      setOutLine(), setShadow(), setScript().
-      -fixed bug in Workbook::sheets() (Björn Schotte).
-      -fixed range for references in formulas (Edward).
-      -added support for external references in formulas.
-      -added support for comparisons in formulas.
-      -added support for strings in formulas.
+      -added support for row ranges (JT Hughes)
+      -added method method Format::setUnLocked()
+      -added Worksheet::writeRow() and Worksheet::writeCol()
+      -fixed problem with unparenthesized expresions in formulas (Brent Laminack)
+      -fixed problems with non ISO-8859-1 characters (KUBO Atsuhiro)
+      -fixed swapping of columns in formulas (JT Hughes)
+      -fixed assorted bugs in tokenizing formulas (JT Hughes)
+      -fixed Worksheet::activate() (JT Hughes)
     </notes>
     <state>beta</state>
     <filelist>
@@ -50,9 +50,6 @@
         </dir>
       </dir>
     </filelist>
-    <deps>
-      <dep type="pkg" rel="has">OLE</dep>
-    </deps>
   </release>
   <changelog>
     <release>
@@ -67,6 +64,22 @@
       -added support for external references in formulas.
       -added support for comparisons in formulas.
       -added support for strings in formulas.
+      </notes>
+    </release>
+    <release>
+      <version>0.3</version>
+      <date>2003-05-02</date>
+      <notes>
+      New features:
+       -added support for row ranges (JT Hughes)
+       -added method method Format::setUnLocked() (Ajit Dixit)
+       -added Worksheet::writeRow() and Worksheet::writeCol()
+      Bug fixes:
+       -fixed problem with unparenthesized expresions in formulas (Brent Laminack)
+       -fixed problems with non ISO-8859-1 characters (KUBO Atsuhiro)
+       -fixed swapping of columns in formulas (JT Hughes)
+       -fixed assorted bugs in tokenizing formulas (JT Hughes)
+       -fixed Worksheet::activate() (JT Hughes)
       </notes>
     </release>
   </changelog>
