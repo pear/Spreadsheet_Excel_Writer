@@ -1587,7 +1587,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             $result = $this->_func();
             return $result;
         }
-        return $this->raiseError("Sintactic error: ".$this->_current_token.
+        return $this->raiseError("Syntax error: ".$this->_current_token.
                                  ", lookahead: ".$this->_lookahead.
                                  ", current char: ".$this->_current_char);
     }
@@ -1615,7 +1615,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                     $this->_advance();  // eat the "," or ";"
                 }
                 else {
-                    return $this->raiseError("Sintactic error: coma expected in ".
+                    return $this->raiseError("Syntax error: coma expected in ".
                                       "function $function, arg #{$num_args}");
                 }
                 $result2 = $this->_condition();
