@@ -524,13 +524,13 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     */
     function _convert($token)
     {
-        if(is_numeric($token))
+        if (preg_match("/^\"[^\"]{0,255}\"$/", $token))
         {
-            return($this->_convertNumber($token));
+            return $this->_convertString($token);
         }
-        elseif(preg_match("/^\"[^\"]{0,255}\"$/", $token))
+        elseif (is_numeric($token))
         {
-            return($this->_convertString($token));
+            return $this->_convertNumber($token);
         }
         // match references like A1 or $A$1
         elseif(preg_match('/^\$?([A-I]?[A-Z])\$?(\d+)$/',$token))
