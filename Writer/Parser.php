@@ -1017,11 +1017,17 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         while ($i < strlen($this->_formula))
         {
             $token .= $this->_formula{$i};
+            if ($i < strlen($this->_formula) - 1) {
+                $this->_lookahead = $this->_formula{$i+1};
+            }
+            else {
+                $this->_lookahead = '';
+            }
             if ($this->_match($token) != '')
             {
-                if ($i < strlen($this->_formula) - 1) {
-                    $this->_lookahead = $this->_formula{$i+1};
-                }
+                //if ($i < strlen($this->_formula) - 1) {
+                //    $this->_lookahead = $this->_formula{$i+1};
+                //}
                 $this->_current_char = $i + 1;
                 $this->_current_token = $token;
                 return 1;
@@ -1130,7 +1136,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                     return $token;
                 }
                 // If it's a number (check that it's not a sheet name or range)
-                elseif (is_numeric($token) and !is_numeric($token.$this->_lookahead) and
+                elseif (is_numeric($token) and 
+                        (!is_numeric($token.$this->_lookahead)) or ($this->_lookahead == '')) and
                         ($this->_lookahead != '!') and (($this->_lookahead != ':')))
                 {
                     return $token;
