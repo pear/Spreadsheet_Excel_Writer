@@ -58,6 +58,11 @@ define('SPREADSHEET_EXCEL_WRITER_CLOSE',")");
 define('SPREADSHEET_EXCEL_WRITER_COMA',",");
 
 /**
+* @const SPREADSHEET_EXCEL_WRITER_SEMICOLON token identifier for character ";"
+*/
+define('SPREADSHEET_EXCEL_WRITER_SEMICOLON',";");
+
+/**
 * @const SPREADSHEET_EXCEL_WRITER_GT token identifier for character ">"
 */
 define('SPREADSHEET_EXCEL_WRITER_GT',">");
@@ -1089,6 +1094,9 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             case SPREADSHEET_EXCEL_WRITER_COMA:
                 return $token;
                 break;
+            case SPREADSHEET_EXCEL_WRITER_SEMICOLON:
+                return $token;
+                break;
             case SPREADSHEET_EXCEL_WRITER_GT:
                 if ($this->_lookahead == '=') { // it's a GE token
                     break;
@@ -1470,12 +1478,14 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             if ($num_args > 0)
             {
-                if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_COMA) {
-                    $this->_advance();  // eat the ","
+                if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_COMA ||
+                    $this->_current_token == SPREADSHEET_EXCEL_WRITER_SEMICOLON)
+                {
+                    $this->_advance();  // eat the "," or ";"
                 }
                 else {
                     return $this->raiseError("Sintactic error: coma expected in ".
-                                      "function $function, {$num_args}º arg");
+                                      "function $function, arg #{$num_args}");
                 }
                 $result2 = $this->_condition();
                 if (PEAR::isError($result2)) {
