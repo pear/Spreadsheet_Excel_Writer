@@ -1304,175 +1304,240 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     }
 
     /**
-     * new method for calculating blocksizes of SST-record.
-     * Handling of the SST continue blocks is complicated by the need to include an
-     * additional continuation byte depending on whether the string is split between
-     * blocks or whether it starts at the beginning of the block. (There are also
-     * additional complications that will arise later when/if Rich Strings are
-     * supported).
-     *
-     * @author <jaenichen@globalpark.de>
-     * @access private
-     */
+    * Calculate
+    * Handling of the SST continue blocks is complicated by the need to include an
+    * additional continuation byte depending on whether the string is split between
+    * blocks or whether it starts at the beginning of the block. (There are also
+    * additional complications that will arise later when/if Rich Strings are
+    * supported).
+    *
+    * @access private
+    */
     function _calculateSharedStringsSizes()
     {
-        $total_offset       = 0;
-        $continue_limit     = 8228;
-        $header_size = 4;
+        /* Iterate through the strings to calculate the CONTINUE block sizes.
+           For simplicity we use the same size for the SST and CONTINUE records:
+           8228 : Maximum Excel97 block size
+             -4 : Length of block header
+             -8 : Length of additional SST header information
+         = 8216
+        */
+        $continue_limit     = 8216;
+        $block_length       = 0;
+        $written            = 0;
         $this->_block_sizes = array();
+        $continue           = 0;
 
-        // set the SST block header information
-        $buffer      = pack("vv", 0x00fc, 0);
-        $buffer      .= pack("VV", 0, 0);
-
-        foreach (array_keys($this->_str_table) as $string) 
-        {
-            // block is full 
-            if ((strlen($buffer) + strlen($string)) > $continue_limit) {
-                $this->_calculateSSTContinueBlock($string, &$buffer, &$total_offset, $header_size, $continue_limit);
+        foreach (array_keys($this->_str_table) as $string) {
+            $string_length = strlen($string);
+ 
+            // Block length is the total length of the strings that will be
+            // written out in a single SST or CONTINUE block.
+            $block_length += $string_length;
+ 
+            // We can write the string if it doesn't cross a CONTINUE boundary
+            if ($block_length < $continue_limit) {
+                $written      += $string_length;
+                continue;
             }
-            else
-            {
-                // add string to block
-                $buffer .= $string;
+ 
+            // Deal with the cases where the next string to be written will exceed
+            // the CONTINUE boundary. If the string is very long it may need to be
+            // written in more than one CONTINUE record.
+            while ($block_length >= $continue_limit) {
+ 
+                // We need to avoid the case where a string is continued in the first
+                // n bytes that contain the string header information.
+                $header_length   = 3; // Min string + header size -1
+                $space_remaining = $continue_limit - $written - $continue;
+ 
+ 
+                /* TODO: Unicode data should only be split on char (2 byte)
+                boundaries. Therefore, in some cases we need to reduce the
+                amount of available
+                */
+ 
+                if ($space_remaining > $header_length) {
+                    // Write as much as possible of the string in the current block
+                    $written      += $space_remaining;
+ 
+                    // Reduce the current block length by the amount written
+                    $block_length -= $continue_limit - $continue;
+ 
+                    // Store the max size for this block
+                    $this->_block_sizes[] = $continue_limit;
+ 
+                    // If the current string was split then the next CONTINUE block
+                    // should have the string continue flag (grbit) set unless the
+                    // split string fits exactly into the remaining space.
+                    if ($block_length > 0) {
+                        $continue = 1;
+                    }
+                    else {
+                        $continue = 0;
+                    }
+ 
+                }
+                else {
+                    // Store the max size for this block
+                    $this->_block_sizes[] = $written + $continue;
+ 
+                    // Not enough space to start the string in the current block
+                    $block_length -= $continue_limit - $space_remaining - $continue;
+                    $continue = 0;
+ 
+                }
+ 
+                // If the string (or substr) is small enough we can write it in the
+                // new CONTINUE block. Else, go through the loop again to write it in
+                // one or more CONTINUE blocks
+                if ($block_length < $continue_limit) {
+                    $written = $block_length;
+                }
+                else {
+                    $written = 0;
+                }
             }
         }
 
-        // save last block
-        if (strlen($buffer) > 0)
-        {
-            $this->_block_sizes[] = (strlen($buffer) - $header_size);
-            $total_offset += strlen($buffer);
+        // Store the max size for the last block unless it is empty
+        if ($written + $continue) {
+            $this->_block_sizes[] = $written + $continue;
         }
-
+ 
+ 
+        /* Calculate the total length of the SST and associated CONTINUEs (if any).
+         The SST record will have a length even if it contains no strings.
+         This length is required to set the offsets in the BOUNDSHEET records since
+         they must be written before the SST records
+        */
+        $total_offset = array_sum($this->_block_sizes);
+        // SST information
+        $total_offset += 8;
+        if (!empty($this->_block_sizes)) {
+            $total_offset += (count($this->_block_sizes)) * 4; // add CONTINUE headers
+        }
         return $total_offset;
     }
 
     /**
-     * Write all of the workbooks strings into an indexed array.
-     * See the comments in _calculate_shared_string_sizes() for more information.
-     *
-     * The Excel documentation says that the SST record should be followed by an
-     * EXTSST record. The EXTSST record is a hash table that is used to optimise
-     * access to SST. However, despite the documentation it doesn't seem to be
-     * required so we will ignore it.
-     *
-     * @author <jaenichen@globalpark.de>
-     * @access private
-     */
+    * Write all of the workbooks strings into an indexed array.
+    * See the comments in _calculate_shared_string_sizes() for more information.
+    *
+    * The Excel documentation says that the SST record should be followed by an
+    * EXTSST record. The EXTSST record is a hash table that is used to optimise
+    * access to SST. However, despite the documentation it doesn't seem to be
+    * required so we will ignore it.
+    *
+    * @access private
+    */
     function _storeSharedStringsTable()
     {
-        $continue_limit     = 8228;
-
         $record  = 0x00fc;  // Record identifier
-        $length  = array_shift($this->_block_sizes);
+        // sizes are upside down
+        $this->_block_sizes = array_reverse($this->_block_sizes);
+        $length = array_pop($this->_block_sizes) + 8; // First block size plus SST information
 
         // Write the SST block header information
-        $buffer      = pack("vv", $record, $length);
-        $buffer      .= pack("VV", $this->_str_total, $this->_str_unique);
+        $header      = pack("vv", $record, $length);
+        $data        = pack("VV", $this->_str_total, $this->_str_unique);
+        $this->_append($header.$data);
 
-        foreach (array_keys($this->_str_table) as $string) 
-        {
-            // block is full 
-            if ((strlen($buffer) + strlen($string)) > $continue_limit) {
-                $this->_storeSSTContinueBlock($string, &$buffer, $continue_limit);
+
+        // Iterate through the strings to calculate the CONTINUE block sizes
+        $continue_limit = 8216;
+        $block_length   = 0;
+        $written        = 0;
+        $continue       = 0;
+
+
+        /* TODO: not good for performance */
+        foreach (array_keys($this->_str_table) as $string) {
+
+            $string_length = strlen($string);
+            $encoding      = 0; // assume there are no Unicode strings
+            $split_string  = 0;
+ 
+            // Block length is the total length of the strings that will be
+            // written out in a single SST or CONTINUE block.
+            //
+            $block_length += $string_length;
+ 
+ 
+            // We can write the string if it doesn't cross a CONTINUE boundary
+            if ($block_length < $continue_limit) {
+                $this->_append($string);
+                $written += $string_length;
+                continue;
             }
-            else
-            {
-                // add string to block
-                $buffer .= $string;
+ 
+            // Deal with the cases where the next string to be written will exceed
+            // the CONTINUE boundary. If the string is very long it may need to be
+            // written in more than one CONTINUE record.
+            // 
+            while ($block_length >= $continue_limit) {
+ 
+                // We need to avoid the case where a string is continued in the first
+                // n bytes that contain the string header information.
+                //
+                $header_length   = 3; // Min string + header size -1
+                $space_remaining = $continue_limit - $written - $continue;
+ 
+ 
+                // Unicode data should only be split on char (2 byte) boundaries.
+                // Therefore, in some cases we need to reduce the amount of available
+ 
+                if ($space_remaining > $header_length) {
+                    // Write as much as possible of the string in the current block
+                    $tmp = substr($string, 0, $space_remaining);
+                    $this->_append($tmp);
+ 
+                    // The remainder will be written in the next block(s)
+                    $string = substr($string, $space_remaining);
+ 
+                    // Reduce the current block length by the amount written
+                    $block_length -= $continue_limit - $continue;
+ 
+                    // If the current string was split then the next CONTINUE block
+                    // should have the string continue flag (grbit) set unless the
+                    // split string fits exactly into the remaining space.
+                    //
+                    if ($block_length > 0) {
+                        $continue = 1;
+                    }
+                    else {
+                        $continue = 0;
+                    }
+                }
+                else {
+                    // Not enough space to start the string in the current block
+                    $block_length -= $continue_limit - $space_remaining - $continue;
+                    $continue = 0;
+                }
+ 
+                // Write the CONTINUE block header
+                if (!empty($this->_block_sizes)) {
+                    $record  = 0x003C;
+                    $length  = array_pop($this->_block_sizes);
+                    $header  = pack('vv', $record, $length);
+                    if ($continue) {
+                        $header .= pack('C', $encoding);
+                    }
+                    $this->_append($header);
+                }
+ 
+                // If the string (or substr) is small enough we can write it in the
+                // new CONTINUE block. Else, go through the loop again to write it in
+                // one or more CONTINUE blocks
+                //
+                if ($block_length < $continue_limit) {
+                    $this->_append($string);
+                    $written = $block_length;
+                }
+                else {
+                    $written = 0;
+                }
             }
-        }
-
-        // save last block
-        if (strlen($buffer) > 0)
-        {
-            $this->_append($buffer);
-        }
-    }
-
-    /**
-     * method for calculation of SST-record Continue-Blocks.
-     *
-     * @author <jaenichen@globalpark.de>
-     * @access private
-     */
-    function _calculateSSTContinueBlock($string, &$buffer, &$total_offset, $header_size, $continue_limit)
-    {
-        // calculate remaining space in block
-        $space = $continue_limit - strlen($buffer);
-
-        // if there's space left in block to store at least the sizeinfo of actual string
-        if ($space > $this->_string_sizeinfo)
-        {
-            // split string
-            $tmp = substr($string, 0, $space);
-            $buffer .= $tmp;
-            // save rest of string
-            $string = substr($string, $space);
-        }
-
-        // save blocksize decremented by headersize
-        $this->_block_sizes[] = (strlen($buffer) - $header_size);
-        // save full blocksize
-        $total_offset += strlen($buffer);
-
-        // set CONTINUE header
-        $buffer = pack("vv", 0x003c, 0);
-        // set optional flagbyte of CONTINUE record for splittet strings
-        if ($space > $this->_string_sizeinfo) {
-            $buffer .= pack('C', 0);
-        }
-
-        // block is full again
-        if ((strlen($buffer) + strlen($string)) > $continue_limit) {
-            $this->_calculateSSTContinueBlock($string, &$buffer, &$total_offset, $header_size, $continue_limit);
-        }
-        else {
-            $buffer .= $string;
-        }
-    }
-
-    /**
-     * method for storing of SST-record Continue-Blocks.
-     *
-     * @author <jaenichen@globalpark.de>
-     * @access private
-     */
-
-    function _storeSSTContinueBlock($string, &$buffer, $continue_limit)
-    {
-        // calculate remaining space in block
-        $space = $continue_limit - strlen($buffer);
-
-        // if there's space left in block to store at least the sizeinfo of actual string
-        if ($space > $this->_string_sizeinfo)
-        {
-            // split string
-            $tmp = substr($string, 0, $space);
-            $buffer .= $tmp;
-            // save rest of string including optional flagbyte of CONTINUE record
-            $string = substr($string, $space);
-        }
-
-        // save block
-        $this->_append($buffer);
-
-        // save CONTINUE header
-        $record  = 0x003C;
-        $length  = array_shift($this->_block_sizes);
-        $buffer = pack('vv', $record, $length);
-        // set optional flagbyte of CONTINUE record for splittet strings
-        if ($space > $this->_string_sizeinfo) {
-            $buffer .= pack('C', 0);
-        }
-        
-        // block is full again
-        if ((strlen($buffer) + strlen($string)) > $continue_limit) {
-            $this->_storeSSTContinueBlock($string, &$buffer, $continue_limit);
-        }
-        else {
-            $buffer .= $string;    
         }
     }
 }
