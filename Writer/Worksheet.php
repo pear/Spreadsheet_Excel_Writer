@@ -3399,8 +3399,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
     
         // The first 2 bytes are used to identify the bitmap.
-        $identity = unpack("A2", $data);
-        if ($identity[''] != "BM") {
+        $identity = unpack("A2ident", $data);
+        if ($identity['ident'] != "BM") {
             $this->raiseError("$bitmap doesn't appear to be a valid bitmap image.\n");
         }
     
@@ -3410,8 +3410,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Read and remove the bitmap size. This is more reliable than reading
         // the data size at offset 0x22.
         //
-        $size_array   = unpack("V", substr($data, 0, 4));
-        $size   = $size_array[''];
+        $size_array   = unpack("Vsa", substr($data, 0, 4));
+        $size   = $size_array['sa'];
         $data   = substr($data, 4);
         $size  -= 0x36; // Subtract size of bitmap header.
         $size  += 0x0C; // Add size of BIFF header.
@@ -3438,15 +3438,15 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $this->raiseError("$bitmap isn't a 24bit true color bitmap.\n");
         }
         if ($planes_and_bitcount[1] != 1) {
-            $this->raiseError("$bitmap: only 1 plane nupported in bitmap image.\n");
+            $this->raiseError("$bitmap: only 1 plane supported in bitmap image.\n");
         }
     
         // Read and remove the bitmap compression. Verify compression.
-        $compression = unpack("V", substr($data, 0, 4));
+        $compression = unpack("Vcomp", substr($data, 0, 4));
         $data = substr($data, 4);
       
         //$compression = 0;
-        if ($compression[""] != 0) {
+        if ($compression['comp'] != 0) {
             $this->raiseError("$bitmap: compression not supported in bitmap image.\n");
         }
     
