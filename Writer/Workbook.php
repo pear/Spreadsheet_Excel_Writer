@@ -1484,7 +1484,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                 // Write the CONTINUE block header
                 if (!empty($this->_block_sizes)) {
                     $record  = 0x003C;
-                    $length  = array_push($this->_block_sizes);
+                    $length  = array_pop($this->_block_sizes);
  
                     $header  = pack('vv', $record, $length);
                     if ($continue) {
