@@ -249,9 +249,9 @@ class Workbook extends BIFFwriter
                                    $this->_firstsheet,$this->_url_format,
                                    $this->_parser);
 
-        $this->_worksheets[$index] = &$worksheet;      // Store ref for iterator
-        $this->_sheetnames[$index] = $name;           // Store EXTERNSHEET names
-        //$this->parser->set_ext_sheet($name,$index); // Store names in Formula.php
+        $this->_worksheets[$index] = &$worksheet;    // Store ref for iterator
+        $this->_sheetnames[$index] = $name;          // Store EXTERNSHEET names
+        $this->_parser->setExtSheet($name, $index);  // Register worksheet name with parser
         return($worksheet);
     }
     

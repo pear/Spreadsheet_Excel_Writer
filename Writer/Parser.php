@@ -117,6 +117,12 @@ class Parser extends PEAR
     var $_func_args;
 
     /**
+    * Array of external sheets
+    * @var array
+    */
+    var $_ext_sheets;
+
+    /**
     * The class constructor
     *
     * @param integer $byte_order The byte order (Little endian or Big endian) of the architecture
@@ -132,6 +138,7 @@ class Parser extends PEAR
         $this->_initializeHashes();      // Initialize the hashes: ptg's and function's ptg's
         $this->_byte_order = $byte_order; // Little Endian or Big Endian
         $this->_func_args  = 0;           // Number of arguments for the current function
+        $this->_ext_sheets = array();
     }
     
     /**
@@ -500,6 +507,11 @@ class Parser extends PEAR
         {
             return($this->_convertRef2d($token));
         }
+        // match external references like Sheet1!A1
+        elseif(preg_match("/^([A-Za-z0-9]+\![A-I]?[A-Z])(\d+)$/",$token))
+        {
+            return($this->_convertRef3d($token));
+        }
         // match ranges like A1:B2
         elseif(preg_match("/^([A-I]?[A-Z])(\d+)\:([A-I]?[A-Z])(\d+)$/",$token))
         {
@@ -641,7 +653,7 @@ class Parser extends PEAR
         if($this->isError($cell_array)) {
             return($cell_array);
             }
-        list($row, $col) = $cell_array; //$this->_cellToPackedRowcol($cell);
+        list($row, $col) = $cell_array;
     
         // The ptg value depends on the class of the ptg.
         if ($class == 0) {
@@ -660,6 +672,124 @@ class Parser extends PEAR
         return($ptgRef.$row.$col);
     }
     
+    /**
+    * Convert an Excel 3d reference such as "Sheet1!A1" or "Sheet1:Sheet2!A1" to a
+    * ptgRef3dV.
+    *
+    * @access private
+    * @param string $cell An Excel cell reference
+    * @return string The cell in packed() format with the corresponding ptg
+    */
+    function _convertRef3d($cell)
+    {
+        $class = 2; // as far as I know, this is magick.
+ 
+        // Split the ref at the ! symbol
+        list($ext_ref, $cell) = split('!', $cell);
+ 
+        // Convert the external reference part
+        $ext_ref = $this->_packExtRef($ext_ref);
+        if ($this->isError($ext_ref)) {
+            return $ext_ref;
+        }
+ 
+        // Convert the cell reference part
+        list($row, $col) = $this->_cellToPackedRowcol($cell);
+ 
+        // The ptg value depends on the class of the ptg.
+        if ($class == 0) {
+            $ptgRef = pack("C", $this->ptg['ptgRef3d']);
+        }
+        elseif ($class == 1) {
+            $ptgRef = pack("C", $this->ptg['ptgRef3dV']);
+        }
+        elseif ($class == 2) {
+            $ptgRef = pack("C", $this->ptg['ptgRef3dA']);
+        }
+        else {
+            $this->raiseError("Unknown class $class", 0, PEAR_ERROR_DIE);
+        }
+
+        return $ptgRef . $ext_ref. $row . $col;
+    }
+
+    /**
+    * Convert the sheet name part of an external reference, for example "Sheet1" or
+    * "Sheet1:Sheet2", to a packed structure.
+    *
+    * @access private
+    * @param string $ext_ref The name of the external reference
+    * @return string The reference index in packed() format
+    */
+    function _packExtRef($ext_ref)
+    {
+        $ext_ref = preg_replace("/^'/", '', $ext_ref); // Remove leading  ' if any.
+        $ext_ref = preg_replace("/'$/", '', $ext_ref); // Remove trailing ' if any.
+ 
+        // Check if there is a sheet range eg., Sheet1:Sheet2.
+        if (preg_match("/:/", $ext_ref))
+        {
+            list($sheet_name1, $sheet_name2) = split(':', $ext_ref);
+ 
+            $sheet1 = $this->_getSheetIndex($sheet_name1);
+            if ($sheet1 == -1) {
+                return $this->raiseError("Unknown sheet name $sheet_name1 in formula");
+            }
+            $sheet2 = $this->_getSheetIndex($sheet_name2);
+            if ($sheet2 == -1) {
+                return $this->raiseError("Unknown sheet name $sheet_name2 in formula");
+            }
+ 
+            // Reverse max and min sheet numbers if necessary
+            if ($sheet1 > $sheet2) {
+                list($sheet1, $sheet2) = array($sheet2, $sheet1);
+            }
+        }
+        else // Single sheet name only.
+        {
+            $sheet1 = $this->_getSheetIndex($ext_ref);
+            if ($sheet1 == -1) {
+                return $this->raiseError("Unknown sheet name $ext_ref in formula");
+            }
+            $sheet2 = $sheet1;
+        }
+ 
+        // References are stored relative to 0xFFFF.
+        $offset = -1 - $sheet1;
+
+        return pack('vdvv', $offset, 0x00, $sheet1, $sheet2);
+    }
+
+    /**
+    * Look up the index that corresponds to an external sheet name. The hash of
+    * sheet names is updated by the addworksheet() method of the Workbook class.
+    *
+    * @access private
+    * @return integer
+    */
+    function _getSheetIndex($sheet_name)
+    {
+        if (!isset($this->_ext_sheets[$sheet_name])) {
+            return -1;
+        }
+        else {
+            return $this->_ext_sheets[$sheet_name];
+        }
+    }
+
+    /**
+    * This method is used to update the array of sheet names. It is
+    * called by the addWorksheet() method of the Workbook class.
+    *
+    * @access private
+    * @param string  $name  The name of the worksheet being added
+    * @param integer $index The index of the worksheet being added
+    */
+    function setExtSheet($name, $index)
+    {
+        $this->_ext_sheets[$name] = $index;
+    }
+
     /**
     * pack() row and column into the required 3 byte format.
     *
@@ -792,6 +922,13 @@ class Parser extends PEAR
                 if(eregi("^[A-I]?[A-Z][0-9]+$",$token) and 
                    !ereg("[0-9]",$this->_lookahead) and 
                    ($this->_lookahead != ':') and ($this->_lookahead != '.'))
+                {
+                    return($token);
+                }
+                // If it's an external reference (Sheet1!A1)
+                elseif(eregi("^[A-Za-z0-9]+\![A-I]?[A-Z][0-9]+$",$token) and
+                       !ereg("[0-9]",$this->_lookahead) and
+                       ($this->_lookahead != ':') and ($this->_lookahead != '.'))
                 {
                     return($token);
                 }
@@ -958,9 +1095,16 @@ class Parser extends PEAR
             $this->_advance();
             return($result);
         }
+        // If it's an external reference (Sheet1!A1)
+        elseif(eregi("^[A-Za-z0-9]+\![A-I]?[A-Z][0-9]+$",$this->_current_token))
+        {
+            $result = $this->_current_token;
+            $this->_advance();
+            return($result);
+        }
         // if it's a range
         elseif (eregi("^[A-Z]?[A-Z][0-9]+:[A-Z]?[A-Z][0-9]+$",$this->_current_token) or 
-                eregi("^[A-Z]?[A-Z][0-9]+\.\.[A-Z]?[A-Z][0-9]+$",$this->_current_token)) 
+                eregi("^[A-Z]?[A-Z][0-9]+\.\.[A-Z]?[A-Z][0-9]+$",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
