@@ -1369,7 +1369,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
         // Write the SST block header information
         $buffer      = pack("vv", $record, $length);
-        $buffer      .= pack("VV", $this->_str_total, $this->_str_total);
+        $buffer      .= pack("VV", $this->_str_total, $this->_str_unique);
 
         foreach (array_keys($this->_str_table) as $string) 
         {
