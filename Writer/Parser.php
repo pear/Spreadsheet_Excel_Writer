@@ -561,7 +561,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             return(pack("C", $this->ptg[$token]));
         }
-        elseif(preg_match("/[A-Z0-9À-Ü\.]+/",$token))
+        elseif(preg_match("/[A-Z0-9\xc0-\xdc\.]+/",$token))
         {
             return($this->_convertFunction($token,$this->_func_args));
         }
@@ -1097,7 +1097,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                     return($token);
                 }
                 // if it's a function call
-                elseif(eregi("^[A-Z0-9À-Ü\.]+$",$token) and ($this->_lookahead == "("))
+                elseif(eregi("^[A-Z0-9\xc0-\xdc\.]+$",$token) and ($this->_lookahead == "("))
                 {
                     return($token);
                 }
@@ -1348,7 +1348,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return($result);
         }
         // if it's a function call
-        elseif (eregi("^[A-Z0-9À-Ü\.]+$",$this->_current_token))
+        elseif (eregi("^[A-Z0-9\xc0-\xdc\.]+$",$this->_current_token))
         {
             $result = $this->_func();
             return($result);
