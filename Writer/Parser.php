@@ -1057,7 +1057,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 // if it's a reference
                 if (preg_match('/^\$?[A-I]?[A-Z]\$?[0-9]+$/',$token) and
                    !ereg("[0-9]",$this->_lookahead) and 
-                   ($this->_lookahead != ':') and ($this->_lookahead != '.'))
+                   ($this->_lookahead != ':') and ($this->_lookahead != '.') and
+                   ($this->_lookahead != '!'))
                 {
                     return $token;
                 }
