@@ -24,15 +24,22 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.5</version>
-    <date>2003-10-01</date>
+    <version>0.6</version>
+    <date>2003-11-15</date>
     <notes>
      New features:
-      -added rowcolToCell() utility method for easy writing of formula's cell references (JT Hughes).
-      -added Worksheet::setOutline() method (Herman Kuiper)
-      -added Format::setFontFamily() method (Donnie Miller)
+      - allow semicolon as argument separator (Axel Pratzner)
+      - added experimental Excel97 generation. You can test it with setVersion():
+$workbook = new Spreadsheet_Excel_Writer('prueba_A.xls');
+$workbook->setVersion(8);
+        Beware! this method will be deprecated in a future release (when
+        Excel97 becomes the default). It is only available for testing
+        purposes. Use it at your own risk.
+      - strings longer than 255 bytes are now available using the experimental
+        Excel97 generation. But not all Excel97 features are available yet!
      Bug fixes:
-      -fixed bug #21, cyrillic characters in sheet references (arhip at goldentele dot com)
+      - Fixed bug #225, error in writeUrl() (jamesn at tocquigny dot com)
+      - Fixed bug #59, retval undefined for writeRow() (Bertrand)
     </notes>
     <deps>
       <dep type="pkg" rel="ge" version="0.3">OLE</dep>
@@ -47,6 +54,7 @@
           <file role="php">Format.php</file>
           <file role="php">Worksheet.php</file>
           <file role="php">Parser.php</file>
+          <file role="php">Validator.php</file>
         </dir>
       </dir>
     </filelist>
@@ -94,6 +102,18 @@
         -fixed Bug #23730, worksheet names containing spaces in formulas (Robin Ericsson)
         -fixed Bug #24147, formulas ended in '0' (paul at classical dot com)
         -fixed swapping of arguments in variable arguments functions (JT Hughes)
+      </notes>
+    </release>
+    <release>
+      <version>0.5</version>
+      <date>2003-10-01</date>
+      <notes>
+       New features:
+        -added rowcolToCell() utility method for easy writing of formula's cell references (JT Hughes).
+        -added Worksheet::setOutline() method (Herman Kuiper)
+        -added Format::setFontFamily() method (Donnie Miller)
+       Bug fixes:
+        -fixed bug #21, cyrillic characters in sheet references (arhip at goldentele dot com)
       </notes>
     </release>
   </changelog>
