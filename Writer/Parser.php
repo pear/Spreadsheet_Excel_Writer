@@ -1378,7 +1378,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                     $this->_advance();  // eat the ","
                 }
                 else {
-                    return($this->raiseError("Sintactic error: coma expected $num_args"));
+                    return new PEAR_Error("Sintactic error: coma expected in ".
+                                          "function $function, {$num_args}º arg"));
                 }
                 $result2 = $this->_condition();
                 if($this->isError($result2)) {
