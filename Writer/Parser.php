@@ -638,10 +638,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $class = 2; // as far as I know, this is magick.
     
         // Split the range into 2 cell refs
-        if(preg_match("/^([A-I]?[A-Z])(\d+)\:([A-I]?[A-Z])(\d+)$/",$range)) {
+        if (preg_match("/^([A-I]?[A-Z])(\d+)\:([A-I]?[A-Z])(\d+)$/",$range)) {
             list($cell1, $cell2) = split(':', $range);
         }
-        elseif(preg_match("/^([A-I]?[A-Z])(\d+)\.\.([A-I]?[A-Z])(\d+)$/",$range)) {
+        elseif (preg_match("/^([A-I]?[A-Z])(\d+)\.\.([A-I]?[A-Z])(\d+)$/",$range)) {
             list($cell1, $cell2) = split('\.\.', $range);
         
         }
@@ -652,14 +652,14 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     
         // Convert the cell references
         $cell_array1 = $this->_cellToPackedRowcol($cell1);
-        if($this->isError($cell_array1)) {
-            return($cell_array1);
-            }
+        if (PEAR::isError($cell_array1)) {
+            return $cell_array1;
+        }
         list($row1, $col1) = $cell_array1; //$this->_cellToPackedRowcol($cell1);
         $cell_array2 = $this->_cellToPackedRowcol($cell2);
-        if($this->isError($cell_array2)) {
-            return($cell_array2);
-            }
+        if (PEAR::isError($cell_array2)) {
+            return $cell_array2;
+        }
         list($row2, $col2) = $cell_array2; //$this->_cellToPackedRowcol($cell2);
     
         // The ptg value depends on the class of the ptg.
@@ -676,7 +676,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             // TODO: use real error codes
             $this->raiseError("Unknown class $class", 0, PEAR_ERROR_DIE);
         }
-        return($ptgArea . $row1 . $row2 . $col1. $col2);
+        return $ptgArea . $row1 . $row2 . $col1. $col2;
     }
  
     /**
@@ -754,9 +754,9 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     
         // Convert the cell reference
         $cell_array = $this->_cellToPackedRowcol($cell);
-        if($this->isError($cell_array)) {
-            return($cell_array);
-            }
+        if (PEAR::isError($cell_array)) {
+            return $cell_array;
+        }
         list($row, $col) = $cell_array;
     
         // The ptg value depends on the class of the ptg.
@@ -773,7 +773,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             // TODO: use real error codes
             $this->raiseError("Unknown class $class", 0, PEAR_ERROR_DIE);
         }
-        return($ptgRef.$row.$col);
+        return $ptgRef.$row.$col;
     }
     
     /**
@@ -1178,14 +1178,14 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     function _condition()
     {
         $result = $this->_expression();
-        if($this->isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
         if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_LT)
         {
             $this->_advance();
             $result2 = $this->_expression();
-            if($this->isError($result2)) {
+            if (PEAR::isError($result2)) {
                 return $result2;
             }
             $result = $this->_createTree('ptgLT', $result, $result2);
@@ -1194,7 +1194,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             $this->_advance();
             $result2 = $this->_expression();
-            if($this->isError($result2)) {
+            if (PEAR::isError($result2)) {
                 return $result2;
             }
             $result = $this->_createTree('ptgGT', $result, $result2);
@@ -1203,7 +1203,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             $this->_advance();
             $result2 = $this->_expression();
-            if($this->isError($result2)) {
+            if (PEAR::isError($result2)) {
                 return $result2;
             }
             $result = $this->_createTree('ptgLE', $result, $result2);
@@ -1212,7 +1212,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             $this->_advance();
             $result2 = $this->_expression();
-            if($this->isError($result2)) {
+            if (PEAR::isError($result2)) {
                 return $result2;
             }
             $result = $this->_createTree('ptgGE', $result, $result2);
@@ -1221,7 +1221,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             $this->_advance();
             $result2 = $this->_expression();
-            if($this->isError($result2)) {
+            if (PEAR::isError($result2)) {
                 return $result2;
             }
             $result = $this->_createTree('ptgEQ', $result, $result2);
@@ -1230,7 +1230,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             $this->_advance();
             $result2 = $this->_expression();
-            if($this->isError($result2)) {
+            if (PEAR::isError($result2)) {
                 return $result2;
             }
             $result = $this->_createTree('ptgNE', $result, $result2);
@@ -1251,11 +1251,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
-            return($result);
+            return $result;
         }
         $result = $this->_term();
-        if($this->isError($result)) {
-            return($result);
+        if (PEAR::isError($result)) {
+            return $result;
         }
         while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_ADD) or 
                ($this->_current_token == SPREADSHEET_EXCEL_WRITER_SUB))
@@ -1264,8 +1264,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             {
                 $this->_advance();
                 $result2 = $this->_term();
-                if($this->isError($result2)) {
-                    return($result2);
+                if (PEAR::isError($result2)) {
+                    return $result2;
                 }
                 $result = $this->_createTree('ptgAdd', $result, $result2);
             }
@@ -1273,13 +1273,13 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             {
                 $this->_advance();
                 $result2 = $this->_term();
-                if($this->isError($result2)) {
-                    return($result2);
+                if (PEAR::isError($result2)) {
+                    return $result2;
                 }
                 $result = $this->_createTree('ptgSub', $result, $result2);
             }
         }
-        return($result);
+        return $result;
     }
     
     /**
@@ -1293,7 +1293,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     function _parenthesizedExpression()
     {
         $result = $this->_createTree('ptgParen', $this->_expression(), '');
-        return($result);
+        return $result;
     }
     
     /**
@@ -1306,8 +1306,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     function _term()
     {
         $result = $this->_fact();
-        if($this->isError($result)) {
-            return($result);
+        if (PEAR::isError($result)) {
+            return $result;
         }
         while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL) or 
                ($this->_current_token == SPREADSHEET_EXCEL_WRITER_DIV))
@@ -1316,8 +1316,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             {
                 $this->_advance();
                 $result2 = $this->_fact();
-                if($this->isError($result2)) {
-                    return($result2);
+                if (PEAR::isError($result2)) {
+                    return $result2;
                 }
                 $result = $this->_createTree('ptgMul', $result, $result2);
             }
@@ -1325,13 +1325,13 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             {
                 $this->_advance();
                 $result2 = $this->_fact();
-                if($this->isError($result2)) {
-                    return($result2);
+                if (PEAR::isError($result2)) {
+                    return $result2;
                 }
                 $result = $this->_createTree('ptgDiv', $result, $result2);
             }
         }
-        return($result);
+        return $result;
     }
     
     /**
@@ -1426,16 +1426,16 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                                           "function $function, {$num_args}º arg");
                 }
                 $result2 = $this->_condition();
-                if($this->isError($result2)) {
-                    return($result2);
+                if (PEAR::isError($result2)) {
+                    return $result2;
                 }
                 $result = $this->_createTree('arg', $result, $result2);
             }
             else // first argument
             {
                 $result2 = $this->_condition();
-                if($this->isError($result2)) {
-                    return($result2);
+                if (PEAR::isError($result2)) {
+                    return $result2;
                 }
                 $result = $this->_createTree('arg', '', $result2);
             }
@@ -1450,7 +1450,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     
         $result = $this->_createTree($function, $result, $num_args);
         $this->_advance();         // eat the ")"
-        return($result);
+        return $result;
     }
     
     /**
@@ -1504,33 +1504,33 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         if (is_array($tree['left']))
         {
             $converted_tree = $this->toReversePolish($tree['left']);
-            if($this->isError($converted_tree)) {
-                return($converted_tree);
-                }
+            if (PEAR::isError($converted_tree)) {
+                return $converted_tree;
+            }
             $polish .= $converted_tree;
         }
         elseif($tree['left'] != '') // It's a final node
         {
             $converted_tree = $this->_convert($tree['left']);
-            if($this->isError($converted_tree)) {
-                return($converted_tree);
-                }
+            if (PEAR::isError($converted_tree)) {
+                return $converted_tree;
+            }
             $polish .= $converted_tree;
         }
         if (is_array($tree['right']))
         {
             $converted_tree = $this->toReversePolish($tree['right']);
-            if($this->isError($converted_tree)) {
-                return($converted_tree);
-                }
+            if (PEAR::isError($converted_tree)) {
+                return $converted_tree;
+            }
             $polish .= $converted_tree;
         }
         elseif($tree['right'] != '') // It's a final node
         {
             $converted_tree = $this->_convert($tree['right']);
-            if($this->isError($converted_tree)) {
-                return($converted_tree);
-                }
+            if (PEAR::isError($converted_tree)) {
+                return $converted_tree;
+            }
             $polish .= $converted_tree;
         }
         // if it's a function convert it here (so we can set it's arguments)
