@@ -42,7 +42,7 @@ require_once('PEAR.php');
 * @package  Spreadsheet_Excel_Writer
 */
 
-class Format extends PEAR
+class Spreadsheet_Excel_Writer_Format extends PEAR
 {
     /**
     * The index given by the workbook when creating a new format.
@@ -249,7 +249,7 @@ class Format extends PEAR
     * @param integer $index the XF index for the format.
     * @param array   $properties array with properties to be set on initialization.
     */
-    function Format($index = 0,$properties =  array())
+    function Spreadsheet_Excel_Writer_Format($index = 0,$properties =  array())
     {
         $this->_xf_index       = $index;
                                
@@ -293,7 +293,7 @@ class Format extends PEAR
         $this->_left_color     = 0x40;
         $this->_right_color    = 0x40;
     
-        // Set properties passed to Workbook::addFormat()
+        // Set properties passed to Spreadsheet_Excel_Writer_Workbook::addFormat()
         foreach($properties as $property => $value)
         {
             if(method_exists($this,'set'.ucwords($property)))
@@ -431,7 +431,8 @@ class Format extends PEAR
     }
     
     /**
-    * Returns a unique hash key for a font. Used by Workbook->_storeAllFonts()
+    * Returns a unique hash key for a font. 
+    * Used by Spreadsheet_Excel_Writer_Workbook::_storeAllFonts()
     *
     * The elements that form the key are arranged to increase the probability of
     * generating a unique key. Elements that hold a large range of numbers
@@ -451,7 +452,7 @@ class Format extends PEAR
     }
     
     /**
-    * Returns the index used by Worksheet->_XF()
+    * Returns the index used by Spreadsheet_Excel_Writer_Worksheet::_XF()
     *
     * @return integer The index for the XF record
     */

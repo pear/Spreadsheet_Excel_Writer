@@ -42,18 +42,18 @@ require_once('Spreadsheet/Excel/Writer/Workbook.php');
 * @package  Spreadsheet_Excel_Writer
 */
 
-class Spreadsheet_Excel_Writer extends Workbook
+class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
 {
     /**
     * The constructor. It just creates a Workbook
     *
     * @param string $filename The optional filename for the Workbook.
-    * @return Workbook The Workbook created
+    * @return Spreadsheet_Excel_Writer_Workbook The Workbook created
     */
     function Spreadsheet_Excel_Writer($filename = '')
     {
         $this->_filename = $filename;
-        $this->Workbook($filename);
+        $this->Spreadsheet_Excel_Writer_Workbook($filename);
     }
 
     /**

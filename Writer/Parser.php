@@ -98,7 +98,7 @@ require_once('PEAR.php');
 * @package  Spreadsheet_Excel_Writer
 */
 
-class Parser extends PEAR
+class Spreadsheet_Excel_Writer_Parser extends PEAR
 {
     /**
     * The index of the character we are currently looking at
@@ -154,7 +154,7 @@ class Parser extends PEAR
     * @param integer $byte_order The byte order (Little endian or Big endian) of the architecture
                                  (optional). 1 => big endian, 0 (default) => little endian. 
     */
-    function Parser($byte_order = 0)
+    function Spreadsheet_Excel_Writer_Parser($byte_order = 0)
     {
         $this->_current_char  = 0;
         $this->_current_token = '';       // The token we are working on.
@@ -863,7 +863,8 @@ class Parser extends PEAR
 
     /**
     * Look up the index that corresponds to an external sheet name. The hash of
-    * sheet names is updated by the addworksheet() method of the Workbook class.
+    * sheet names is updated by the addworksheet() method of the 
+    * Spreadsheet_Excel_Writer_Workbook class.
     *
     * @access private
     * @return integer
@@ -880,7 +881,7 @@ class Parser extends PEAR
 
     /**
     * This method is used to update the array of sheet names. It is
-    * called by the addWorksheet() method of the Workbook class.
+    * called by the addWorksheet() method of the Spreadsheet_Excel_Writer_Workbook class.
     *
     * @access private
     * @param string  $name  The name of the worksheet being added

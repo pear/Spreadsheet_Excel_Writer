@@ -51,7 +51,7 @@ require_once('PEAR.php');
 * @package  Spreadsheet_Excel_Writer
 */
 
-class BIFFwriter extends PEAR
+class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
 {
     /**
     * The BIFF/Excel version (5). 
@@ -89,7 +89,7 @@ class BIFFwriter extends PEAR
     *
     * @access public
     */
-    function BIFFwriter()
+    function Spreadsheet_Excel_Writer_BIFFwriter()
     {
         $this->_byte_order = '';
         $this->_data       = '';

@@ -42,7 +42,7 @@ require_once('PEAR.php');
 * @package  Spreadsheet_Excel_Writer
 */
 
-class OLEwriter extends PEAR
+class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
 {
     /**
     * Filename for the OLE stream
@@ -104,7 +104,7 @@ class OLEwriter extends PEAR
     *
     * @param string $OLEfilename the name of the file for the OLE stream
     */
-    function OLEwriter($OLEfilename)
+    function Spreadsheet_Excel_Writer_OLEwriter($OLEfilename)
     {
         $this->_OLEfilename  = $OLEfilename;
         $this->_filehandle   = "";
@@ -161,7 +161,7 @@ class OLEwriter extends PEAR
     *   $maxsize    = $big_blocks * 512 bytes = 7087104
     *
     * @access public
-    * @see Workbook::store_OLE_file()
+    * @see Spreadsheet_Excel_Writer_Workbook::store_OLE_file()
     * @param integer $biffsize The size of the data to be written to the OLE stream
     * @return integer 1 for success
     */
@@ -212,7 +212,7 @@ class OLEwriter extends PEAR
     * having to wait for DESTROY.
     *
     * @access public
-    * @see Workbook::store_OLE_file()
+    * @see Spreadsheet_Excel_Writer_Workbook::store_OLE_file()
     */
     function close() 
     {

@@ -43,7 +43,7 @@ require_once('Spreadsheet/Excel/Writer/BIFFwriter.php');
 * @package  Spreadsheet_Excel_Writer
 */
 
-class Worksheet extends BIFFwriter
+class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwriter
 {
     /**
     * Name of the Worksheet
@@ -293,9 +293,12 @@ class Worksheet extends BIFFwriter
     * @param mixed   &$url_format  The default format for hyperlinks
     * @param mixed   &$parser      The formula parser created for the Workbook
     */
-    function Worksheet($name, $index, &$activesheet, &$firstsheet, &$url_format, &$parser)
+    function Spreadsheet_Excel_Writer_Worksheet($name, $index, &$activesheet,
+                                                &$firstsheet, &$url_format,
+                                                &$parser)
     {
-        $this->BIFFwriter();     // It needs to call its parent's constructor explicitly
+        // It needs to call its parent's constructor explicitly
+        $this->Spreadsheet_Excel_Writer_BIFFwriter();
         $rowmax                = 65536; // 16384 in Excel 5
         $colmax                = 256;
     
@@ -395,7 +398,7 @@ class Worksheet extends BIFFwriter
     * and to the end of the workbook.
     *
     * @access public 
-    * @see Workbook::storeWorkbook()
+    * @see Spreadsheet_Excel_Writer_Workbook::storeWorkbook()
     * @param array $sheetnames The array of sheetnames from the Workbook this 
     *                          worksheet belongs to
     */

@@ -46,7 +46,7 @@ require_once('Spreadsheet/Excel/Writer/Parser.php');
 * @package  Spreadsheet_Excel_Writer
 */
 
-class Workbook extends BIFFwriter
+class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwriter
 {
     /**
     * Filename for the Workbook
@@ -152,12 +152,13 @@ class Workbook extends BIFFwriter
     * @param string filename for storing the workbook. "-" for writing to stdout.
     * @access public
     */
-    function Workbook($filename)
+    function Spreadsheet_Excel_Writer_Workbook($filename)
     {
-        $this->BIFFwriter(); // It needs to call its parent's constructor explicitly
+        // It needs to call its parent's constructor explicitly
+        $this->Spreadsheet_Excel_Writer_BIFFwriter();
     
         $this->_filename         = $filename;
-        $this->_parser           = new Parser($this->_byte_order);
+        $this->_parser           = new Spreadsheet_Excel_Writer_Parser($this->_byte_order);
         $this->_1904             = 0;
         $this->_activesheet      = 0;
         $this->_firstsheet       = 0;
@@ -166,7 +167,7 @@ class Workbook extends BIFFwriter
         $this->_fileclosed       = 0;
         $this->_biffsize         = 0;
         $this->_sheetname        = "Sheet";
-        $this->_tmp_format       =& new Format();
+        $this->_tmp_format       =& new Spreadsheet_Excel_Writer_Format();
         $this->_worksheets       = array();
         $this->_sheetnames       = array();
         $this->_formats          = array();
@@ -224,7 +225,7 @@ class Workbook extends BIFFwriter
     *
     * @access public
     * @param string $name the optional name of the worksheet
-    * @return &Worksheet reference to a worksheet object
+    * @return &iSpreadsheet_Excel_Writer_Worksheet reference to a worksheet object
     */
     function &addWorksheet($name = '')
     {
@@ -248,7 +249,7 @@ class Workbook extends BIFFwriter
             }
         }
     
-        $worksheet = new Worksheet($name,$index,$this->_activesheet,
+        $worksheet = new Spreadsheet_Excel_Writer_Worksheet($name,$index,$this->_activesheet,
                                    $this->_firstsheet,$this->_url_format,
                                    $this->_parser);
 
@@ -264,11 +265,11 @@ class Workbook extends BIFFwriter
     *
     * @access public
     * @param array $properties array with properties for initializing the format (see Format.php)
-    * @return &Format reference to an XF format
+    * @return &Spreadsheet_Excel_Writer_Format reference to an XF format
     */
     function &addFormat($properties = array())
     {
-        $format = new Format($this->_xf_index,$properties);
+        $format = new Spreadsheet_Excel_Writer_Format($this->_xf_index,$properties);
         $this->_xf_index += 1;
         $this->_formats[] = &$format;
         return($format);
@@ -436,7 +437,7 @@ class Workbook extends BIFFwriter
     */
     function _storeOLEFile()
     {
-        $OLE  = new OLEwriter($this->_filename);
+        $OLE  = new Spreadsheet_Excel_Writer_OLEwriter($this->_filename);
         $this->_tmp_filename = $OLE->_tmp_filename;
         // Write Worksheet data if data <~ 7MB
         if ($OLE->setSize($this->_biffsize))
