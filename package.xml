@@ -24,17 +24,15 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.4</version>
-    <date>2003-08-21</date>
+    <version>0.5</version>
+    <date>2003-10-01</date>
     <notes>
      New features:
-      -using OLE package (>= 0.3) to generate files bigger than 7MB
-      -changed setFgColor() and setBgColor()'s behavior to something more intuitive.
+      -added rowcolToCell() utility method for easy writing of formula's cell references (JT Hughes).
+      -added Worksheet::setOutline() method (Herman Kuiper)
+      -added Format::setFontFamily() method (Donnie Miller)
      Bug fixes:
-      -fixed bug #25133, lowercase cell references (jkwiat03 at hotmail dot com)
-      -fixed Bug #23730, worksheet names containing spaces in formulas (Robin Ericsson)
-      -fixed Bug #24147, formulas ended in '0' (paul at classical dot com)
-      -fixed swapping of arguments in variable arguments functions (JT Hughes)
+      -fixed bug #21, cyrillic characters in sheet references (arhip at goldentele dot com)
     </notes>
     <deps>
       <dep type="pkg" rel="ge" version="0.3">OLE</dep>
@@ -82,6 +80,20 @@
        -fixed swapping of columns in formulas (JT Hughes)
        -fixed assorted bugs in tokenizing formulas (JT Hughes)
        -fixed Worksheet::activate() (JT Hughes)
+      </notes>
+    </release>
+    <release>
+      <version>0.4</version>
+      <date>2003-08-21</date>
+      <notes>
+       New features:
+        -using OLE package (>= 0.3) to generate files bigger than 7MB
+        -changed setFgColor() and setBgColor()'s behavior to something more intuitive.
+       Bug fixes:
+        -fixed bug #25133, lowercase cell references (jkwiat03 at hotmail dot com)
+        -fixed Bug #23730, worksheet names containing spaces in formulas (Robin Ericsson)
+        -fixed Bug #24147, formulas ended in '0' (paul at classical dot com)
+        -fixed swapping of arguments in variable arguments functions (JT Hughes)
       </notes>
     </release>
   </changelog>
