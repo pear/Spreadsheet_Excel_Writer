@@ -137,12 +137,6 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     var $_byte_order;
 
     /**
-    * Number of arguments for the current function
-    * @var integer
-    */
-    var $_func_args;
-
-    /**
     * Array of external sheets
     * @var array
     */
@@ -163,7 +157,6 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $this->_parse_tree    = '';       // The parse tree to be generated.
         $this->_initializeHashes();      // Initialize the hashes: ptg's and function's ptg's
         $this->_byte_order = $byte_order; // Little Endian or Big Endian
-        $this->_func_args  = 0;           // Number of arguments for the current function
         $this->_ext_sheets = array();
     }
     
@@ -561,15 +554,15 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             return(pack("C", $this->ptg[$token]));
         }
-        elseif(preg_match("/[A-Z0-9\xc0-\xdc\.]+/",$token))
+        // commented so argument number can be processed correctly. See toReversePolish().
+        /*elseif(preg_match("/[A-Z0-9\xc0-\xdc\.]+/",$token))
         {
             return($this->_convertFunction($token,$this->_func_args));
-        }
+        }*/
         // if it's an argument, ignore the token (the argument remains)
-        elseif($token == 'arg')
+        elseif ($token == 'arg')
         {
-            $this->_func_args++;
-            return('');
+            return '';
         }
         // TODO: use real error codes
         $this->raiseError("Unknown token $token", 0, PEAR_ERROR_DIE);
@@ -616,21 +609,21 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     *
     * @access private
     * @param string  $token    The name of the function for convertion to ptg value.
-    * @param integer $num_args The number of arguments the function recieves.
+    * @param integer $num_args The number of arguments the function receives.
+    * @return string The packed ptg for the function
     */
     function _convertFunction($token, $num_args)
     {
-        $this->_func_args = 0; // re initialize the number of arguments
         $args     = $this->_functions[$token][1];
         $volatile = $this->_functions[$token][3];
     
         // Fixed number of args eg. TIME($i,$j,$k).
         if ($args >= 0) {
-            return(pack("Cv", $this->ptg['ptgFuncV'], $this->_functions[$token][0]));
+            return pack("Cv", $this->ptg['ptgFuncV'], $this->_functions[$token][0]);
         }
         // Variable number of args eg. SUM($i,$j,$k, ..).
         if ($args == -1) {
-            return(pack("CCv", $this->ptg['ptgFuncVarV'], $num_args, $this->_functions[$token][0]));
+            return pack("CCv", $this->ptg['ptgFuncVarV'], $num_args, $this->_functions[$token][0]);
         }
     }
     
@@ -1455,7 +1448,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return($this->raiseError("Incorrect number of arguments in function $function() "));
         }
     
-        $result = $this->_createTree($function, $result, '');
+        $result = $this->_createTree($function, $result, $num_args);
         $this->_advance();         // eat the ")"
         return($result);
     }
@@ -1540,12 +1533,35 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 }
             $polish .= $converted_tree;
         }
-        $converted_tree = $this->_convert($tree['value']);
-        if($this->isError($converted_tree)) {
-            return($converted_tree);
+        // if it's a function convert it here (so we can set it's arguments)
+        if (preg_match("/^[A-Z0-9\xc0-\xdc\.]+$/",$tree['value']) and
+            !preg_match('/^([A-I]?[A-Z])(\d+)$/',$tree['value']) and
+            !preg_match("/^[A-I]?[A-Z](\d+)\.\.[A-I]?[A-Z](\d+)$/",$tree['value']) and
+            !is_numeric($tree['value']) and
+            !isset($this->ptg[$tree['value']]))
+        {
+            // left subtree for a function is always an array.
+            if ($tree['left'] != '') {
+                $left_tree = $this->toReversePolish($tree['left']);
             }
+            else {
+                $left_tree = '';
+            }
+            if (PEAR::isError($left_tree)) {
+                return $left_tree;
+            }
+            // add it's left subtree and return.
+            return $left_tree.$this->_convertFunction($tree['value'], $tree['right']);
+        }
+        else
+        {
+            $converted_tree = $this->_convert($tree['value']);
+            if (PEAR::isError($converted_tree)) {
+                return $converted_tree;
+            }
+        }
         $polish .= $converted_tree;
-        return($polish);
+        return $polish;
     }
 }
 ?>
