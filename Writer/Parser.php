@@ -789,20 +789,20 @@ class Parser extends PEAR
                 break;
             default:
                 // if it's a reference
-                if(eregi("^[A-Z][0-9]+$",$token) and 
+                if(eregi("^[A-I]?[A-Z][0-9]+$",$token) and 
                    !ereg("[0-9]",$this->_lookahead) and 
                    ($this->_lookahead != ':') and ($this->_lookahead != '.'))
                 {
                     return($token);
                 }
                 // if it's a range (A1:A2)
-                elseif(eregi("^[A-Z]?[A-Z][0-9]+:[A-Z]?[A-Z][0-9]+$",$token) and 
+                elseif(eregi("^[A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$",$token) and 
                        !ereg("[0-9]",$this->_lookahead))
                 {
                     return($token);
                 }
                 // if it's a range (A1..A2)
-                elseif(eregi("^[A-Z]?[A-Z][0-9]+\.\.[A-Z]?[A-Z][0-9]+$",$token) and 
+                elseif(eregi("^[A-I]?[A-Z][0-9]+\.\.[A-I]?[A-Z][0-9]+$",$token) and 
                        !ereg("[0-9]",$this->_lookahead))
                 {
                     return($token);
