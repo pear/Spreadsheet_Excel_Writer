@@ -508,8 +508,8 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
         // Add Workbook globals
         $this->_storeBof(0x0005);
+        $this->_storeCodepage();
         if ($this->_BIFF_version == 0x0600) {
-            $this->_storeCodepage();
             $this->_storeWindow1();
         }
         if ($this->_BIFF_version == 0x0500) {
