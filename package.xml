@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE package SYSTEM "../package.dtd">
+<package version="1.0">
+  <name>Spreadsheet_Excel_Writer</name>
+  <summary>Spreadsheet_Excel_Writer generates Excel files</summary>
+  <description>
+    Spreadsheet_Excel_Writer generates Excel files without the need for COM objects.</description>
+  <license>LGPL</license>
+  <maintainers>
+    <maintainer>
+      <user>xnoguer</user>
+      <name>Xavier Noguer</name>
+      <email>xnoguer@rezebra.com</email>
+      <role>lead</role>
+    </maintainer>
+  </maintainers>
+  <release>
+    <version>0.1</version>
+    <date>2002-11-26</date>
+    <notes>This is the initial release of the package.</notes>
+    <state>devel</state>
+    <filelist>
+      <dir name="/" baseinstalldir="Spreadsheet/Excel/">
+        <file role="php">Writer.php</file>
+        <dir name="Writer">
+          <file role="php">OLEwriter.php</file>
+          <file role="php">BIFFwriter.php</file>
+          <file role="php">Workbook.php</file>
+          <file role="php">Format.php</file>
+          <file role="php">Worksheet.php</file>
+          <file role="php">Parser.php</file>
+        </dir>
+      </dir>
+    </filelist>
+  </release>
+</package>
