@@ -1118,10 +1118,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $this->_formula      = $formula;
         $this->_lookahead    = $formula{1};
         $this->_advance();
-        $this->_parse_tree   = $this->_condition(); //$this->_expression();
-        if($this->isError($this->_parse_tree)) {
-            return($this->_parse_tree);
-            }
+        $this->_parse_tree   = $this->_condition();
+        if ($this->isError($this->_parse_tree)) {
+            return $this->_parse_tree;
+        }
     }
     
     /**
