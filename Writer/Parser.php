@@ -644,10 +644,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $class = 2; // as far as I know, this is magick.
     
         // Split the range into 2 cell refs
-        if (preg_match("/^([A-I]?[A-Z])(\d+)\:([A-I]?[A-Z])(\d+)$/",$range)) {
+        if (preg_match("/^([A-Ia-i]?[A-Za-z])(\d+)\:([A-Ia-i]?[A-Za-z])(\d+)$/",$range)) {
             list($cell1, $cell2) = split(':', $range);
         }
-        elseif (preg_match("/^([A-I]?[A-Z])(\d+)\.\.([A-I]?[A-Z])(\d+)$/",$range)) {
+        elseif (preg_match("/^([A-Ia-i]?[A-Za-z])(\d+)\.\.([A-Ia-i]?[A-Za-z])(\d+)$/",$range)) {
             list($cell1, $cell2) = split('\.\.', $range);
         
         }
@@ -709,7 +709,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         list($cell1, $cell2) = split(':', $range);
  
         // Convert the cell references
-        if (preg_match("/^(\$)?[A-I]?[A-Z](\$)?(\d+)$/", $cell1))
+        if (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/", $cell1))
         {
             $cell_array1 = $this->_cellToPackedRowcol($cell1);
             if (PEAR::isError($cell_array1)) {
@@ -1378,36 +1378,36 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return $result;
         }
         // if it's a reference
-        if (preg_match('/^\$?[A-I]?[A-Z]\$?[0-9]+$/',$this->_current_token))
+        if (preg_match('/^\$?[A-Ia-i]?[A-Za-z]\$?[0-9]+$/',$this->_current_token))
         {
             $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
             return $result;
         }
         // If it's an external reference (Sheet1!A1 or Sheet1:Sheet2!A1)
-        elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\![A-I]?[A-Z][0-9]+$/",$this->_current_token))
+        elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\![A-Ia-i]?[A-Za-z][0-9]+$/",$this->_current_token))
         {
             $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
             return $result;
         }
         // if it's a range
-        elseif (preg_match("/^(\$)?[A-I]?[A-Z](\$)?[0-9]+:(\$)?[A-I]?[A-Z](\$)?[0-9]+$/",$this->_current_token) or 
-                preg_match("/^(\$)?[A-I]?[A-Z](\$)?[0-9]+\.\.(\$)?[A-I]?[A-Z](\$)?[0-9]+$/",$this->_current_token))
+        elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?[0-9]+:(\$)?[A-Ia-i]?[A-Za-z](\$)?[0-9]+$/",$this->_current_token) or 
+                preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?[0-9]+\.\.(\$)?[A-Ia-i]?[A-Za-z](\$)?[0-9]+$/",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
             return $result;
         }
         // If it's an external range (Sheet1!A1:B2)
-        elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\!([A-I]?[A-Z])?[0-9]+:([A-I]?[A-Z])?[0-9]+$/",$this->_current_token))
+        elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\!([A-Ia-i]?[A-Za-z])?[0-9]+:([A-Ia-i]?[A-Za-z])?[0-9]+$/",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
             return $result;
         }
 		// If it's an external range ('Sheet1'!A1:B2)
-        elseif (preg_match("/^'[A-Za-z0-9_ ]+(\:[A-Za-z0-9_ ]+)?'\!([A-I]?[A-Z])?[0-9]+:([A-I]?[A-Z])?[0-9]+$/",$this->_current_token))
+        elseif (preg_match("/^'[A-Za-z0-9_ ]+(\:[A-Za-z0-9_ ]+)?'\!([A-Ia-i]?[A-Za-z])?[0-9]+:([A-Ia-i]?[A-Za-z])?[0-9]+$/",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
