@@ -871,7 +871,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                 $this->_rotation = 1;
                 break;
             default :
-                $this->raiseError("Invalid value for angle.".
+                return $this->raiseError("Invalid value for angle.".
                                   " Possible values are: 0, 90, 270 and -1 ".
                                   "for stacking top-to-bottom.");
                 $this->_rotation = 0;
@@ -941,6 +941,18 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     function setUnLocked()
     {
         $this->_locked = 0;
+    }
+
+    /**
+    * Sets the font family name.
+    *
+    * @access public
+    * @param string $fontfamily The font family name. Possible values are:
+    *                           'Times New Roman', 'Arial', 'Courier'.
+    */
+    function setFontFamily($font_family)
+    {
+        $this->_font_name = $font_family;
     }
 }
 ?>
