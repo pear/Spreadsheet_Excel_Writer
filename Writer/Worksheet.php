@@ -1936,7 +1936,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
     
         // Strip URL type
-        $url = preg_replace('s[^internal:]', '', $url);
+        $url = preg_replace('[^internal:]', '', $url);
     
         // Write the visible label
         if ($str == '') {
