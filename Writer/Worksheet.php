@@ -566,7 +566,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     function activate()
     {
         $this->selected = 1;
-        $this->activesheet =& $this->index;
+        $this->activesheet = $this->index;
     }
     
     /**
