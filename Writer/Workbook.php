@@ -179,8 +179,7 @@ class Workbook extends BIFFwriter
     }
     
     /**
-    * Calls finalization methods and explicitly close the OLEwriter file
-    * handle.
+    * Calls finalization methods.
     *
     * @access public
     */
@@ -219,7 +218,6 @@ class Workbook extends BIFFwriter
     
     /**
     * Add a new worksheet to the Excel workbook.
-    * TODO: Add accessor for $this->{_sheetname} for international Excel versions.
     *
     * @access public
     * @param string $name the optional name of the worksheet
@@ -258,8 +256,8 @@ class Workbook extends BIFFwriter
     }
     
     /**
-    * Add a new format to the Excel workbook. This adds an XF record and
-    * a FONT record. Also, pass any properties to the Format constructor.
+    * Add a new format to the Excel workbook.
+    * Also, pass any properties to the Format constructor.
     *
     * @access public
     * @param array $properties array with properties for initializing the format (see Format.php)

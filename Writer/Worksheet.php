@@ -554,8 +554,9 @@ class Worksheet extends BIFFwriter
     }
     
     /**
-    * Set this worksheet as the active worksheet, i.e. the worksheet that is
-    * displayed when the workbook is opened. Also set it as selected.
+    * Set this worksheet as the active worksheet,
+    * i.e. the worksheet that is displayed when the workbook is opened.
+    * Also set it as selected.
     *
     * @access public
     */
@@ -740,7 +741,7 @@ class Worksheet extends BIFFwriter
     }
     
     /**
-    * Center the page horinzontally.
+    * Center the page vertically.
     *
     * @access public
     * @param integer $center the optional value for centering. Defaults to 1 (center).
