@@ -23,44 +23,44 @@
 */
 
 /**
-* @const ADD token identifier for character "+"
+* @const SPREADSHEET_EXCEL_WRITER_ADD token identifier for character "+"
 */
-define('ADD',"+");
+define('SPREADSHEET_EXCEL_WRITER_ADD',"+");
 
 /**
-* @const SUB token identifier for character "-"
+* @const SPREADSHEET_EXCEL_WRITER_SUB token identifier for character "-"
 */
-define('SUB',"-");
+define('SPREADSHEET_EXCEL_WRITER_SUB',"-");
 
 /**
-* @const EQUAL token identifier for character "="
+* @const SPREADSHEET_EXCEL_WRITER_EQUAL token identifier for character "="
 */
-define('EQUAL',"=");
+define('SPREADSHEET_EXCEL_WRITER_EQUAL',"=");
 
 /**
-* @const MUL token identifier for character "*"
+* @const SPREADSHEET_EXCEL_WRITER_MUL token identifier for character "*"
 */
-define('MUL',"*");
+define('SPREADSHEET_EXCEL_WRITER_MUL',"*");
 
 /**
-* @const DIV token identifier for character "/"
+* @const SPREADSHEET_EXCEL_WRITER_DIV token identifier for character "/"
 */
-define('DIV',"/");
+define('SPREADSHEET_EXCEL_WRITER_DIV',"/");
 
 /**
-* @const OPEN token identifier for character "("
+* @const SPREADSHEET_EXCEL_WRITER_OPEN token identifier for character "("
 */
-define('OPEN',"(");
+define('SPREADSHEET_EXCEL_WRITER_OPEN',"(");
 
 /**
-* @const CLOSE token identifier for character ")"
+* @const SPREADSHEET_EXCEL_WRITER_CLOSE token identifier for character ")"
 */
-define('CLOSE',")");
+define('SPREADSHEET_EXCEL_WRITER_CLOSE',")");
 
 /**
-* @const COMA token identifier for character ","
+* @const SPREADSHEET_EXCEL_WRITER_COMA token identifier for character ","
 */
-define('COMA',",");
+define('SPREADSHEET_EXCEL_WRITER_COMA',",");
 
 require_once('PEAR.php');
 
@@ -766,25 +766,25 @@ class Parser extends PEAR
     {
         switch($token)
         {
-            case ADD:
+            case SPREADSHEET_EXCEL_WRITER_ADD:
                 return($token);
                 break;
-            case SUB:
+            case SPREADSHEET_EXCEL_WRITER_SUB:
                 return($token);
                 break;
-            case MUL:
+            case SPREADSHEET_EXCEL_WRITER_MUL:
                 return($token);
                 break;
-            case DIV:
+            case SPREADSHEET_EXCEL_WRITER_DIV:
                 return($token);
                 break;
-            case OPEN:
+            case SPREADSHEET_EXCEL_WRITER_OPEN:
                 return($token);
                 break;
-            case CLOSE:
+            case SPREADSHEET_EXCEL_WRITER_CLOSE:
                 return($token);
                 break;
-            case COMA:
+            case SPREADSHEET_EXCEL_WRITER_COMA:
                 return($token);
                 break;
             default:
@@ -851,9 +851,10 @@ class Parser extends PEAR
         if($this->isError($result)) {
             return($result);
         }
-        while ($this->_current_token == ADD or $this->_current_token == SUB)
+        while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_ADD) or 
+               ($this->_current_token == SPREADSHEET_EXCEL_WRITER_SUB))
         {
-            if ($this->_current_token == ADD)
+            if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_ADD)
             {
                 $this->_advance();
                 $result2 = $this->_term();
@@ -902,9 +903,10 @@ class Parser extends PEAR
         if($this->isError($result)) {
             return($result);
         }
-        while ($this->_current_token == MUL || $this->_current_token == DIV)
+        while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL) or 
+               ($this->_current_token == SPREADSHEET_EXCEL_WRITER_DIV))
         {
-            if ($this->_current_token == MUL)
+            if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL)
             {
                 $this->_advance();
                 $result2 = $this->_fact();
@@ -939,11 +941,11 @@ class Parser extends PEAR
     */
     function _fact()
     {
-        if ($this->_current_token == OPEN)
+        if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_OPEN)
         {
             $this->_advance();         // eat the "("
             $result = $this->_parenthesizedExpression();//$this->_expression();
-            if ($this->_current_token != CLOSE) {
+            if ($this->_current_token != SPREADSHEET_EXCEL_WRITER_CLOSE) {
                 return($this->raiseError("')' token expected."));
             }
             $this->_advance();         // eat the ")"
@@ -996,7 +998,7 @@ class Parser extends PEAR
         {
             if($num_args > 0)
             {
-                if($this->_current_token == COMA) {
+                if($this->_current_token == SPREADSHEET_EXCEL_WRITER_COMA) {
                     $this->_advance();  // eat the ","
                 }
                 else {
