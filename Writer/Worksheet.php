@@ -2124,7 +2124,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $reserved    = 0x0000;               // Reserved
         $grbit       = 0x0000;               // Option flags
         $ixfe        = $this->_XF($format);  // XF index
-    
+
+        // set row_sizes so _sizeRow() can use it
+        $this->row_sizes[$row] = $height;
+
         // Use setRow($row, NULL, $XF) to set XF format without setting height
         if ($height != NULL) {
             $miyRw = $height * 20;  // row height
