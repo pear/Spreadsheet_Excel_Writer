@@ -590,8 +590,9 @@ class Format extends PEAR
     }
     
     /**
-    * Bold has a range 0x64..0x3E8.
-    * 0x190 is normal. 0x2BC is bold.
+    * Sets the boldness of the text.
+    * Bold has a range 100..1000.
+    * 0 (400) is normal. 1 (700) is bold.
     *
     * @access public
     * @param integer $weight Weight for the text, 0 maps to 400 (normal text),
@@ -621,7 +622,7 @@ class Format extends PEAR
     */
     
     /**
-    * Sets the bottom border of the cell
+    * Sets the width for the bottom border of the cell
     *
     * @access public
     * @param integer $style style of the cell border. 1 => thin, 2 => thick.
@@ -632,7 +633,7 @@ class Format extends PEAR
     }
     
     /**
-    * Sets the top border of the cell
+    * Sets the width for the top border of the cell
     *
     * @access public
     * @param integer $style style of the cell top border. 1 => thin, 2 => thick.
@@ -643,7 +644,7 @@ class Format extends PEAR
     }
     
     /**
-    * Sets the left border of the cell
+    * Sets the width for the left border of the cell
     *
     * @access public
     * @param integer $style style of the cell left border. 1 => thin, 2 => thick.
@@ -654,7 +655,7 @@ class Format extends PEAR
     }
     
     /**
-    * Sets the right border of the cell
+    * Sets the width for the right border of the cell
     *
     * @access public
     * @param integer $style style of the cell right border. 1 => thin, 2 => thick.
@@ -872,10 +873,11 @@ class Format extends PEAR
     }
 
     /**
-    * Sets the num format
+    * Sets the numeric format.
+    * It can be date, time, currency, etc...
     *
     * @access public
-    * @param integer $num_format The num format.
+    * @param integer $num_format The numeric format.
     */
     function setNumFormat($num_format)
     {
@@ -893,7 +895,7 @@ class Format extends PEAR
     }
 
     /**
-    * Sets font as outLine.
+    * Sets outlining for a font.
     *
     * @access public
     */
