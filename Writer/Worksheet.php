@@ -1050,8 +1050,11 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Write an array of values as a row
     *
     * @access public
-    * @param
-    * @return 
+    * @param integer $row    The row we are writing to
+    * @param integer $col    The first col (leftmost col) we are writing to
+    * @param array   $val    The array of values to write
+    * @param mixed   $format The optional format to apply to the cell
+    * @return mixed PEAR_Error on failure
     */
 
     function writeRow($row, $col, $val, $format=0)
@@ -1075,8 +1078,11 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Write an array of values as a column
     *
     * @access public
-    * @param
-    * @return 
+    * @param integer $row    The first row (uppermost row) we are writing to
+    * @param integer $col    The col we are writing to
+    * @param array   $val    The array of values to write
+    * @param mixed   $format The optional format to apply to the cell
+    * @return mixed PEAR_Error on failure
     */
     
     function writeCol($row, $col, $val, $format=0)
