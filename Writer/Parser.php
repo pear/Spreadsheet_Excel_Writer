@@ -514,6 +514,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     *
     * @access private
     * @param mixed $token The token to convert.
+    * @return mixed the converted token on success. PEAR_Error if the token
+    *               is not recognized
     */
     function _convert($token)
     {
@@ -570,7 +572,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return '';
         }
         // TODO: use real error codes
-        return new PEAR_Error("Unknown token $token", 0, PEAR_ERROR_DIE);
+        $this->raiseError("Unknown token $token");
     }
     
     /**
@@ -659,12 +661,12 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         if (PEAR::isError($cell_array1)) {
             return $cell_array1;
         }
-        list($row1, $col1) = $cell_array1; //$this->_cellToPackedRowcol($cell1);
+        list($row1, $col1) = $cell_array1;
         $cell_array2 = $this->_cellToPackedRowcol($cell2);
         if (PEAR::isError($cell_array2)) {
             return $cell_array2;
         }
-        list($row2, $col2) = $cell_array2; //$this->_cellToPackedRowcol($cell2);
+        list($row2, $col2) = $cell_array2;
     
         // The ptg value depends on the class of the ptg.
         if ($class == 0) {
@@ -775,7 +777,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         }
         else {
             // TODO: use real error codes
-            return new PEAR_Error("Unknown class $class", 0, PEAR_ERROR_DIE);
+            $this->raiseError("Unknown class $class");
         }
         return $ptgRef.$row.$col;
     }
@@ -841,11 +843,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
  
             $sheet1 = $this->_getSheetIndex($sheet_name1);
             if ($sheet1 == -1) {
-                return new PEAR_Error("Unknown sheet name $sheet_name1 in formula");
+                $this->raiseError("Unknown sheet name $sheet_name1 in formula");
             }
             $sheet2 = $this->_getSheetIndex($sheet_name2);
             if ($sheet2 == -1) {
-                return new PEAR_Error("Unknown sheet name $sheet_name2 in formula");
+                $this->raiseError("Unknown sheet name $sheet_name2 in formula");
             }
  
             // Reverse max and min sheet numbers if necessary
@@ -857,7 +859,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             $sheet1 = $this->_getSheetIndex($ext_ref);
             if ($sheet1 == -1) {
-                return new PEAR_Error("Unknown sheet name $ext_ref in formula");
+                $this->raiseError("Unknown sheet name $ext_ref in formula");
             }
             $sheet2 = $sheet1;
         }
@@ -910,10 +912,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     {
         list($row, $col, $row_rel, $col_rel) = $this->_cellToRowcol($cell);
         if ($col >= 256) {
-            return new PEAR_Error("Column in: $cell greater than 255");
+            $this->raiseError("Column in: $cell greater than 255");
         }
         if ($row >= 16384) {
-            return new PEAR_Error("Row in: $cell greater than 16384 ");
+            $this->raiseError("Row in: $cell greater than 16384 ");
         }
     
         // Set the high bits to indicate if row or col are relative.
@@ -951,7 +953,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
 
         //list($row, $col, $row_rel, $col_rel) = $this->_cellToRowcol($cell);
         if (($row1 >= 16384) or ($row2 >= 16384)) {
-            return new PEAR_Error("Row in: $range greater than 16384 ");
+            $this->raiseError("Row in: $range greater than 16384 ");
         }
     
         // Set the high bits to indicate if rows are relative.
@@ -1369,7 +1371,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             $this->_advance();         // eat the "("
             $result = $this->_parenthesizedExpression();
             if ($this->_current_token != SPREADSHEET_EXCEL_WRITER_CLOSE) {
-                return new PEAR_Error("')' token expected.");
+                $this->raiseError("')' token expected.");
             }
             $this->_advance();         // eat the ")"
             return $result;
@@ -1422,7 +1424,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             $result = $this->_func();
             return $result;
         }
-        return new PEAR_Error("Sintactic error: ".$this->_current_token.", lookahead: ".
+        $this->raiseError("Sintactic error: ".$this->_current_token.", lookahead: ".
                               $this->_lookahead.", current char: ".$this->_current_char);
     }
     
@@ -1446,8 +1448,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                     $this->_advance();  // eat the ","
                 }
                 else {
-                    return new PEAR_Error("Sintactic error: coma expected in ".
-                                          "function $function, {$num_args}º arg");
+                    $this->raiseError("Sintactic error: coma expected in ".
+                                      "function $function, {$num_args}º arg");
                 }
                 $result2 = $this->_condition();
                 if (PEAR::isError($result2)) {
@@ -1468,7 +1470,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $args = $this->_functions[$function][1];
         // If fixed number of args eg. TIME($i,$j,$k). Check that the number of args is valid.
         if (($args >= 0) and ($args != $num_args)) {
-            return new PEAR_Error("Incorrect number of arguments in function $function() ");
+            $this->raiseError("Incorrect number of arguments in function $function() ");
         }
     
         $result = $this->_createTree($function, $result, $num_args);
