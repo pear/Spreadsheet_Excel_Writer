@@ -37,8 +37,9 @@ require_once('Spreadsheet/Excel/Writer/Workbook.php');
 /**
 * Class for writing Excel Spreadsheets. This class should change COMPLETELY.
 *
-* @author Xavier Noguer <xnoguer@rezebra.com>
-* @package Spreadsheet_Excel_Writer
+* @author   Xavier Noguer <xnoguer@rezebra.com>
+* @category File Formats
+* @package  Spreadsheet_Excel_Writer
 */
 
 class Spreadsheet_Excel_Writer extends Workbook

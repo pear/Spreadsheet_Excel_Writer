@@ -46,8 +46,9 @@ require_once('PEAR.php');
 * formula entered into a cell; one describes the size and location of a 
 * window into a document; another describes a picture format.
 *
-* @author Xavier Noguer <xnoguer@rezebra.com>
-* @package Spreadsheet_Excel_Writer
+* @author   Xavier Noguer <xnoguer@rezebra.com>
+* @category File Formats
+* @package  Spreadsheet_Excel_Writer
 */
 
 class BIFFwriter extends PEAR

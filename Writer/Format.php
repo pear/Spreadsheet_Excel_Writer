@@ -35,8 +35,9 @@
 /**
 * Class for generating Excel XF records (formats)
 *
-* @author Xavier Noguer <xnoguer@rezebra.com>
-* @package Spreadsheet_Excel_Writer
+* @author   Xavier Noguer <xnoguer@rezebra.com>
+* @category File Formats
+* @package  Spreadsheet_Excel_Writer
 */
 
 class Format extends PEAR

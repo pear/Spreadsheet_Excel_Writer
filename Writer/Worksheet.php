@@ -38,8 +38,9 @@ require_once('Spreadsheet/Excel/Writer/BIFFwriter.php');
 /**
 * Class for generating Excel Spreadsheets
 *
-* @author Xavier Noguer <xnoguer@rezebra.com>
-* @package Spreadsheet_Excel_Writer
+* @author   Xavier Noguer <xnoguer@rezebra.com>
+* @category File Formats
+* @package  Spreadsheet_Excel_Writer
 */
 
 class Worksheet extends BIFFwriter
