@@ -926,5 +926,15 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     {
         $this->_font_script = $script;
     }
+
+    /**
+    * Unlocks a cell. Useful for unprotecting particular cells of a protected sheet.
+    *
+    * @access public
+    */
+    function setUnLocked()
+    {
+        $this->_locked = 0;
+    }
 }
 ?>
