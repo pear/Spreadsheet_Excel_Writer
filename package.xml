@@ -27,9 +27,11 @@
     <version>0.3</version>
     <date>2003-05-02</date>
     <notes>
+     New features:
       -added support for row ranges (JT Hughes)
-      -added method method Format::setUnLocked()
+      -added method Format::setUnLocked() (Ajit Dixit)
       -added Worksheet::writeRow() and Worksheet::writeCol()
+     Bug fixes:
       -fixed problem with unparenthesized expresions in formulas (Brent Laminack)
       -fixed problems with non ISO-8859-1 characters (KUBO Atsuhiro)
       -fixed swapping of columns in formulas (JT Hughes)
