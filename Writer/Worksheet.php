@@ -423,8 +423,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->print_colmin     = NULL;
         $this->print_colmax     = NULL;
     
-        $this->_print_gridlines = 1;
-        $this->_print_headers   = 0;
+        $this->_print_gridlines  = 1;
+        $this->_screen_gridlines = 1;
+        $this->_print_headers    = 0;
     
         $this->_fit_page        = 0;
         $this->_fit_width       = 0;
@@ -1016,6 +1017,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_print_gridlines = 0;
     }
     
+    /**
+    * Set the option to hide gridlines on the worksheet (as seen on the screen). 
+    *
+    * @access public
+    */
+    function hideScreenGridlines()
+    {
+        $this->_screen_gridlines = 0;
+    }
+ 
     /**
     * Set the option to print the row and column headers on the printed page.
     *
@@ -2198,7 +2209,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         // The options flags that comprise $grbit
         $fDspFmla       = 0;                     // 0 - bit
-        $fDspGrid       = 1;                     // 1
+        $fDspGrid       = $this->_screen_gridlines; // 1
         $fDspRwCol      = 1;                     // 2
         $fFrozen        = $this->_frozen;        // 3
         $fDspZeros      = 1;                     // 4
