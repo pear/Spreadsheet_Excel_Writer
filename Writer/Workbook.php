@@ -154,6 +154,12 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     var $_codepage;
 
     /**
+    * The country code used for localization
+    * @var integer
+    */
+    var $_country_code;
+
+    /**
     * Class constructor
     *
     * @param string filename for storing the workbook. "-" for writing to stdout.
@@ -180,6 +186,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_formats          = array();
         $this->_palette          = array();
         $this->_codepage         = 0x04E4; // FIXME: should change for BIFF8
+        $this->_country_code     = -1;
     
         // Add the default format for hyperlinks
         $this->_url_format =& $this->addFormat(array('color' => 'blue', 'underline' => 1));
@@ -266,6 +273,18 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                 $this->_formats[$i]->_BIFF_version = $version;
             }
         }
+    }
+
+    /**
+    * Set the country identifier for the workbook
+    *
+    * @access public
+    * @param integer $code Is the international calling country code for the
+    *                      chosen country.
+    */
+    function setCountry($code)
+    {
+        $this->_country_code = $code;
     }
 
     /**
@@ -499,7 +518,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             $this->_storeBoundsheet($this->_worksheets[$i]->name,$this->_worksheets[$i]->offset);
         }
  
-        /* TODO: store COUNTRY record? */
+        if ($this->_country_code != -1) {
+            $this->_storeCountry();
+        }
 
         if ($this->_BIFF_version == 0x0600) {
             //$this->_storeSupbookInternal();
@@ -569,6 +590,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             // add the length of the SST
             /* TODO: check this works for a lot of strings (> 8224 bytes) */
             $offset += $this->_calculateSharedStringsSizes();
+            if ($this->_country_code != -1) {
+                $offset += 8; // adding COUNTRY record
+            }
             // add the lenght of SUPBOOK, EXTERNSHEET and NAME records
             //$offset += 8; // FIXME: calculate real value when storing the records
         }
@@ -1200,8 +1224,23 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $data              .= pack("C", 0x10);
         $this->_append($header.$data);
     }
-    
-    
+
+    /**
+    * Stores the COUNTRY record for localization
+    *
+    * @access private
+    */
+    function _storeCountry()
+    {
+        $record          = 0x008C;    // Record identifier
+        $length          = 4;         // Number of bytes to follow
+
+        $header = pack('vv',  $record, $length);
+        /* using the same country code always for simplicity */
+        $data = pack('vv', $this->_country_code, $this->_country_code);
+        $this->_append($header.$data);
+    }
+
     /**
     * Stores the PALETTE biff record.
     *
