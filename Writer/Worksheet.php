@@ -140,12 +140,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     var $_selection;
 
     /**
-    * Array containing the selected area for the worksheet
-    * @var array
-    */
-    var $_selection;
-
-    /**
     * Array containing the panes for the worksheet
     * @var array
     */
