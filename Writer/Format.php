@@ -90,6 +90,66 @@ class Format extends PEAR
     var $_rotation;
 
     /**
+    * The cell's foreground color.
+    * @var integer
+    */
+    var $_fg_color;
+
+    /**
+    * The cell's background color.
+    * @var integer
+    */
+    var $_bg_color;
+
+    /**
+    * Style of the bottom border of the cell
+    * @var integer
+    */
+    var $_bottom;
+
+    /**
+    * Color of the bottom border of the cell.
+    * @var integer
+    */
+    var $_bottom_color;
+
+    /**
+    * Style of the top border of the cell
+    * @var integer
+    */
+    var $_top;
+
+    /**
+    * Color of the top border of the cell.
+    * @var integer
+    */
+    var $_top_color;
+
+    /**
+    * Style of the left border of the cell
+    * @var integer
+    */
+    var $_left;
+
+    /**
+    * Color of the left border of the cell.
+    * @var integer
+    */
+    var $_left_color;
+
+    /**
+    * Style of the right border of the cell
+    * @var integer
+    */
+    var $_right;
+
+    /**
+    * Color of the right border of the cell.
+    * @var integer
+    */
+    var $_right_color;
+
+    /**
     * Constructor
     *
     * @access public
@@ -125,20 +185,20 @@ class Format extends PEAR
         $this->_text_justlast  = 0;
         $this->_rotation       = 0;
                                
-        $this->fg_color        = 0x40;
-        $this->bg_color        = 0x41;
+        $this->_fg_color       = 0x40;
+        $this->_bg_color       = 0x41;
                                
         $this->pattern         = 0;
                                
-        $this->bottom          = 0;
-        $this->top             = 0;
-        $this->left            = 0;
-        $this->right           = 0;
+        $this->_bottom         = 0;
+        $this->_top            = 0;
+        $this->_left           = 0;
+        $this->_right          = 0;
                                
-        $this->bottom_color    = 0x40;
-        $this->top_color       = 0x40;
-        $this->left_color      = 0x40;
-        $this->right_color     = 0x40;
+        $this->_bottom_color   = 0x40;
+        $this->_top_color      = 0x40;
+        $this->_left_color     = 0x40;
+        $this->_right_color    = 0x40;
     
         // Set properties passed to Workbook::addFormat()
         foreach($properties as $property => $value)
@@ -173,27 +233,27 @@ class Format extends PEAR
         $atr_num     = ($this->_num_format != 0)?1:0;
         $atr_fnt     = ($this->font_index != 0)?1:0;
         $atr_alc     = ($this->_text_wrap)?1:0;
-        $atr_bdr     = ($this->bottom   ||
-                        $this->top      ||
-                        $this->left     ||
-                        $this->right)?1:0;
-        $atr_pat     = (($this->fg_color != 0x40) ||
-                        ($this->bg_color != 0x41) ||
+        $atr_bdr     = ($this->_bottom   ||
+                        $this->_top      ||
+                        $this->_left     ||
+                        $this->_right)?1:0;
+        $atr_pat     = (($this->_fg_color != 0x40) ||
+                        ($this->_bg_color != 0x41) ||
                         $this->pattern)?1:0;
         $atr_prot    = 0;
     
         // Zero the default border colour if the border has not been set.
-        if ($this->bottom == 0) {
-            $this->bottom_color = 0;
+        if ($this->_bottom == 0) {
+            $this->_bottom_color = 0;
             }
-        if ($this->top  == 0) {
-            $this->top_color = 0;
+        if ($this->_top  == 0) {
+            $this->_top_color = 0;
             }
-        if ($this->right == 0) {
-            $this->right_color = 0;
+        if ($this->_right == 0) {
+            $this->_right_color = 0;
             }
-        if ($this->left == 0) {
-            $this->left_color = 0;
+        if ($this->_left == 0) {
+            $this->_left_color = 0;
             }
     
         $record         = 0x00E0;              // Record identifier
@@ -214,20 +274,20 @@ class Format extends PEAR
         $align         |= $atr_pat                << 14;
         $align         |= $atr_prot               << 15;
     
-        $icv            = $this->fg_color;           // fg and bg pattern colors
-        $icv           |= $this->bg_color      << 7;
+        $icv            = $this->_fg_color;           // fg and bg pattern colors
+        $icv           |= $this->_bg_color      << 7;
     
         $fill           = $this->pattern;            // Fill and border line style
-        $fill          |= $this->bottom        << 6;
-        $fill          |= $this->bottom_color  << 9;
+        $fill          |= $this->_bottom        << 6;
+        $fill          |= $this->_bottom_color  << 9;
     
-        $border1        = $this->top;                // Border line style and color
-        $border1       |= $this->left          << 3;
-        $border1       |= $this->right         << 6;
-        $border1       |= $this->top_color     << 9;
+        $border1        = $this->_top;                // Border line style and color
+        $border1       |= $this->_left          << 3;
+        $border1       |= $this->_right         << 6;
+        $border1       |= $this->_top_color     << 9;
     
-        $border2        = $this->left_color;         // Border color
-        $border2       |= $this->right_color   << 7;
+        $border2        = $this->_left_color;         // Border color
+        $border2       |= $this->_right_color   << 7;
     
         $header      = pack("vv",       $record, $length);
         $data        = pack("vvvvvvvv", $ifnt, $ifmt, $style, $align,
@@ -460,7 +520,7 @@ class Format extends PEAR
     */
     function setBottom($style)
     {
-        $this->bottom = $style;
+        $this->_bottom = $style;
     }
     
     /**
@@ -471,7 +531,7 @@ class Format extends PEAR
     */
     function setTop($style)
     {
-        $this->top = $style;
+        $this->_top = $style;
     }
     
     /**
@@ -482,7 +542,7 @@ class Format extends PEAR
     */
     function setLeft($style)
     {
-        $this->left = $style;
+        $this->_left = $style;
     }
     
     /**
@@ -493,7 +553,7 @@ class Format extends PEAR
     */
     function setRight($style)
     {
-        $this->right = $style;
+        $this->_right = $style;
     }
     
     
@@ -540,7 +600,7 @@ class Format extends PEAR
     function setBottomColor($color)
     {
         $value = $this->_getColor($color);
-        $this->bottom_color = $value;
+        $this->_bottom_color = $value;
     }
     
     /**
@@ -552,7 +612,7 @@ class Format extends PEAR
     function setTopColor($color)
     {
         $value = $this->_getColor($color);
-        $this->top_color = $value;
+        $this->_top_color = $value;
     }
     
     /**
@@ -564,7 +624,7 @@ class Format extends PEAR
     function setLeftColor($color)
     {
         $value = $this->_getColor($color);
-        $this->left_color = $value;
+        $this->_left_color = $value;
     }
     
     /**
@@ -576,7 +636,7 @@ class Format extends PEAR
     function setRightColor($color)
     {
         $value = $this->_getColor($color);
-        $this->right_color = $value;
+        $this->_right_color = $value;
     }
     
     
@@ -589,7 +649,7 @@ class Format extends PEAR
     function setFgColor($color)
     {
         $value = $this->_getColor($color);
-        $this->fg_color = $value;
+        $this->_fg_color = $value;
     }
       
     /**
@@ -601,7 +661,7 @@ class Format extends PEAR
     function setBgColor($color)
     {
         $value = $this->_getColor($color);
-        $this->bg_color = $value;
+        $this->_bg_color = $value;
     }
     
     /**
