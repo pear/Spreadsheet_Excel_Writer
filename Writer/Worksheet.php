@@ -1068,6 +1068,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         } else {
             $retval = new PEAR_Error('$val needs to be an array');
         }
+        return($retval);
     }
       
     /**
@@ -1088,6 +1089,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         } else {
             $retval = new PEAR_Error('$val needs to be an array');
         }
+        return($retval);
     }
     
     /**
