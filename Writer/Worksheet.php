@@ -344,6 +344,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     var $_str_table;
 
     /**
+    * Merged cell ranges
+    * @var array
+    */
+    var $_merged_ranges;
+
+    /**
     * Constructor
     *
     * @param string  $name         The name of the new worksheet
@@ -441,6 +447,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_outline_below     = 1;
         $this->_outline_right     = 1;
         $this->_outline_on        = 1;
+
+        $this->_merged_ranges     = array();
 
         $this->_dv                = array();
 
@@ -581,6 +589,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $this->_storePanes($this->_panes);
         }
         $this->_storeSelection($this->_selection);
+        $this->_storeMergedCells();
         /* TODO: add data validity */
         /*if ($this->_BIFF_version == 0x0600) {
             $this->_storeDataValidity();
@@ -619,20 +628,39 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             if ($this->_using_tmpfile) {
                 fseek($fh, 0);
             }
-            return($tmp);
+            return $tmp;
         }
         // Return data stored on disk
         if ($this->_using_tmpfile)
         {
             if ($tmp = fread($this->_filehandle, $buffer)) {
-                return($tmp);
+                return $tmp;
             }
         }
     
         // No data to return
-        return('');
+        return '';
     }
-    
+ 
+    /**
+    * Sets a merged cell range
+    *
+    * @access public
+    * @param integer $first_row First row of the area to merge
+    * @param integer $first_col First column of the area to merge
+    * @param integer $last_row  Last row of the area to merge
+    * @param integer $last_col  Last column of the area to merge
+    */
+    function setMerge($first_row, $first_col, $last_row, $last_col)
+    {
+        if (($last_row < $first_row) or ($last_col < $first_col)) {
+            return;
+        }
+        // don't check rowmin, rowmax, etc... because we don't know when this
+        // is going to be called
+        $this->_merged_ranges[] = array($first_row, $first_col, $last_row, $last_col);
+    }
+
     /**
     * Set this worksheet as a selected worksheet,
     * i.e. the worksheet has its tab highlighted.
@@ -2334,7 +2362,28 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
                                        $colFirst, $colLast);
         $this->_append($header.$data);
     }
-    
+ 
+    /**
+    * Store the MERGEDCELLS record for all ranges of merged cells
+    *
+    * @access private
+    */
+    function _storeMergedCells()
+    {
+        // if there are no merged cell ranges set, return
+        if (count($this->_merged_ranges) == 0) {
+            return;
+        }
+        $record   = 0x00E5;
+        $length   = 2 + count($this->_merged_ranges) * 8; 
+ 
+        $header   = pack('vv', $record, $length);
+        $data     = pack('v',  count($this->_merged_ranges));
+        foreach ($this->_merged_ranges as $range) {
+            $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
+        }
+        $this->_append($header.$data);
+    }
     
     /**
     * Write BIFF record EXTERNCOUNT to indicate the number of external sheet
