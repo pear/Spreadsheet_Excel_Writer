@@ -1148,8 +1148,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 }
                 // If it's a number (check that it's not a sheet name or range)
                 elseif (is_numeric($token) and 
-                        (!is_numeric($token.$this->_lookahead)) or ($this->_lookahead == '')) and
-                        ($this->_lookahead != '!') and (($this->_lookahead != ':')))
+                        (!is_numeric($token.$this->_lookahead) or ($this->_lookahead == '')) and
+                        ($this->_lookahead != '!') and ($this->_lookahead != ':'))
                 {
                     return $token;
                 }
