@@ -1379,14 +1379,15 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 else {
                     return($this->raiseError("Sintactic error: coma expected $num_args"));
                 }
-                $result2 = $this->_condition(); //$this->_expression();
+                $result2 = $this->_condition();
                 if($this->isError($result2)) {
                     return($result2);
                 }
                 $result = $this->_createTree('arg', $result, $result2);
             }
-            else {
-                $result2 = $this->_condition(); //$this->_expression();
+            else // first argument
+            {
+                $result2 = $this->_condition();
                 if($this->isError($result2)) {
                     return($result2);
                 }
