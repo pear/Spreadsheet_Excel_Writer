@@ -158,7 +158,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->Spreadsheet_Excel_Writer_BIFFwriter();
     
         $this->_filename         = $filename;
-        $this->_parser           = new Spreadsheet_Excel_Writer_Parser($this->_byte_order);
+        $this->_parser           =& new Spreadsheet_Excel_Writer_Parser($this->_byte_order);
         $this->_1904             = 0;
         $this->_activesheet      = 0;
         $this->_firstsheet       = 0;
@@ -181,6 +181,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
     /**
     * Calls finalization methods.
+    * This method should always be the last one to be called on every workbook
     *
     * @access public
     */
@@ -222,10 +223,12 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
     /**
     * Add a new worksheet to the Excel workbook.
+    * If no name is given the name of the worksheet will be Sheeti$i, with
+    * $i in [1..].
     *
     * @access public
     * @param string $name the optional name of the worksheet
-    * @return &iSpreadsheet_Excel_Writer_Worksheet reference to a worksheet object
+    * @return &Spreadsheet_Excel_Writer_Worksheet reference to a worksheet object
     */
     function &addWorksheet($name = '')
     {
@@ -264,8 +267,8 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Also, pass any properties to the Format constructor.
     *
     * @access public
-    * @param array $properties array with properties for initializing the format (see Format.php)
-    * @return &Spreadsheet_Excel_Writer_Format reference to an XF format
+    * @param array $properties array with properties for initializing the format.
+    * @return &Spreadsheet_Excel_Writer_Format reference to an Excel Format
     */
     function &addFormat($properties = array())
     {
