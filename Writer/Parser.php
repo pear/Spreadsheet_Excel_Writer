@@ -1306,7 +1306,7 @@ class Parser extends PEAR
             return($result);
         }
         // if it's a reference
-        if (eregi("^[A-Z][0-9]+$",$this->_current_token))
+        if (eregi("^[A-I]?[A-Z][0-9]+$",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
@@ -1320,8 +1320,8 @@ class Parser extends PEAR
             return($result);
         }
         // if it's a range
-        elseif (eregi("^[A-Z]?[A-Z][0-9]+:[A-Z]?[A-Z][0-9]+$",$this->_current_token) or 
-                eregi("^[A-Z]?[A-Z][0-9]+\.\.[A-Z]?[A-Z][0-9]+$",$this->_current_token))
+        elseif (eregi("^[A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$",$this->_current_token) or 
+                eregi("^[A-I]?[A-Z][0-9]+\.\.[A-I]?[A-Z][0-9]+$",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
