@@ -148,14 +148,27 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     var $_ext_sheets;
 
     /**
+    * Array of sheet references in the form of REF structures
+    * @var array
+    */
+    var $_references;
+
+    /**
+    * The BIFF version for the workbook
+    * @var integer
+    */
+    var $_BIFF_version;
+
+    /**
     * The class constructor
     *
     * @param integer $byte_order The byte order (Little endian or Big endian) of the architecture
-                                 (optional). 1 => big endian, 0 (default) => little endian. 
+                                 (optional). 1 => big endian, 0 (default) little endian.
     */
-    function Spreadsheet_Excel_Writer_Parser($byte_order = 0)
+    function Spreadsheet_Excel_Writer_Parser($byte_order, $biff_version)
     {
         $this->_current_char  = 0;
+        $this->_BIFF_version  = $biff_version;
         $this->_current_token = '';       // The token we are working on.
         $this->_formula       = "";       // The formula to parse.
         $this->_lookahead     = '';       // The character ahead of the current char.
@@ -163,6 +176,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $this->_initializeHashes();      // Initialize the hashes: ptg's and function's ptg's
         $this->_byte_order = $byte_order; // Little Endian or Big Endian
         $this->_ext_sheets = array();
+        $this->_references = array();
     }
     
     /**
@@ -697,10 +711,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
  
     /**
     * Convert an Excel 3d range such as "Sheet1!A1:D4" or "Sheet1:Sheet2!A1:D4" to
-    * a ptgArea3dV.
+    * a ptgArea3d.
     *
     * @access private
     * @param string $token An Excel range in the Sheet1!A1:A2 format.
+    * @return mixed The packed ptgArea3d token on success, PEAR_Error on failure.
     */
     function _convertRange3d($token)
     {
@@ -709,12 +724,20 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         // Split the ref at the ! symbol
         list($ext_ref, $range) = split('!', $token);
  
-        // Convert the external reference part
-        $ext_ref = $this->_packExtRef($ext_ref);
-        if (PEAR::isError($ext_ref)) {
-            return $ext_ref;
+        // Convert the external reference part (different for BIFF8)
+        if ($this->_BIFF_version == 0x0500) {
+            $ext_ref = $this->_packExtRef($ext_ref);
+            if (PEAR::isError($ext_ref)) {
+                return $ext_ref;
+            }
         }
- 
+        elseif ($this->_BIFF_version == 0x0600) {
+             $ext_ref = $this->_getRefIndex($ext_ref);
+             if (PEAR::isError($ext_ref)) {
+                 return $ext_ref;
+             }
+        }
+
         // Split the range into 2 cell refs
         list($cell1, $cell2) = split(':', $range);
  
@@ -732,7 +755,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             }
             list($row2, $col2) = $cell_array2;
         }
-        else { // It's a columns range (like 26:27)
+        else { // It's a rows range (like 26:27)
              $cells_array = $this->_rangeToPackedRange($cell1.':'.$cell2);
              if (PEAR::isError($cells_array)) {
                  return $cells_array;
@@ -794,11 +817,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     
     /**
     * Convert an Excel 3d reference such as "Sheet1!A1" or "Sheet1:Sheet2!A1" to a
-    * ptgRef3dV.
+    * ptgRef3d.
     *
     * @access private
     * @param string $cell An Excel cell reference
-    * @return string The cell in packed() format with the corresponding ptg
+    * @return mixed The packed ptgRef3d token on success, PEAR_Error on failure.
     */
     function _convertRef3d($cell)
     {
@@ -807,12 +830,20 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         // Split the ref at the ! symbol
         list($ext_ref, $cell) = split('!', $cell);
  
-        // Convert the external reference part
-        $ext_ref = $this->_packExtRef($ext_ref);
-        if (PEAR::isError($ext_ref)) {
-            return $ext_ref;
+        // Convert the external reference part (different for BIFF8)
+        if ($this->_BIFF_version == 0x0500) {
+            $ext_ref = $this->_packExtRef($ext_ref);
+            if (PEAR::isError($ext_ref)) {
+                return $ext_ref;
+            }
         }
- 
+        elseif ($this->_BIFF_version == 0x0600) {
+            $ext_ref = $this->_getRefIndex($ext_ref);
+            if (PEAR::isError($ext_ref)) {
+                return $ext_ref;
+            }
+        }
+
         // Convert the cell reference part
         list($row, $col) = $this->_cellToPackedRowcol($cell);
  
@@ -881,12 +912,77 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     }
 
     /**
+    * Look up the REF index that corresponds to an external sheet name 
+    * (or range). If it doesn't exist yet add it to the workbook's references
+    * array. It assumes all sheet names given must exist.
+    *
+    * @access private
+    * @param string $ext_ref The name of the external reference
+    * @return mixed The reference index in packed() format on success,
+    *               PEAR_Error on failure
+    */
+    function _getRefIndex($ext_ref)
+    {
+        $ext_ref = preg_replace("/^'/", '', $ext_ref); // Remove leading  ' if any.
+        $ext_ref = preg_replace("/'$/", '', $ext_ref); // Remove trailing ' if any.
+ 
+        // Check if there is a sheet range eg., Sheet1:Sheet2.
+        if (preg_match("/:/", $ext_ref))
+        {
+            list($sheet_name1, $sheet_name2) = split(':', $ext_ref);
+ 
+            $sheet1 = $this->_getSheetIndex($sheet_name1);
+            if ($sheet1 == -1) {
+                return $this->raiseError("Unknown sheet name $sheet_name1 in formula");
+            }
+            $sheet2 = $this->_getSheetIndex($sheet_name2);
+            if ($sheet2 == -1) {
+                return $this->raiseError("Unknown sheet name $sheet_name2 in formula");
+            }
+ 
+            // Reverse max and min sheet numbers if necessary
+            if ($sheet1 > $sheet2) {
+                list($sheet1, $sheet2) = array($sheet2, $sheet1);
+            }
+        }
+        else // Single sheet name only.
+        {
+            $sheet1 = $this->_getSheetIndex($ext_ref);
+            if ($sheet1 == -1) {
+                return $this->raiseError("Unknown sheet name $ext_ref in formula");
+            }
+            $sheet2 = $sheet1;
+        }
+ 
+        // assume all references belong to this document
+        $supbook_index = 0x00;
+        $ref = pack('vvv', $supbook_index, $sheet1, $sheet2);
+        $total_references = count($this->_references);
+        $index = -1;
+        for ($i = 0; $i < $total_references; $i++)
+        {
+            if ($ref == $this->_references[$i]) {
+                $index = $i;
+                break;
+            }
+        }
+        // if REF was not found add it to references array
+        if ($index == -1)
+        {
+            $this->_references[$total_references] = $ref;
+            $index = $total_references;
+        }
+
+        return pack('v', $index);
+    }
+
+    /**
     * Look up the index that corresponds to an external sheet name. The hash of
     * sheet names is updated by the addworksheet() method of the 
     * Spreadsheet_Excel_Writer_Workbook class.
     *
     * @access private
-    * @return integer
+    * @return integer The sheet index, -1 if the sheet was not found
     */
     function _getSheetIndex($sheet_name)
     {
@@ -900,9 +996,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
 
     /**
     * This method is used to update the array of sheet names. It is
-    * called by the addWorksheet() method of the Spreadsheet_Excel_Writer_Workbook class.
+    * called by the addWorksheet() method of the
+    * Spreadsheet_Excel_Writer_Workbook class.
     *
-    * @access private
+    * @access public
+    * @see Spreadsheet_Excel_Writer_Workbook::addWorksheet()
     * @param string  $name  The name of the worksheet being added
     * @param integer $index The index of the worksheet being added
     */
@@ -912,7 +1010,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     }
 
     /**
-    * pack() row and column into the required 3 byte format.
+    * pack() row and column into the required 3 or 4 byte format.
     *
     * @access private
     * @param string $cell The Excel cell reference to be packed
@@ -925,23 +1023,30 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         if ($col >= 256) {
             return $this->raiseError("Column in: $cell greater than 255");
         }
+        // FIXME: change for BIFF8
         if ($row >= 16384) {
             return $this->raiseError("Row in: $cell greater than 16384 ");
         }
     
         // Set the high bits to indicate if row or col are relative.
-        $row    |= $col_rel << 14;
-        $row    |= $row_rel << 15;
-    
+        if ($this->_BIFF_version == 0x0500) {
+            $row    |= $col_rel << 14;
+            $row    |= $row_rel << 15;
+            $col     = pack('C', $col);
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $col    |= $col_rel << 14;
+            $col    |= $row_rel << 15;
+            $col     = pack('v', $col);
+        }
         $row     = pack('v', $row);
-        $col     = pack('C', $col);
     
         return array($row, $col);
     }
     
     /**
-    * pack() row range into the required 3 byte format.
-    * Just using maximun col/rows, which is probably not the correct solution
+    * pack() row range into the required 3 or 4 byte format.
+    * Just using maximum col/rows, which is probably not the correct solution
     *
     * @access private
     * @param string $range The Excel range to be packed
@@ -960,21 +1065,28 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $row2--;
         // Trick poor inocent Excel
         $col1 = 0;
-        $col2 = 16383; // maximum possible value for Excel 5 (change this!!!)
+        $col2 = 16383; // FIXME: maximum possible value for Excel 5 (change this!!!)
 
-        //list($row, $col, $row_rel, $col_rel) = $this->_cellToRowcol($cell);
+        // FIXME: this changes for BIFF8
         if (($row1 >= 16384) or ($row2 >= 16384)) {
             return $this->raiseError("Row in: $range greater than 16384 ");
         }
     
         // Set the high bits to indicate if rows are relative.
-        $row1    |= $row1_rel << 14;
-        $row2    |= $row2_rel << 15;
-    
+        if ($this->_BIFF_version == 0x0500) {
+            $row1    |= $row1_rel << 14; // FIXME: probably a bug
+            $row2    |= $row2_rel << 15;
+            $col1     = pack('C', $col1);
+            $col2     = pack('C', $col2);
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $col1    |= $row1_rel << 15;
+            $col2    |= $row2_rel << 15;
+            $col1     = pack('v', $col1);
+            $col2     = pack('v', $col2);
+        }
         $row1     = pack('v', $row1);
         $row2     = pack('v', $row2);
-        $col1     = pack('C', $col1);
-        $col2     = pack('C', $col2);
     
         return array($row1, $col1, $row2, $col2);
     }
@@ -1284,6 +1396,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     /**
     * It parses a expression. It assumes the following rule:
     * Expr -> Term [("+" | "-") Term]
+    *      -> "string"
+    *      -> "-" Term
     *
     * @access private
     * @return mixed The parsed ptg'd tree on success, PEAR_Error on failure
@@ -1291,10 +1405,16 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     function _expression()
     {
         // If it's a string return a string node
-        if (ereg("^\"[^\"]{0,255}\"$", $this->_current_token))
-        {
+        if (ereg("^\"[^\"]{0,255}\"$", $this->_current_token)) {
             $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
+            return $result;
+        }
+        // catch "-" Term
+        elseif ($this->_current_token == SPREADSHEET_EXCEL_WRITER_SUB) {
+            $this->_advance();
+            $result2 = $this->_expression();
+            $result = $this->_createTree('ptgUminus', $result2, '');
             return $result;
         }
         $result = $this->_term();
