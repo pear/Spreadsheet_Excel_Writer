@@ -160,6 +160,12 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     var $_country_code;
 
     /**
+    * The temporary dir for storing the OLE file
+    * @var string
+    */
+    var $_tmp_dir;
+
+    /**
     * Class constructor
     *
     * @param string filename for storing the workbook. "-" for writing to stdout.
@@ -194,6 +200,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_str_unique      = 0;
         $this->_str_table       = array();
         $this->_setPaletteXl97();
+        $this->_tmp_dir         = '';
     }
     
     /**
@@ -540,7 +547,23 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
         return true;
     }
-    
+ 
+    /**
+    * Sets the temp dir used for storing the OLE file
+    *
+    * @access public
+    * @param string $dir The dir to be used as temp dir
+    * @return true if given dir is valid, false otherwise
+    */
+    function setTempDir($dir)
+    {
+        if (is_dir($dir)) {
+            $this->_tmp_dir = $dir;
+            return true;
+        }
+        return false;
+    }
+
     /**
     * Store the workbook in an OLE container
     *
@@ -550,6 +573,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     function _storeOLEFile()
     {
         $OLE = new OLE_PPS_File(OLE::Asc2Ucs('Book'));
+        if ($this->_tmp_dir != '') {
+            $OLE->setTempDir($this->_tmp_dir);
+        }
         $res = $OLE->init();
         if ($this->isError($res)) {
             return $this->raiseError("OLE Error: ".$res->getMessage());
@@ -563,6 +589,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             }
         }
         $root = new OLE_PPS_Root(time(), time(), array($OLE));
+        if ($this->_tmp_dir != '') {
+            $root->setTempDir($this->_tmp_dir);
+        }
         $res = $root->save($this->_filename);
         if ($this->isError($res)) {
             return $this->raiseError("OLE Error: ".$res->getMessage());
