@@ -55,7 +55,7 @@ class Workbook extends BIFFwriter
 
     /**
     * Formula parser
-    * @var object
+    * @var object Parser
     */
     var $_parser;
 
@@ -111,7 +111,7 @@ class Workbook extends BIFFwriter
 
     /**
     * The default XF format.
-    * @var object
+    * @var object Format
     */
     var $_tmp_format;
 
@@ -141,7 +141,7 @@ class Workbook extends BIFFwriter
 
     /**
     * The default format for URLs.
-    * @var object
+    * @var object Format
     */
     var $_url_format;
 

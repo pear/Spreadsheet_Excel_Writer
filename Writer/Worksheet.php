@@ -58,13 +58,13 @@ class Worksheet extends BIFFwriter
 
     /**
     * Reference to the (default) Format object for URLs
-    * @var object
+    * @var object Format
     */
     var $_url_format;
 
     /**
     * Reference to the parser used for parsing formulas
-    * @var object
+    * @var object Format
     */
     var $_parser;
 
@@ -916,7 +916,7 @@ class Worksheet extends BIFFwriter
     *
     * @access public
     * @param  integer $width  Maximun width of printed area in pages
-    * @param  integer $heigth Maximun heigth of printed area in pages
+    * @param  integer $height Maximun heigth of printed area in pages
     * @see setPrintScale()
     */
     function fitToPages($width, $height)
@@ -1050,7 +1050,7 @@ class Worksheet extends BIFFwriter
     /**
     * Returns an index to the XF record in the workbook
     *
-    * @param mixed $format The optional XF format
+    * @param mixed &$format The optional XF format
     * @return integer The XF record index
     */
     function _XF(&$format)

@@ -79,7 +79,7 @@ class Format extends PEAR
 
     /**
     * Index to the cell's color
-    * @var 
+    * @var integer
     */
     var $_color;
 

@@ -58,6 +58,7 @@ class Spreadsheet_Excel_Writer extends Workbook
     /**
     * Send HTTP headers for the Excel file.
     *
+    * @param string $filename The filename to use for HTTP headers
     * @access public
     */
     function send($filename)
