@@ -39,58 +39,106 @@
 * @package Spreadsheet_Excel_Writer
 */
 
-class Format
+class Format extends PEAR
 {
-  /**
-  * Constructor
-  *
-  * @access public
-  * @param integer $index the XF index for the format.
-  * @param array   $properties array with properties to be set on initialization.
-  */
+    /**
+    * The index given by the workbook when creating a new format.
+    * @var integer
+    */
+    var $_xf_index;
+
+    /**
+    * Height of font (1/20 of a point)
+    * @var integer
+    */
+    var $_size;
+
+    /**
+    * Bold style
+    * @var integer
+    */
+    var $_bold;
+
+    /**
+    * Bit specifiying if the font is italic.
+    * @var integer
+    */
+    var $_italic;
+
+    /**
+    * Index to the cell's color
+    * @var 
+    */
+    var $_color;
+
+    /**
+    * The text underline property
+    * @var integer
+    */
+    var $_underline;
+
+    /**
+    * Bit specifiying if the font has strikeout.
+    * @var integer
+    */
+    var $_font_strikeout;
+
+    /**
+    * The two bits specifying the text rotation.
+    * @var integer
+    */
+    var $_rotation;
+
+    /**
+    * Constructor
+    *
+    * @access public
+    * @param integer $index the XF index for the format.
+    * @param array   $properties array with properties to be set on initialization.
+    */
     function Format($index = 0,$properties =  array())
     {
-        $this->xf_index       = $index;
-    
-        $this->font_index     = 0;
-        $this->font           = 'Arial';
-        $this->size           = 10;
-        $this->bold           = 0x0190;
-        $this->_italic        = 0;
-        $this->color          = 0x7FFF;
-        $this->_underline     = 0;
-        $this->font_strikeout = 0;
-        $this->font_outline   = 0;
-        $this->font_shadow    = 0;
-        $this->font_script    = 0;
-        $this->font_family    = 0;
-        $this->font_charset   = 0;
-    
-        $this->_num_format    = 0;
-    
-        $this->hidden         = 0;
-        $this->locked         = 1;
-    
-        $this->_text_h_align  = 0;
-        $this->_text_wrap     = 0;
-        $this->text_v_align   = 2;
-        $this->text_justlast  = 0;
-        $this->rotation       = 0;
-    
-        $this->fg_color       = 0x40;
-        $this->bg_color       = 0x41;
-    
-        $this->pattern        = 0;
-    
-        $this->bottom         = 0;
-        $this->top            = 0;
-        $this->left           = 0;
-        $this->right          = 0;
-    
-        $this->bottom_color   = 0x40;
-        $this->top_color      = 0x40;
-        $this->left_color     = 0x40;
-        $this->right_color    = 0x40;
+        $this->_xf_index       = $index;
+                               
+        $this->font_index      = 0;
+        $this->font            = 'Arial';
+        $this->_size           = 10;
+        $this->_bold           = 0x0190;
+        $this->_italic         = 0;
+        $this->_color          = 0x7FFF;
+        $this->_underline      = 0;
+        $this->_font_strikeout = 0;
+        $this->font_outline    = 0;
+        $this->font_shadow     = 0;
+        $this->font_script     = 0;
+        $this->font_family     = 0;
+        $this->font_charset    = 0;
+                               
+        $this->_num_format     = 0;
+                               
+        $this->_hidden         = 0;
+        $this->_locked         = 1;
+                               
+        $this->_text_h_align   = 0;
+        $this->_text_wrap      = 0;
+        $this->_text_v_align   = 2;
+        $this->_text_justlast  = 0;
+        $this->_rotation       = 0;
+                               
+        $this->fg_color        = 0x40;
+        $this->bg_color        = 0x41;
+                               
+        $this->pattern         = 0;
+                               
+        $this->bottom          = 0;
+        $this->top             = 0;
+        $this->left            = 0;
+        $this->right           = 0;
+                               
+        $this->bottom_color    = 0x40;
+        $this->top_color       = 0x40;
+        $this->left_color      = 0x40;
+        $this->right_color     = 0x40;
     
         // Set properties passed to Workbook::addFormat()
         foreach($properties as $property => $value)
@@ -117,8 +165,8 @@ class Format
             $style = 0xFFF5;
         }
         else {
-            $style   = $this->locked;
-            $style  |= $this->hidden << 1;
+            $style   = $this->_locked;
+            $style  |= $this->_hidden << 1;
         }
     
         // Flags to indicate if attributes have been set.
@@ -155,10 +203,10 @@ class Format
         $ifmt           = $this->_num_format;  // Index to FORMAT record
     
         $align          = $this->_text_h_align;       // Alignment
-        $align         |= $this->_text_wrap    << 3;
-        $align         |= $this->text_v_align  << 4;
-        $align         |= $this->text_justlast << 7;
-        $align         |= $this->rotation      << 8;
+        $align         |= $this->_text_wrap     << 3;
+        $align         |= $this->_text_v_align  << 4;
+        $align         |= $this->_text_justlast << 7;
+        $align         |= $this->_rotation      << 8;
         $align         |= $atr_num                << 10;
         $align         |= $atr_fnt                << 11;
         $align         |= $atr_alc                << 12;
@@ -196,9 +244,9 @@ class Format
     */
     function getFont()
     {
-        $dyHeight   = $this->size * 20;    // Height of font (1/20 of a point)
-        $icv        = $this->color;        // Index to color palette
-        $bls        = $this->bold;         // Bold style
+        $dyHeight   = $this->_size * 20;   // Height of font (1/20 of a point)
+        $icv        = $this->_color;       // Index to color palette
+        $bls        = $this->_bold;        // Bold style
         $sss        = $this->font_script;  // Superscript/subscript
         $uls        = $this->_underline;   // Underline
         $bFamily    = $this->font_family;  // Font family
@@ -213,7 +261,7 @@ class Format
         if ($this->_italic) {
             $grbit     |= 0x02;
         }
-        if ($this->font_strikeout) {
+        if ($this->_font_strikeout) {
             $grbit     |= 0x08;
         }
         if ($this->font_outline) {
@@ -241,11 +289,11 @@ class Format
     */
     function getFontKey()
     {
-        $key  = "$this->font$this->size";
+        $key  = "$this->font$this->_size";
         $key .= "$this->font_script$this->_underline";
-        $key .= "$this->font_strikeout$this->bold$this->font_outline";
+        $key .= "$this->_font_strikeout$this->_bold$this->font_outline";
         $key .= "$this->font_family$this->font_charset";
-        $key .= "$this->font_shadow$this->color$this->_italic";
+        $key .= "$this->font_shadow$this->_color$this->_italic";
         $key  = str_replace(" ","_",$key);
         return ($key);
     }
@@ -257,7 +305,7 @@ class Format
     */
     function getXfIndex()
     {
-        return($this->xf_index);
+        return($this->_xf_index);
     }
     
     /**
@@ -351,17 +399,17 @@ class Format
         if ($location == 'equal_space') // For T.K.
             $this->_text_h_align = 7; 
         if ($location == 'top')
-            $this->text_v_align = 0; 
+            $this->_text_v_align = 0; 
         if ($location == 'vcentre')
-            $this->text_v_align = 1; 
+            $this->_text_v_align = 1; 
         if ($location == 'vcenter')
-            $this->text_v_align = 1; 
+            $this->_text_v_align = 1; 
         if ($location == 'bottom')
-            $this->text_v_align = 2; 
+            $this->_text_v_align = 2; 
         if ($location == 'vjustify')
-            $this->text_v_align = 3; 
+            $this->_text_v_align = 3; 
         if ($location == 'vequal_space') // For T.K.
-            $this->text_v_align = 4; 
+            $this->_text_v_align = 4; 
     }
     
     /**
@@ -396,7 +444,7 @@ class Format
         if($weight >  0x3E8) {
             $weight = 0x190;  // Upper bound
         }
-        $this->bold = $weight;
+        $this->_bold = $weight;
     }
     
     
@@ -565,7 +613,7 @@ class Format
     function setColor($color)
     {
         $value = $this->_getColor($color);
-        $this->color = $value;
+        $this->_color = $value;
     }
     
     /**
@@ -609,7 +657,7 @@ class Format
     */
     function setSize($size)
     {
-        $this->size = $size;
+        $this->_size = $size;
     }
     
     /**
@@ -633,6 +681,50 @@ class Format
     function setTextWrap($text_wrap = 1)
     {
         $this->_text_wrap = $text_wrap;
+    }
+
+    /**
+    * Sets the orientation of the text
+    *
+    * @access public
+    * @param integer $angle The rotation angle for the text (clockwise). Possible
+                            values are: 0, 90, 270 and -1 for stacking top-to-bottom.
+    */
+    function setTextRotation($angle)
+    {
+        switch ($angle)
+        {
+            case 0:
+                $this->_rotation = 0;
+                break;
+            case 90:
+                $this->_rotation = 3;
+                break;
+            case 270:
+                $this->_rotation = 2;
+                break;
+            case -1:
+                $this->_rotation = 1;
+                break;
+            default :
+                $this->raiseError("Invalid value for angle.".
+                                  " Possible values are: 0, 90, 270 and -1 ".
+                                  "for stacking top-to-bottom.");
+                $this->_rotation = 0;
+                break;
+        }
+    }
+
+    /**
+    * Sets Font Strikeout.
+    *
+    * @access public
+    * @param integer $strikeout Optional. 0 => no font strikeout, 1 => font strikeout. 
+    *                           Defaults to 1.
+    */
+    function setStrikeOut($strikeout = 1)
+    {
+        $this->_font_strikeout = $strikeout;
     }
 }
 ?>
