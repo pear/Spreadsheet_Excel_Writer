@@ -24,25 +24,19 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.6</version>
-    <date>2003-11-15</date>
+    <version>0.7</version>
+    <date>2004-02-27</date>
     <notes>
      New features:
-      - allow semicolon as argument separator (Axel Pratzner)
-      - added experimental Excel97 generation. You can test it with setVersion():
-$workbook = new Spreadsheet_Excel_Writer('prueba_A.xls');
-$workbook->setVersion(8);
-        Beware! this method will be deprecated in a future release (when
-        Excel97 becomes the default). It is only available for testing
-        purposes. Use it at your own risk.
-      - strings longer than 255 bytes are now available using the experimental
-        Excel97 generation. But not all Excel97 features are available yet!
+      - allow setting temp dir other than default using setTempDir() (using OLE 5.0 for this).
+      - added setMerge() for merging (only for experimental Excel97 generation)
+      - added setCountry() method.
+      - added setLocked() method.
      Bug fixes:
-      - Fixed bug #225, error in writeUrl() (jamesn at tocquigny dot com)
-      - Fixed bug #59, retval undefined for writeRow() (Bertrand)
+      - Fixed bug #415, typo in BIFF8 code (papercrane at reversefold dot com)
     </notes>
     <deps>
-      <dep type="pkg" rel="ge" version="0.3">OLE</dep>
+      <dep type="pkg" rel="ge" version="0.5">OLE</dep>
     </deps>
     <state>beta</state>
     <filelist>
@@ -114,6 +108,25 @@ $workbook->setVersion(8);
         -added Format::setFontFamily() method (Donnie Miller)
        Bug fixes:
         -fixed bug #21, cyrillic characters in sheet references (arhip at goldentele dot com)
+      </notes>
+    </release>
+    <release>
+      <version>0.6</version>
+      <date>2003-11-15</date>
+      <notes>
+       New features:
+        - allow semicolon as argument separator (Axel Pratzner)
+        - added experimental Excel97 generation. You can test it with setVersion():
+$woorrkbook = new Spreadsheet_Excel_Writer('prueba_A.xls');
+$woorrkbook->setVersion(8);
+          Beware! this method will be deprecated in a future release (when
+          Excel97 becomes the default). It is only available for testing
+          purposes. Use it at your own risk.
+        - strings longer than 255 bytes are now available using the experimental
+          Excel97 generation. But not all Excel97 features are available yet!
+       Bug fixes:
+        - Fixed bug #225, error in writeUrl() (jamesn at tocquigny dot com)
+        - Fixed bug #59, retval undefined for writeRow() (Bertrand)
       </notes>
     </release>
   </changelog>
