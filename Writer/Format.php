@@ -132,6 +132,42 @@ class Format extends PEAR
     var $_num_format;
 
     /**
+    * Bit specifying if formulas are hidden.
+    * @var integer
+    */
+    var $_hidden;
+
+    /**
+    * Bit specifying if the cell is locked.
+    * @var integer
+    */
+    var $_locked;
+
+    /**
+    * The three bits specifying the text horizontal alignment.
+    * @var integer
+    */
+    var $_text_h_align;
+
+    /**
+    * Bit specifying if the text is wrapped at the right border.
+    * @var integer
+    */
+    var $_text_wrap;
+
+    /**
+    * The three bits specifying the text vertical alignment.
+    * @var integer
+    */
+    var $_text_v_align;
+
+    /**
+    * 1 bit, apparently not used.
+    * @var integer
+    */
+    var $_text_justlast;
+
+    /**
     * The two bits specifying the text rotation.
     * @var integer
     */
@@ -232,16 +268,16 @@ class Format extends PEAR
                                
         $this->_hidden         = 0;
         $this->_locked         = 1;
-                               
-        $this->_text_h_align   = 0;  // no declarada
-        $this->_text_wrap      = 0;  // no declarada
-        $this->_text_v_align   = 2;  // no declarada
-        $this->_text_justlast  = 0;  // no declarada
+
+        $this->_text_h_align   = 0;
+        $this->_text_wrap      = 0;
+        $this->_text_v_align   = 2;
+        $this->_text_justlast  = 0;
         $this->_rotation       = 0;
-                               
+
         $this->_fg_color       = 0x40;
         $this->_bg_color       = 0x41;
-                               
+
         $this->_pattern        = 0;
                                
         $this->_bottom         = 0;
@@ -496,34 +532,48 @@ class Format extends PEAR
     
         $location = strtolower($location);
     
-        if ($location == 'left')
-            $this->_text_h_align = 1; 
-        if ($location == 'centre')
-            $this->_text_h_align = 2; 
-        if ($location == 'center')
-            $this->_text_h_align = 2; 
-        if ($location == 'right')
-            $this->_text_h_align = 3; 
-        if ($location == 'fill')
-            $this->_text_h_align = 4; 
-        if ($location == 'justify')
+        if ($location == 'left') {
+            $this->_text_h_align = 1;
+            }
+        if ($location == 'centre') {
+            $this->_text_h_align = 2;
+            }
+        if ($location == 'center') {
+            $this->_text_h_align = 2;
+            }
+        if ($location == 'right') {
+            $this->_text_h_align = 3;
+            }
+        if ($location == 'fill') {
+            $this->_text_h_align = 4;
+            }
+        if ($location == 'justify') {
             $this->_text_h_align = 5;
-        if ($location == 'merge')
+            }
+        if ($location == 'merge') {
             $this->_text_h_align = 6;
-        if ($location == 'equal_space') // For T.K.
-            $this->_text_h_align = 7; 
-        if ($location == 'top')
-            $this->_text_v_align = 0; 
-        if ($location == 'vcentre')
-            $this->_text_v_align = 1; 
-        if ($location == 'vcenter')
-            $this->_text_v_align = 1; 
-        if ($location == 'bottom')
-            $this->_text_v_align = 2; 
-        if ($location == 'vjustify')
-            $this->_text_v_align = 3; 
-        if ($location == 'vequal_space') // For T.K.
-            $this->_text_v_align = 4; 
+            }
+        if ($location == 'equal_space') { // For T.K.
+            $this->_text_h_align = 7;
+            }
+        if ($location == 'top') {
+            $this->_text_v_align = 0;
+            }
+        if ($location == 'vcentre') {
+            $this->_text_v_align = 1;
+            }
+        if ($location == 'vcenter') {
+            $this->_text_v_align = 1;
+            }
+        if ($location == 'bottom') {
+            $this->_text_v_align = 2;
+            }
+        if ($location == 'vjustify') {
+            $this->_text_v_align = 3;
+            }
+        if ($location == 'vequal_space') { // For T.K.
+            $this->_text_v_align = 4;
+            }
     }
     
     /**
@@ -780,12 +830,10 @@ class Format extends PEAR
     * Sets text wrapping
     *
     * @access public
-    * @param integer $text_wrap Optional. 0 => no text wrapping, 1 => text wrapping. 
-    *                           Defaults to 1.
     */
-    function setTextWrap($text_wrap = 1)
+    function setTextWrap()
     {
-        $this->_text_wrap = $text_wrap;
+        $this->_text_wrap = 1;
     }
 
     /**
