@@ -24,26 +24,26 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.3</version>
-    <date>2003-05-02</date>
+    <version>0.4</version>
+    <date>2003-08-21</date>
     <notes>
      New features:
-      -added support for row ranges (JT Hughes)
-      -added method Format::setUnLocked() (Ajit Dixit)
-      -added Worksheet::writeRow() and Worksheet::writeCol()
+      -using OLE package (>= 0.3) to generate files bigger than 7MB
+      -changed setFgColor() and setBgColor()'s behavior to something more intuitive.
      Bug fixes:
-      -fixed problem with unparenthesized expresions in formulas (Brent Laminack)
-      -fixed problems with non ISO-8859-1 characters (KUBO Atsuhiro)
-      -fixed swapping of columns in formulas (JT Hughes)
-      -fixed assorted bugs in tokenizing formulas (JT Hughes)
-      -fixed Worksheet::activate() (JT Hughes)
+      -fixed bug #25133, lowercase cell references (jkwiat03 at hotmail dot com)
+      -fixed Bug #23730, worksheet names containing spaces in formulas (Robin Ericsson)
+      -fixed Bug #24147, formulas ended in '0' (paul at classical dot com)
+      -fixed swapping of arguments in variable arguments functions (JT Hughes)
     </notes>
+    <deps>
+      <dep type="pkg" rel="ge" version="0.3">OLE</dep>
+    </deps>
     <state>beta</state>
     <filelist>
       <dir name="/" baseinstalldir="Spreadsheet/Excel/">
         <file role="php">Writer.php</file>
         <dir name="Writer">
-          <file role="php">OLEwriter.php</file>
           <file role="php">BIFFwriter.php</file>
           <file role="php">Workbook.php</file>
           <file role="php">Format.php</file>
