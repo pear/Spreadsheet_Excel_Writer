@@ -165,18 +165,26 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
     function _storeBof($type)
     {
         $record  = 0x0809;        // Record identifier
-        $length  = 0x0008;        // Number of bytes to follow
-        $version = $this->_BIFF_version;
-   
+
         // According to the SDK $build and $year should be set to zero.
-        // However, this throws a warning in Excel 5. So, use these
-        // magic numbers.
-        $build   = 0x096C;
-        $year    = 0x07C9;
+        // However, this throws a warning in Excel 5. So, use magic numbers.
+        if ($this->_BIFF_version == 0x0500) {
+            $length  = 0x0008;
+            $unknown = '';
+            $build   = 0x096C;
+            $year    = 0x07C9;
+        }
+        elseif ($this->_BIFF_version == 0x0600) {
+            $length  = 0x0010;
+            $unknown = pack("VV", 0x00000000, 0x00000006); //unknown last 8 bytes for BIFF8
+            $build   = 0x0DBB;
+            $year    = 0x07CC;
+        }
+        $version = $this->_BIFF_version;
    
         $header  = pack("vv",   $record, $length);
         $data    = pack("vvvv", $version, $type, $build, $year);
-        $this->_prepend($header.$data);
+        $this->_prepend($header.$data.$unknown);
     }
 
     /**

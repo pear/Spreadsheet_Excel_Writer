@@ -62,7 +62,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     var $_parser;
 
     /**
-    * Flag for 1904 date system
+    * Flag for 1904 date system (0 => base date is 1900, 1 => base date is 1904)
     * @var integer
     */
     var $_1904;
@@ -159,7 +159,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->Spreadsheet_Excel_Writer_BIFFwriter();
     
         $this->_filename         = $filename;
-        $this->_parser           =& new Spreadsheet_Excel_Writer_Parser($this->_byte_order);
+        $this->_parser           =& new Spreadsheet_Excel_Writer_Parser($this->_byte_order, $this->_BIFF_version);
         $this->_1904             = 0;
         $this->_activesheet      = 0;
         $this->_firstsheet       = 0;
@@ -168,7 +168,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_fileclosed       = 0;
         $this->_biffsize         = 0;
         $this->_sheetname        = "Sheet";
-        $this->_tmp_format       =& new Spreadsheet_Excel_Writer_Format();
+        $this->_tmp_format       =& new Spreadsheet_Excel_Writer_Format($this->_BIFF_version);
         $this->_worksheets       = array();
         $this->_sheetnames       = array();
         $this->_formats          = array();
@@ -223,9 +223,35 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     function worksheets()
     {
-        return($this->_worksheets);
+        return $this->_worksheets;
     }
-    
+ 
+    /**
+    * Sets the BIFF version. 
+    * Possible values are 5 (Excel 5.0), or 8 (Excel 97/2000).
+    * For any other value it fails silently.
+    *
+    * @access public
+    * @param integer $version The BIFF version
+    */
+    function setVersion($version)
+    {
+        if (($version == 5) or ($version == 8)) {
+            if ($version == 5) {
+                $version = 0x0500;
+            }
+            elseif ($version == 8) {
+                $version = 0x0600;
+            }
+            $this->_BIFF_version = $version;
+            $total_worksheets = count($this->_worksheets);
+            // change version for all worksheets too
+            for ($i = 0; $i < $total_worksheets; $i++) {
+                $this->_worksheets[$i]->_BIFF_version = $version;
+            }
+        }
+    }
+
     /**
     * Add a new worksheet to the Excel workbook.
     * If no name is given the name of the worksheet will be Sheeti$i, with
@@ -279,12 +305,26 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     function &addFormat($properties = array())
     {
-        $format = new Spreadsheet_Excel_Writer_Format($this->_xf_index,$properties);
+        $format = new Spreadsheet_Excel_Writer_Format($this->_BIFF_version, $this->_xf_index,$properties);
         $this->_xf_index += 1;
         $this->_formats[] = &$format;
-        return($format);
+        return $format;
     }
     
+    /**
+     * Create new validator.
+     *
+     * @access public
+     * @return &Spreadsheet_Excel_Writer_Validator reference to a Validator
+     */
+    function &addValidator()
+    {
+        include_once('Spreadsheet/Excel/Writer/Validator.php');
+        /* FIXME: check for successful inclusion*/
+        $valid = new Spreadsheet_Excel_Writer_Validator($this->_parser);
+        return $valid;
+    }
+
     /**
     * Change the RGB components of the elements in the colour palette.
     *
@@ -418,10 +458,17 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
         // Add Workbook globals
         $this->_storeBof(0x0005);
-        $this->_storeExterns();    // For print area and repeat rows
+        if ($this->_BIFF_version == 0x0600) {
+            $this->_storeWindow1();
+        }
+        if ($this->_BIFF_version == 0x0500) {
+            $this->_storeExterns();    // For print area and repeat rows
+        }
         $this->_storeNames();      // For print area and repeat rows
-        $this->_storeWindow1();
-        $this->_store1904();
+        if ($this->_BIFF_version == 0x0500) {
+            $this->_storeWindow1();
+        }
+        $this->_storeDatemode();
         $this->_storeAllFonts();
         $this->_storeAllNumFormats();
         $this->_storeAllXfs();
@@ -433,7 +480,19 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         for ($i=0; $i < $total_worksheets; $i++) {
             $this->_storeBoundsheet($this->_worksheets[$i]->name,$this->_worksheets[$i]->offset);
         }
-    
+ 
+        /* TODO: store COUNTRY record? */
+
+        if ($this->_BIFF_version == 0x0600) {
+            $this->_storeSupbookInternal();
+        /*
+        TODO: store external SUPBOOK records and XCT and CRN records 
+        in case of external references for BIFF8
+        */
+            $this->_storeExternsheetBiff8();
+        }
+
+        /* TODO: store SST for BIFF8 */
         // End Workbook globals
         $this->_storeEof();
     
@@ -459,9 +518,10 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             return $this->raiseError("OLE Error: ".$res->getMessage());
         }
         $OLE->append($this->_data);
-        foreach ($this->_worksheets as $sheet)
+        $total_worksheets = count($this->_worksheets);
+        for ($i = 0; $i < $total_worksheets; $i++)
         {
-            while ($tmp = $sheet->getData()) {
+            while ($tmp = $this->_worksheets[$i]->getData()) {
                 $OLE->append($tmp);
             }
         }
@@ -654,28 +714,29 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     function _storeNames()
     {
         // Create the print area NAME records
-        foreach ($this->_worksheets as $worksheet) {
+        $total_worksheets = count($this->_worksheets);
+        for ($i = 0; $i < $total_worksheets; $i++) {
             // Write a Name record if the print area has been defined
-            if (isset($worksheet->print_rowmin))
+            if (isset($this->_worksheets[$i]->print_rowmin))
             {
                 $this->_storeNameShort(
-                    $worksheet->index,
+                    $this->_worksheets[$i]->index,
                     0x06, // NAME type
-                    $worksheet->print_rowmin,
-                    $worksheet->print_rowmax,
-                    $worksheet->print_colmin,
-                    $worksheet->print_colmax
+                    $this->_worksheets[$i]->print_rowmin,
+                    $this->_worksheets[$i]->print_rowmax,
+                    $this->_worksheets[$i]->print_colmin,
+                    $this->_worksheets[$i]->print_colmax
                     );
             }
         }
     
         // Create the print title NAME records
-        foreach ($this->_worksheets as $worksheet)
-        {
-            $rowmin = $worksheet->title_rowmin;
-            $rowmax = $worksheet->title_rowmax;
-            $colmin = $worksheet->title_colmin;
-            $colmax = $worksheet->title_colmax;
+        $total_worksheets = count($this->_worksheets);
+        for ($i = 0; $i < $total_worksheets; $i++) {
+            $rowmin = $this->_worksheets[$i]->title_rowmin;
+            $rowmax = $this->_worksheets[$i]->title_rowmax;
+            $colmin = $this->_worksheets[$i]->title_colmin;
+            $colmax = $this->_worksheets[$i]->title_colmax;
     
             // Determine if row + col, row, col or nothing has been defined
             // and write the appropriate record
@@ -684,7 +745,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                 // Row and column titles have been defined.
                 // Row title has been defined.
                 $this->_storeNameLong(
-                    $worksheet->index,
+                    $this->_worksheets[$i]->index,
                     0x07, // NAME type
                     $rowmin,
                     $rowmax,
@@ -695,7 +756,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             elseif (isset($rowmin)) {
                 // Row title has been defined.
                 $this->_storeNameShort(
-                    $worksheet->index,
+                    $this->_worksheets[$i]->index,
                     0x07, // NAME type
                     $rowmin,
                     $rowmax,
@@ -706,7 +767,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             elseif (isset($colmin)) {
                 // Column title has been defined.
                 $this->_storeNameShort(
-                    $worksheet->index,
+                    $this->_worksheets[$i]->index,
                     0x07, // NAME type
                     0x0000,
                     0x3fff,
@@ -778,7 +839,44 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $data      = pack("VvC", $offset, $grbit, $cch);
         $this->_append($header.$data.$sheetname);
     }
-    
+ 
+    /**
+    * Write Internal SUPBOOK record
+    *
+    * @access private
+    */
+    function _storeSupbookInternal()
+    {
+        $record    = 0x01AE;   // Record identifier
+        $length    = 0x0004;   // Bytes to follow
+                               
+        $header    = pack("vv", $record, $length);
+        $data      = pack("vv", count($this->_worksheets), 0x0104);
+        $this->_append($header.$data);
+    }
+
+    /**
+    * Writes the Excel BIFF EXTERNSHEET record. These references are used by
+    * formulas. 
+    *
+    * @param string $sheetname Worksheet name
+    * @access private
+    */
+    function _storeExternsheetBiff8()
+    {
+        $total_references = count($this->_parser->_references);
+        $record   = 0x0017;                     // Record identifier
+        $length   = 2 + 6 * $total_references;  // Number of bytes to follow
+
+        $supbook_index = 0;                  // only using internal SUPBOOK record
+        $header           = pack("vv",  $record, $length);
+        $data             = pack('v', $total_references);
+        for ($i = 0; $i < $total_references; $i++) {
+            $data .= $this->_parser->_references[$i];
+        }
+        $this->_append($header.$data);
+    }
+
     /**
     * Write Excel BIFF STYLE records.
     *
@@ -819,11 +917,11 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     }
     
     /**
-    * Write Excel 1904 record to indicate the date system in use.
+    * Write DATEMODE record to indicate the date system in use (1904 or 1900).
     *
     * @access private
     */
-    function _store1904()
+    function _storeDatemode()
     {
         $record    = 0x0022;         // Record identifier
         $length    = 0x0002;         // Bytes to follow
