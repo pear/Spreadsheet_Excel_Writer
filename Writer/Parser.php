@@ -550,6 +550,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             return $this->_convertRange3d($token);
         }
+		// match external ranges like 'Sheet1:Sheet2'!A1:B2
+        elseif (preg_match("/^'[A-Za-z0-9_ ]+(\:[A-Za-z0-9_ ]+)?'\!([A-I]?[A-Z])?(\d+)\:([A-I]?[A-Z])?(\d+)$/",$token))
+        {
+            return $this->_convertRange3d($token);
+        }
         elseif (isset($this->ptg[$token])) // operators (including parentheses)
         {
             return pack("C", $this->ptg[$token]);
@@ -1129,8 +1134,14 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 {
                     return $token;
                 }
-                // If it's an external range
+                // If it's an external range like Sheet1:Sheet2!A1:B2
                 elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\!([A-I]?[A-Z])?[0-9]+:([A-I]?[A-Z])?[0-9]+$/",$token) and
+                       !ereg("[0-9]",$this->_lookahead))
+                {
+                    return $token;
+                }
+				// If it's an external range like 'Sheet1:Sheet2'!A1:B2
+                elseif (preg_match("/^'[A-Za-z0-9_ ]+(\:[A-Za-z0-9_ ]+)?'\!([A-I]?[A-Z])?[0-9]+:([A-I]?[A-Z])?[0-9]+$/",$token) and
                        !ereg("[0-9]",$this->_lookahead))
                 {
                     return $token;
@@ -1387,6 +1398,13 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         }
         // If it's an external range (Sheet1!A1:B2)
         elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\!([A-I]?[A-Z])?[0-9]+:([A-I]?[A-Z])?[0-9]+$/",$this->_current_token))
+        {
+            $result = $this->_current_token;
+            $this->_advance();
+            return $result;
+        }
+		// If it's an external range ('Sheet1'!A1:B2)
+        elseif (preg_match("/^'[A-Za-z0-9_ ]+(\:[A-Za-z0-9_ ]+)?'\!([A-I]?[A-Z])?[0-9]+:([A-I]?[A-Z])?[0-9]+$/",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
