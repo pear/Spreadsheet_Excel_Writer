@@ -905,10 +905,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     {
         list($row, $col, $row_rel, $col_rel) = $this->_cellToRowcol($cell);
         if ($col >= 256) {
-            return new PEAR_Error("Column in: $cell greater than 255"));
+            return new PEAR_Error("Column in: $cell greater than 255");
         }
         if ($row >= 16384) {
-            return new PEAR_Error("Row in: $cell greater than 16384 "));
+            return new PEAR_Error("Row in: $cell greater than 16384 ");
         }
     
         // Set the high bits to indicate if row or col are relative.
@@ -1398,7 +1398,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return $result;
         }
         return new PEAR_Error("Sintactic error: ".$this->_current_token.", lookahead: ".
-                              $this->_lookahead.", current char: ".$this->_current_char));
+                              $this->_lookahead.", current char: ".$this->_current_char);
     }
     
     /**
@@ -1443,7 +1443,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $args = $this->_functions[$function][1];
         // If fixed number of args eg. TIME($i,$j,$k). Check that the number of args is valid.
         if (($args >= 0) and ($args != $num_args)) {
-            return new PEAR_Error("Incorrect number of arguments in function $function() "));
+            return new PEAR_Error("Incorrect number of arguments in function $function() ");
         }
     
         $result = $this->_createTree($function, $result, $num_args);
