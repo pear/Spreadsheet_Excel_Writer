@@ -3010,7 +3010,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Open file.
         $bmp_fd = @fopen($bitmap,"rb");
         if (!$bmp_fd) {
-            return($this->raiseError("Couldn't import $bitmap"));
+            $this->raiseError("Couldn't import $bitmap");
         }
             
         // Slurp the file into a string.
@@ -3018,13 +3018,13 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         // Check that the file is big enough to be a bitmap.
         if (strlen($data) <= 0x36) {
-            return($this->raiseError("$bitmap doesn't contain enough data.\n"));
+            $this->raiseError("$bitmap doesn't contain enough data.\n");
         }
     
         // The first 2 bytes are used to identify the bitmap.
         $identity = unpack("A2", $data);
         if ($identity[''] != "BM") {
-            return($this->raiseError("$bitmap doesn't appear to be a valid bitmap image.\n"));
+            $this->raiseError("$bitmap doesn't appear to be a valid bitmap image.\n");
         }
     
         // Remove bitmap data: ID.
@@ -3048,20 +3048,20 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $height = $width_and_height[2];
         $data   = substr($data, 8);
         if ($width > 0xFFFF) { 
-            return($this->raiseError("$bitmap: largest image width supported is 65k.\n"));
+            $this->raiseError("$bitmap: largest image width supported is 65k.\n");
         }
         if ($height > 0xFFFF) { 
-            return($this->raiseError("$bitmap: largest image height supported is 65k.\n"));
+            $this->raiseError("$bitmap: largest image height supported is 65k.\n");
         }
     
         // Read and remove the bitmap planes and bpp data. Verify them.
         $planes_and_bitcount = unpack("v2", substr($data, 0, 4));
         $data = substr($data, 4);
         if ($planes_and_bitcount[2] != 24) { // Bitcount
-            return($this->raiseError("$bitmap isn't a 24bit true color bitmap.\n"));
+            $this->raiseError("$bitmap isn't a 24bit true color bitmap.\n");
         }
         if ($planes_and_bitcount[1] != 1) {
-            return($this->raiseError("$bitmap: only 1 plane nupported in bitmap image.\n"));
+            $this->raiseError("$bitmap: only 1 plane nupported in bitmap image.\n");
         }
     
         // Read and remove the bitmap compression. Verify compression.
@@ -3070,7 +3070,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
       
         //$compression = 0;
         if ($compression[""] != 0) {
-            return($this->raiseError("$bitmap: compression not supported in bitmap image.\n"));
+            $this->raiseError("$bitmap: compression not supported in bitmap image.\n");
         }
     
         // Remove bitmap data: data size, hres, vres, colours, imp. colours.
