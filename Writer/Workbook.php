@@ -33,10 +33,11 @@
 */
 
 require_once('Spreadsheet/Excel/Writer/Format.php');
-require_once('Spreadsheet/Excel/Writer/OLEwriter.php');
 require_once('Spreadsheet/Excel/Writer/BIFFwriter.php');
 require_once('Spreadsheet/Excel/Writer/Worksheet.php');
 require_once('Spreadsheet/Excel/Writer/Parser.php');
+require_once('OLE/PPS/Root.php');
+require_once('OLE/PPS/File.php');
 
 /**
 * Class for generating Excel Spreadsheets
@@ -184,17 +185,21 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * This method should always be the last one to be called on every workbook
     *
     * @access public
+    * @return mixed true on success. PEAR_Error on failure
     */
     function close()
     {
         if ($this->_fileclosed) { // Prevent close() from being called twice.
-            return;
+            return true;
         }
-        $this->_storeWorkbook();
+        $res = $this->_storeWorkbook();
+        if ($this->isError($res)) {
+            $this->raiseError($res->getMessage());
+        }
         $this->_fileclosed = 1;
+        return true;
     }
-    
-    
+ 
     /**
     * An accessor for the _worksheets[] array
     * Returns an array of the worksheet objects in a workbook
@@ -388,6 +393,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * storage.
     *
     * @access private
+    * @return mixed true on success. PEAR_Error on failure
     */
     function _storeWorkbook()
     {
@@ -429,34 +435,41 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_storeEof();
     
         // Store the workbook in an OLE container
-        $this->_storeOLEFile();
+        $res = $this->_storeOLEFile();
+        if ($this->isError($res)) {
+            $this->raiseError($res->getMessage());
+        }
+        return true;
     }
     
     /**
-    * Store the workbook in an OLE container if the total size of the workbook data
-    * is less than ~ 7MB.
+    * Store the workbook in an OLE container
     *
     * @access private
+    * @return mixed true on success. PEAR_Error on failure
     */
     function _storeOLEFile()
     {
-        $OLE  = new Spreadsheet_Excel_Writer_OLEwriter($this->_filename);
-        $this->_tmp_filename = $OLE->_tmp_filename;
-        // Write Worksheet data if data <~ 7MB
-        if ($OLE->setSize($this->_biffsize))
+        $OLE = new OLE_PPS_File(OLE::Asc2Ucs('Book'));
+        $res = $OLE->init();
+        if ($this->isError($res)) {
+            $this->raiseError("OLE Error: ".$res->getMessage());
+        }
+        $OLE->append($this->_data);
+        foreach ($this->_worksheets as $sheet)
         {
-            $OLE->writeHeader();
-            $OLE->write($this->_data);
-            foreach($this->_worksheets as $sheet) 
-            {
-                while ($tmp = $sheet->getData()) {
-                    $OLE->write($tmp);
-                }
+            while ($tmp = $sheet->getData()) {
+                $OLE->append($tmp);
             }
         }
-        $OLE->close();
+        $root = new OLE_PPS_Root(time(), time(), array($OLE));
+        $res = $root->save($this->_filename);
+        if ($this->isError($res)) {
+            $this->raiseError("OLE Error: ".$res->getMessage());
+        }
+        return true;
     }
-    
+ 
     /**
     * Calculate offsets for Worksheet BOF records.
     *
