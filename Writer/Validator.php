@@ -150,20 +150,25 @@ class Spreadsheet_Excel_Writer_Validator
         return true;
     }
 
-   function _getOptions()
-   {
-      $options = $this->_type;
-      $options |= $this->_style << 3;
-      if($this->_fixedList)
-         $options |= 0x80;
-      if($this->_blank)
-         $options |= 0x100;
-      if(!$this->_incell)
-         $options |= 0x200;
-      if($this->_showprompt)
-         $options |= 0x40000;
-      if($this->_showerror)
-         $options |= 0x80000;
+    function _getOptions()
+    {
+        $options = $this->_type;
+        $options |= $this->_style << 3;
+        if ($this->_fixedList) {
+            $options |= 0x80;
+        }
+        if ($this->_blank) {
+            $options |= 0x100;
+        }
+        if (!$this->_incell) {
+            $options |= 0x200;
+        }
+        if ($this->_showprompt) {
+            $options |= 0x40000;
+        }
+        if ($this->_showerror) {
+            $options |= 0x80000;
+        }
       $options |= $this->_operator << 20;
       
       return $options;

@@ -32,7 +32,7 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once('PEAR.php');
+require_once 'PEAR.php';
 
 /**
 * Class for generating Excel XF records (formats)
@@ -296,10 +296,9 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->_diag_color     = 0x40;
     
         // Set properties passed to Spreadsheet_Excel_Writer_Workbook::addFormat()
-        foreach($properties as $property => $value)
+        foreach ($properties as $property => $value)
         {
-            if(method_exists($this,'set'.ucwords($property)))
-            {
+            if (method_exists($this, 'set'.ucwords($property))) {
                 $method_name = 'set'.ucwords($property);
                 $this->$method_name($value);
             }
@@ -318,8 +317,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         // Set the type of the XF record and some of the attributes.
         if ($style == "style") {
             $style = 0xFFF5;
-        }
-        else {
+        } else {
             $style   = $this->_locked;
             $style  |= $this->_hidden << 1;
         }
@@ -364,8 +362,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                                                
         $ifnt           = $this->font_index;   // Index to FONT record
         $ifmt           = $this->_num_format;  // Index to FORMAT record
-        if ($this->_BIFF_version == 0x0500)
-        {
+        if ($this->_BIFF_version == 0x0500) {
             $align          = $this->_text_h_align;       // Alignment
             $align         |= $this->_text_wrap     << 3;
             $align         |= $this->_text_v_align  << 4;
@@ -397,9 +394,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
             $data        = pack("vvvvvvvv", $ifnt, $ifmt, $style, $align,
                                             $icv, $fill,
                                             $border1, $border2);
-        }
-        elseif ($this->_BIFF_version == 0x0600)
-        {
+        } elseif ($this->_BIFF_version == 0x0600) {
             $align          = $this->_text_h_align;       // Alignment
             $align         |= $this->_text_wrap     << 3;
             $align         |= $this->_text_v_align  << 4;
@@ -464,8 +459,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $record     = 0x31;                      // Record identifier
         if ($this->_BIFF_version == 0x0500) {
             $length     = 0x0F + $cch;            // Record length
-        }
-        elseif ($this->_BIFF_version == 0x0600) {
+        } elseif ($this->_BIFF_version == 0x0600) {
             $length     = 0x10 + $cch;
         }
         $reserved   = 0x00;                // Reserved
@@ -488,8 +482,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
             $data    = pack("vvvvvCCCCC", $dyHeight, $grbit, $icv, $bls,
                                           $sss, $uls, $bFamily,
                                           $bCharSet, $reserved, $cch);
-        }
-        elseif ($this->_BIFF_version == 0x0600) {
+        } elseif ($this->_BIFF_version == 0x0600) {
             $data    = pack("vvvvvCCCCCC", $dyHeight, $grbit, $icv, $bls,
                                            $sss, $uls, $bFamily,
                                            $bCharSet, $reserved, $cch, $encoding);
@@ -561,27 +554,27 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                        );
     
         // Return the default color, 0x7FFF, if undef,
-        if($name_color == '') {
+        if ($name_color == '') {
             return(0x7FFF);
         }
     
         // or the color string converted to an integer,
-        if(isset($colors[$name_color])) {
+        if (isset($colors[$name_color])) {
             return($colors[$name_color]);
         }
     
         // or the default color if string is unrecognised,
-        if(preg_match("/\D/",$name_color)) {
+        if (preg_match("/\D/",$name_color)) {
             return(0x7FFF);
         }
     
         // or an index < 8 mapped into the correct range,
-        if($name_color < 8) {
+        if ($name_color < 8) {
             return($name_color + 8);
         }
     
         // or the default color if arg is outside range,
-        if($name_color > 63) {
+        if ($name_color > 63) {
             return(0x7FFF);
         }
     
@@ -669,16 +662,16 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     */
     function setBold($weight = 1)
     {
-        if($weight == 1) {
+        if ($weight == 1) {
             $weight = 0x2BC;  // Bold text
         }
-        if($weight == 0) {
+        if ($weight == 0) {
             $weight = 0x190;  // Normal text
         }
-        if($weight <  0x064) {
+        if ($weight <  0x064) {
             $weight = 0x190;  // Lower bound
         }
-        if($weight >  0x3E8) {
+        if ($weight >  0x3E8) {
             $weight = 0x190;  // Upper bound
         }
         $this->_bold = $weight;

@@ -32,7 +32,7 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once('PEAR.php');
+require_once 'PEAR.php';
 
 /**
 * Class for creating OLE streams for Excel Spreadsheets
@@ -131,18 +131,15 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     {
         $OLEfile = $this->_OLEfilename;
  
-        if(($OLEfile == '-') or ($OLEfile == ''))
-        {
+        if (($OLEfile == '-') or ($OLEfile == '')) {
             $this->_tmp_filename = tempnam("/tmp", "OLEwriter");
-            $fh = fopen($this->_tmp_filename,"wb");
+            $fh = fopen($this->_tmp_filename, "wb");
             if ($fh == false) {
                 $this->raiseError("Can't create temporary file.");
             }
-        }
-        else
-        {
+        } else {
             // Create a new file, open for writing (in binmode)
-            $fh = fopen($OLEfile,"wb");
+            $fh = fopen($OLEfile, "wb");
             if ($fh == false) {
                 $this->raiseError("Can't open $OLEfile. It may be in use or protected.");
             }
@@ -177,8 +174,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         // Set the min file size to 4k to avoid having to use small blocks
         if ($biffsize > 4096) {
             $this->_booksize = $biffsize;
-        }
-        else {
+        } else {
             $this->_booksize = 4096;
         }
         //$this->_size_allowed = 1;
@@ -196,8 +192,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         $datasize = $this->_booksize;
         if ($datasize % 512 == 0) {
             $this->_big_blocks = $datasize/512;
-        }
-        else {
+        } else {
             $this->_big_blocks = floor($datasize/512) + 1;
         }
         // There are 127 list blocks and 1 marker blocks for each big block
@@ -222,8 +217,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         $this->_writeBigBlockDepot();
         // Close the filehandle 
         fclose($this->_filehandle);
-        if(($this->_OLEfilename == '-') or ($this->_OLEfilename == ''))
-        {
+        if (($this->_OLEfilename == '-') or ($this->_OLEfilename == '')) {
             $fh = fopen($this->_tmp_filename, "rb");
             if ($fh == false) {
                 $this->raiseError("Can't read temporary file.");
@@ -242,7 +236,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     */
     function write($data)
     {
-        fwrite($this->_filehandle,$data,strlen($data));
+        fwrite($this->_filehandle, $data, strlen($data));
     }
 
 
@@ -267,26 +261,24 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         $unknown7        = pack("VVV",  0x00, -2 ,0x00);
         $unused          = pack("V",    -1);
  
-        fwrite($this->_filehandle,$id);
-        fwrite($this->_filehandle,$unknown1);
-        fwrite($this->_filehandle,$unknown2);
-        fwrite($this->_filehandle,$unknown3);
-        fwrite($this->_filehandle,$unknown4);
-        fwrite($this->_filehandle,$unknown5);
-        fwrite($this->_filehandle,$num_bbd_blocks);
-        fwrite($this->_filehandle,$root_startblock);
-        fwrite($this->_filehandle,$unknown6);
-        fwrite($this->_filehandle,$sbd_startblock);
-        fwrite($this->_filehandle,$unknown7);
+        fwrite($this->_filehandle, $id);
+        fwrite($this->_filehandle, $unknown1);
+        fwrite($this->_filehandle, $unknown2);
+        fwrite($this->_filehandle, $unknown3);
+        fwrite($this->_filehandle, $unknown4);
+        fwrite($this->_filehandle, $unknown5);
+        fwrite($this->_filehandle, $num_bbd_blocks);
+        fwrite($this->_filehandle, $root_startblock);
+        fwrite($this->_filehandle, $unknown6);
+        fwrite($this->_filehandle, $sbd_startblock);
+        fwrite($this->_filehandle, $unknown7);
  
-        for($i=1; $i <= $num_lists; $i++)
-        {
+        for ($i=1; $i <= $num_lists; $i++) {
             $root_start++;
-            fwrite($this->_filehandle,pack("V",$root_start));
+            fwrite($this->_filehandle, pack("V",$root_start));
         }
-        for($i = $num_lists; $i <=108; $i++)
-        {
-            fwrite($this->_filehandle,$unused);
+        for ($i = $num_lists; $i <=108; $i++) {
+            fwrite($this->_filehandle, $unused);
         }
     }
 
@@ -307,19 +299,16 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         $end_of_chain = pack("V", -2);
         $unused       = pack("V", -1);
  
-        for($i=1; $i < $num_blocks; $i++)
-        {
-            fwrite($this->_filehandle,pack("V",$i));
+        for ($i=1; $i < $num_blocks; $i++) {
+            fwrite($this->_filehandle, pack("V",$i));
         }
-        fwrite($this->_filehandle,$end_of_chain);
-        fwrite($this->_filehandle,$end_of_chain);
-        for($i=0; $i < $num_lists; $i++)
-        {
-            fwrite($this->_filehandle,$marker);
+        fwrite($this->_filehandle, $end_of_chain);
+        fwrite($this->_filehandle, $end_of_chain);
+        for ($i=0; $i < $num_lists; $i++) {
+            fwrite($this->_filehandle, $marker);
         }
-        for($i=$used_blocks; $i <= $total_blocks; $i++)
-        {
-            fwrite($this->_filehandle,$unused);
+        for ($i=$used_blocks; $i <= $total_blocks; $i++) {
+            fwrite($this->_filehandle, $unused);
         }
     }
 
@@ -348,16 +337,14 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
 * @param integer $size  size of the property storage.
 * @access private
 */
-    function _writePps($name,$type,$dir,$start,$size)
+    function _writePps($name, $type, $dir, $start, $size)
     {
         $length  = 0;
         $rawname = '';
  
-        if ($name != '')
-        {
+        if ($name != '') {
             $name = $name . "\0";
-            for($i=0;$i<strlen($name);$i++)
-            {
+            for ($i = 0; $i < strlen($name); $i++) {
                 // Simulate a Unicode string
                 $rawname .= pack("H*",dechex(ord($name{$i}))).pack("C",0);
             }
@@ -381,25 +368,25 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         $pps_size        = pack("V",  $size);      // 0x78
        
        
-        fwrite($this->_filehandle,$rawname);
-        for($i=0; $i < (64 -$length); $i++) {
-            fwrite($this->_filehandle,$zero);
+        fwrite($this->_filehandle, $rawname);
+        for ($i = 0; $i < (64 -$length); $i++) {
+            fwrite($this->_filehandle, $zero);
         }
-        fwrite($this->_filehandle,$pps_sizeofname);
-        fwrite($this->_filehandle,$pps_type);
-        fwrite($this->_filehandle,$pps_prev);
-        fwrite($this->_filehandle,$pps_next);
-        fwrite($this->_filehandle,$pps_dir);
-        for($i=0; $i < 5; $i++) {
-            fwrite($this->_filehandle,$unknown1);
+        fwrite($this->_filehandle, $pps_sizeofname);
+        fwrite($this->_filehandle, $pps_type);
+        fwrite($this->_filehandle, $pps_prev);
+        fwrite($this->_filehandle, $pps_next);
+        fwrite($this->_filehandle, $pps_dir);
+        for ($i = 0; $i < 5; $i++) {
+            fwrite($this->_filehandle, $unknown1);
         }
-        fwrite($this->_filehandle,$pps_ts1s);
-        fwrite($this->_filehandle,$pps_ts1d);
-        fwrite($this->_filehandle,$pps_ts2d);
-        fwrite($this->_filehandle,$pps_ts2d);
-        fwrite($this->_filehandle,$pps_sb);
-        fwrite($this->_filehandle,$pps_size);
-        fwrite($this->_filehandle,$unknown1);
+        fwrite($this->_filehandle, $pps_ts1s);
+        fwrite($this->_filehandle, $pps_ts1d);
+        fwrite($this->_filehandle, $pps_ts2d);
+        fwrite($this->_filehandle, $pps_ts2d);
+        fwrite($this->_filehandle, $pps_sb);
+        fwrite($this->_filehandle, $pps_size);
+        fwrite($this->_filehandle, $unknown1);
     }
 
     /**
@@ -411,16 +398,14 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     {
         $biffsize = $this->_biffsize;
         if ($biffsize < 4096) {
-	    $min_size = 4096;
-        }
-	else {    
+	        $min_size = 4096;
+        } else {    
             $min_size = 512;
         }
-	if ($biffsize % $min_size != 0)
-        {
+        if ($biffsize % $min_size != 0) {
             $padding  = $min_size - ($biffsize % $min_size);
-            for($i=0; $i < $padding; $i++) {
-                fwrite($this->_filehandle,"\0");
+            for ($i = 0; $i < $padding; $i++) {
+                fwrite($this->_filehandle, "\0");
             }
         }
     }

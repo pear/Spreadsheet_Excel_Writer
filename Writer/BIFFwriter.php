@@ -32,7 +32,7 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once('PEAR.php');
+require_once 'PEAR.php';
 
 /**
 * Class for writing Excel BIFF records.
@@ -112,11 +112,9 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $number  = pack("C8", 0x8D, 0x97, 0x6E, 0x12, 0x83, 0xC0, 0xF3, 0x3F);
         if ($number == $teststr) {
             $byte_order = 0;    // Little Endian
-        }
-        elseif ($number == strrev($teststr)){
+        } elseif ($number == strrev($teststr)){
             $byte_order = 1;    // Big Endian
-        }
-        else {
+        } else {
             // Give up. I'll fix this in a later version.
             return $this->raiseError("Required floating point format ".
                                      "not supported on this platform.");
@@ -173,8 +171,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
             $unknown = '';
             $build   = 0x096C;
             $year    = 0x07C9;
-        }
-        elseif ($this->_BIFF_version == 0x0600) {
+        } elseif ($this->_BIFF_version == 0x0600) {
             $length  = 0x0010;
             $unknown = pack("VV", 0x00000041, 0x00000006); //unknown last 8 bytes for BIFF8
             $build   = 0x0DBB;
@@ -224,8 +221,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $header = pack("vv", $record, $limit);  // Headers for continue records
  
         // Retrieve chunks of 2080/8224 bytes +4 for the header.
-        for($i = $limit; $i < strlen($data) - $limit; $i += $limit)
-        {
+        for ($i = $limit; $i < strlen($data) - $limit; $i += $limit) {
             $tmp .= $header;
             $tmp .= substr($data, $i, $limit);
         }
@@ -233,7 +229,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         // Retrieve the last chunk of data
         $header  = pack("vv", $record, strlen($data) - $i);
         $tmp    .= $header;
-        $tmp    .= substr($data,$i,strlen($data) - $i);
+        $tmp    .= substr($data, $i, strlen($data) - $i);
  
         return $tmp;
     }

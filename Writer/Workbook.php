@@ -32,12 +32,12 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once('Spreadsheet/Excel/Writer/Format.php');
-require_once('Spreadsheet/Excel/Writer/BIFFwriter.php');
-require_once('Spreadsheet/Excel/Writer/Worksheet.php');
-require_once('Spreadsheet/Excel/Writer/Parser.php');
-require_once('OLE/PPS/Root.php');
-require_once('OLE/PPS/File.php');
+require_once 'Spreadsheet/Excel/Writer/Format.php';
+require_once 'Spreadsheet/Excel/Writer/BIFFwriter.php';
+require_once 'Spreadsheet/Excel/Writer/Worksheet.php';
+require_once 'Spreadsheet/Excel/Writer/Parser.php';
+require_once 'OLE/PPS/Root.php';
+require_once 'OLE/PPS/File.php';
 
 /**
 * Class for generating Excel Spreadsheets
@@ -327,8 +327,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
         // Check that the worksheet name doesn't already exist: a fatal Excel error.
         $total_worksheets = count($this->_worksheets);
-        for ($i=0; $i < $total_worksheets; $i++)
-        {
+        for ($i = 0; $i < $total_worksheets; $i++) {
             if ($name == $this->_worksheets[$i]->getName()) {
                 return $this->raiseError("Worksheet '$name' already exists");
             }
@@ -357,7 +356,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     function &addFormat($properties = array())
     {
-        $format = new Spreadsheet_Excel_Writer_Format($this->_BIFF_version, $this->_xf_index,$properties);
+        $format = new Spreadsheet_Excel_Writer_Format($this->_BIFF_version, $this->_xf_index, $properties);
         $this->_xf_index += 1;
         $this->_formats[] = &$format;
         return $format;
@@ -371,7 +370,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
      */
     function &addValidator()
     {
-        include_once('Spreadsheet/Excel/Writer/Validator.php');
+        include_once 'Spreadsheet/Excel/Writer/Validator.php';
         /* FIXME: check for successful inclusion*/
         $valid = new Spreadsheet_Excel_Writer_Validator($this->_parser);
         return $valid;
@@ -387,7 +386,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @param integer $blue  blue RGB value [0-255]
     * @return integer The palette index for the custom color
     */
-    function setCustomColor($index,$red,$green,$blue)
+    function setCustomColor($index, $red, $green, $blue)
     {
         // Match a HTML #xxyyzz style parameter
         /*if (defined $_[1] and $_[1] =~ /^#(\w\w)(\w\w)(\w\w)/ ) {
@@ -401,9 +400,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
     
         // Check that the colour components are in the right range
-        if ( ($red   < 0 or $red   > 255) or
-             ($green < 0 or $green > 255) or
-             ($blue  < 0 or $blue  > 255) )  
+        if (($red   < 0 or $red   > 255) ||
+            ($green < 0 or $green > 255) ||
+            ($blue  < 0 or $blue  > 255))  
         {
             return $this->raiseError("Color component outside range: 0 <= color <= 255");
         }
@@ -499,7 +498,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         // Calculate the number of selected worksheet tabs and call the finalization
         // methods for each worksheet
         $total_worksheets = count($this->_worksheets);
-        for ($i=0; $i < $total_worksheets; $i++) {
+        for ($i = 0; $i < $total_worksheets; $i++) {
             if ($this->_worksheets[$i]->selected) {
                 $this->_selected++;
             }
@@ -528,7 +527,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_calcSheetOffsets();
     
         // Add BOUNDSHEET records
-        for ($i=0; $i < $total_worksheets; $i++) {
+        for ($i = 0; $i < $total_worksheets; $i++) {
             $this->_storeBoundsheet($this->_worksheets[$i]->name,$this->_worksheets[$i]->offset);
         }
  
@@ -589,8 +588,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
         $OLE->append($this->_data);
         $total_worksheets = count($this->_worksheets);
-        for ($i = 0; $i < $total_worksheets; $i++)
-        {
+        for ($i = 0; $i < $total_worksheets; $i++) {
             while ($tmp = $this->_worksheets[$i]->getData()) {
                 $OLE->append($tmp);
             }
@@ -615,8 +613,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     {
         if ($this->_BIFF_version == 0x0600) {
             $boundsheet_length = 12;  // fixed length for a BOUNDSHEET record
-        }
-        else {
+        } else {
             $boundsheet_length = 11;
         }
         $EOF               = 4;
@@ -634,12 +631,12 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
         $total_worksheets = count($this->_worksheets);
         // add the length of the BOUNDSHEET records 
-        for ($i=0; $i < $total_worksheets; $i++) {
+        for ($i = 0; $i < $total_worksheets; $i++) {
             $offset += $boundsheet_length + strlen($this->_worksheets[$i]->name);
         }
         $offset += $EOF;
 
-        for ($i=0; $i < $total_worksheets; $i++) {
+        for ($i = 0; $i < $total_worksheets; $i++) {
             $this->_worksheets[$i]->offset = $offset;
             $offset += $this->_worksheets[$i]->_datasize;
         }
@@ -660,7 +657,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         // Note: Fonts are 0-indexed. According to the SDK there is no index 4,
         // so the following fonts are 0, 1, 2, 3, 5
         //
-        for ($i=1; $i <= 5; $i++){
+        for ($i = 1; $i <= 5; $i++){
             $this->_append($font);
         }
     
@@ -674,14 +671,12 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $fonts[$key] = 0;             // Index of the default font
 
         $total_formats = count($this->_formats);
-        for ($i=0; $i < $total_formats; $i++)
-        {
+        for ($i = 0; $i < $total_formats; $i++) {
             $key = $this->_formats[$i]->getFontKey();
             if (isset($fonts[$key])) {
                 // FONT has already been used
                 $this->_formats[$i]->font_index = $fonts[$key];
-            }
-            else {
+            } else {
                 // Add a new FONT record
                 $fonts[$key]        = $index;
                 $this->_formats[$i]->font_index = $index;
@@ -707,17 +702,15 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         // Iterate through the XF objects and write a FORMAT record if it isn't a
         // built-in format type and if the FORMAT string hasn't already been used.
         $total_formats = count($this->_formats);
-        for ($i=0; $i < $total_formats; $i++)
-        {
+        for ($i = 0; $i < $total_formats; $i++) {
             $num_format = $this->_formats[$i]->_num_format;
     
             // Check if $num_format is an index to a built-in format.
             // Also check for a string of zeros, which is a valid format string
             // but would evaluate to zero.
             //
-            if (!preg_match("/^0+\d/",$num_format))
-            {
-                if (preg_match("/^\d+$/",$num_format)) { // built-in format
+            if (!preg_match("/^0+\d/", $num_format)) {
+                if (preg_match("/^\d+$/", $num_format)) { // built-in format
                     continue;
                 }
             }
@@ -725,8 +718,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             if (isset($hash_num_formats[$num_format])) {
                 // FORMAT has already been used
                 $this->_formats[$i]->_num_format = $hash_num_formats[$num_format];
-            }
-            else{
+            } else{
                 // Add a new FORMAT
                 $hash_num_formats[$num_format]  = $index;
                 $this->_formats[$i]->_num_format = $index;
@@ -754,7 +746,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         // The default font index is 0
         //
         $format = $this->_tmp_format;
-        for ($i=0; $i <= 14; $i++) {
+        for ($i = 0; $i <= 14; $i++) {
             $xf = $format->getXf('style'); // Style XF
             $this->_append($xf);
         }
@@ -764,7 +756,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     
         // User defined XFs
         $total_formats = count($this->_formats);
-        for ($i=0; $i < $total_formats; $i++) {
+        for ($i = 0; $i < $total_formats; $i++) {
             $xf = $this->_formats[$i]->getXf('cell');
             $this->_append($xf);
         }
@@ -808,8 +800,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $total_worksheets = count($this->_worksheets);
         for ($i = 0; $i < $total_worksheets; $i++) {
             // Write a Name record if the print area has been defined
-            if (isset($this->_worksheets[$i]->print_rowmin))
-            {
+            if (isset($this->_worksheets[$i]->print_rowmin)) {
                 $this->_storeNameShort(
                     $this->_worksheets[$i]->index,
                     0x06, // NAME type
@@ -832,7 +823,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             // Determine if row + col, row, col or nothing has been defined
             // and write the appropriate record
             //
-            if (isset($rowmin) and isset($colmin)) {
+            if (isset($rowmin) && isset($colmin)) {
                 // Row and column titles have been defined.
                 // Row title has been defined.
                 $this->_storeNameLong(
@@ -843,8 +834,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     $colmin,
                     $colmax
                     );
-            }
-            elseif (isset($rowmin)) {
+            } elseif (isset($rowmin)) {
                 // Row title has been defined.
                 $this->_storeNameShort(
                     $this->_worksheets[$i]->index,
@@ -854,8 +844,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     0x00,
                     0xff
                     );
-            }
-            elseif (isset($colmin)) {
+            } elseif (isset($colmin)) {
                 // Column title has been defined.
                 $this->_storeNameShort(
                     $this->_worksheets[$i]->index,
@@ -865,8 +854,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     $colmin,
                     $colmax
                     );
-            }
-            else {
+            } else {
                 // Print title hasn't been defined.
             }
         }
@@ -941,8 +929,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $record    = 0x0085;                    // Record identifier
         if ($this->_BIFF_version == 0x0600) {
             $length    = 0x08 + strlen($sheetname); // Number of bytes to follow
-        }
-        else {
+        } else {
             $length = 0x07 + strlen($sheetname); // Number of bytes to follow
         }
     
@@ -952,8 +939,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $header    = pack("vv",  $record, $length);
         if ($this->_BIFF_version == 0x0600) {
             $data      = pack("Vvv", $offset, $grbit, $cch);
-        }
-        else {
+        } else {
             $data      = pack("VvC", $offset, $grbit, $cch);
         }
         $this->_append($header.$data.$sheetname);
@@ -1030,8 +1016,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         if ($this->_BIFF_version == 0x0600) {
             $length    = 5 + strlen($format);      // Number of bytes to follow
             $encoding = 0x0;
-        }
-        elseif ($this->_BIFF_version == 0x0500) {
+        } elseif ($this->_BIFF_version == 0x0500) {
             $length    = 3 + strlen($format);      // Number of bytes to follow
         }
 
@@ -1040,8 +1025,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $header    = pack("vv", $record, $length);
         if ($this->_BIFF_version == 0x0600) {
             $data      = pack("vvC", $ifmt, $cch, $encoding);
-        }
-        elseif ($this->_BIFF_version == 0x0500) {
+        } elseif ($this->_BIFF_version == 0x0500) {
             $data      = pack("vC", $ifmt, $cch);
         }
         $this->_append($header.$data.$format);
@@ -1292,8 +1276,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $data = '';                                // The RGB data
     
         // Pack the RGB data
-        foreach($aref as $color)
-        {
+        foreach($aref as $color) {
             foreach($color as $byte) {
                 $data .= pack("C",$byte);
             }
@@ -1372,13 +1355,10 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     // split string fits exactly into the remaining space.
                     if ($block_length > 0) {
                         $continue = 1;
-                    }
-                    else {
+                    } else {
                         $continue = 0;
                     }
- 
-                }
-                else {
+                } else {
                     // Store the max size for this block
                     $this->_block_sizes[] = $written + $continue;
  
@@ -1393,8 +1373,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                 // one or more CONTINUE blocks
                 if ($block_length < $continue_limit) {
                     $written = $block_length;
-                }
-                else {
+                } else {
                     $written = 0;
                 }
             }
@@ -1504,12 +1483,10 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     //
                     if ($block_length > 0) {
                         $continue = 1;
-                    }
-                    else {
+                    } else {
                         $continue = 0;
                     }
-                }
-                else {
+                } else {
                     // Not enough space to start the string in the current block
                     $block_length -= $continue_limit - $space_remaining - $continue;
                     $continue = 0;
@@ -1533,8 +1510,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                 if ($block_length < $continue_limit) {
                     $this->_append($string);
                     $written = $block_length;
-                }
-                else {
+                } else {
                     $written = 0;
                 }
             }
