@@ -68,7 +68,7 @@ require_once('PEAR.php');
 * Class for parsing Excel formulas
 *
 * @author   Xavier Noguer <xnoguer@rezebra.com>
-* @category File Formats
+* @category FileFormats
 * @package  Spreadsheet_Excel_Writer
 */
 

@@ -38,7 +38,7 @@ require_once('PEAR.php');
 * Class for creating OLE streams for Excel Spreadsheets
 *
 * @author   Xavier Noguer <xnoguer@rezebra.com>
-* @category File Formats
+* @category FileFormats
 * @package  Spreadsheet_Excel_Writer
 */
 

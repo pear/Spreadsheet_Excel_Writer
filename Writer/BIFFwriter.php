@@ -47,7 +47,7 @@ require_once('PEAR.php');
 * window into a document; another describes a picture format.
 *
 * @author   Xavier Noguer <xnoguer@rezebra.com>
-* @category File Formats
+* @category FileFormats
 * @package  Spreadsheet_Excel_Writer
 */
 
