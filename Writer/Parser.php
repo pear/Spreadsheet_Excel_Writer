@@ -62,6 +62,31 @@ define('SPREADSHEET_EXCEL_WRITER_CLOSE',")");
 */
 define('SPREADSHEET_EXCEL_WRITER_COMA',",");
 
+/**
+* @const SPREADSHEET_EXCEL_WRITER_GT token identifier for character ">"
+*/
+define('SPREADSHEET_EXCEL_WRITER_GT',">");
+
+/**
+* @const SPREADSHEET_EXCEL_WRITER_LT token identifier for character "<"
+*/
+define('SPREADSHEET_EXCEL_WRITER_LT',"<");
+
+/**
+* @const SPREADSHEET_EXCEL_WRITER_LE token identifier for character "<="
+*/
+define('SPREADSHEET_EXCEL_WRITER_LE',"<=");
+
+/**
+* @const SPREADSHEET_EXCEL_WRITER_GE token identifier for character ">="
+*/
+define('SPREADSHEET_EXCEL_WRITER_GE',">=");
+
+/**
+* @const SPREADSHEET_EXCEL_WRITER_EQ token identifier for character "="
+*/
+define('SPREADSHEET_EXCEL_WRITER_EQ',"=");
+
 
 require_once('PEAR.php');
 
@@ -503,6 +528,10 @@ class Parser extends PEAR
         {
             return($this->_convertNumber($token));
         }
+        elseif(preg_match("/^\"[^\"]{0,255}\"$/", $token))
+        {
+            return($this->_convertString($token));
+        }
         // match references like A1
         elseif(preg_match("/^([A-I]?[A-Z])(\d+)$/",$token))
         {
@@ -550,7 +579,7 @@ class Parser extends PEAR
     * Convert a number token to ptgInt or ptgNum
     *
     * @access private
-    * @param mixed $num an integer or double for conersion to its ptg value
+    * @param mixed $num an integer or double for conversion to its ptg value
     */
     function _convertNumber($num)
     {
@@ -568,6 +597,19 @@ class Parser extends PEAR
         }
     }
     
+    /**
+    * Convert a string token to ptgStr
+    *
+    * @access private
+    * @param string $string A string for conversion to its ptg value
+    */
+    function _convertString($string)
+    {
+        // chop away beggining and ending quotes
+        $string = substr($string, 1, strlen($string) - 2);
+        return pack("CC", $this->ptg['ptgStr'], strlen($string)).$string;
+    }
+ 
     /**
     * Convert a function to a ptgFunc or ptgFuncVarV depending on the number of
     * args that it takes.
@@ -978,6 +1020,27 @@ class Parser extends PEAR
             case SPREADSHEET_EXCEL_WRITER_COMA:
                 return($token);
                 break;
+            case SPREADSHEET_EXCEL_WRITER_GT:
+                if ($this->_lookahead == '=') { // it's a GE token
+                    break;
+                }
+                return($token);
+                break;
+            case SPREADSHEET_EXCEL_WRITER_LT:
+                if ($this->_lookahead == '=') { // it's a LE token
+                    break;
+                }
+                return($token);
+                break;
+            case SPREADSHEET_EXCEL_WRITER_GE:
+                return($token);
+                break;
+            case SPREADSHEET_EXCEL_WRITER_LE:
+                return($token);
+                break;
+            case SPREADSHEET_EXCEL_WRITER_EQ:
+                return($token);
+                break;
             default:
                 // if it's a reference
                 if(eregi("^[A-I]?[A-Z][0-9]+$",$token) and 
@@ -1011,7 +1074,13 @@ class Parser extends PEAR
                 {
                     return($token);
                 }
+                // If it's a number
                 elseif(is_numeric($token) and !is_numeric($token.$this->_lookahead))
+                {
+                    return($token);
+                }
+                // If it's a string (of maximum 255 characters)
+                elseif(ereg("^\"[^\"]{0,255}\"$",$token))
                 {
                     return($token);
                 }
@@ -1036,12 +1105,72 @@ class Parser extends PEAR
         $this->_formula      = $formula;
         $this->_lookahead    = $formula{1};
         $this->_advance();
-        $this->_parse_tree   = $this->_expression();
+        $this->_parse_tree   = $this->_condition(); //$this->_expression();
         if($this->isError($this->_parse_tree)) {
             return($this->_parse_tree);
             }
     }
     
+    /**
+    * It parses a condition. It assumes the following rule:
+    * Cond -> Expr [(">" | "<") Expr]
+    *
+    * @access private
+    * @return mixed The parsed ptg'd tree
+    */
+    function _condition()
+    {
+        $result = $this->_expression();
+        if($this->isError($result)) {
+            return $result;
+        }
+        if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_LT)
+        {
+            $this->_advance();
+            $result2 = $this->_expression();
+            if($this->isError($result2)) {
+                return $result2;
+            }
+            $result = $this->_createTree('ptgLT', $result, $result2);
+        }
+        elseif ($this->_current_token == SPREADSHEET_EXCEL_WRITER_GT) 
+        {
+            $this->_advance();
+            $result2 = $this->_expression();
+            if($this->isError($result2)) {
+                return $result2;
+            }
+            $result = $this->_createTree('ptgGT', $result, $result2);
+        }
+        elseif ($this->_current_token == SPREADSHEET_EXCEL_WRITER_LE) 
+        {
+            $this->_advance();
+            $result2 = $this->_expression();
+            if($this->isError($result2)) {
+                return $result2;
+            }
+            $result = $this->_createTree('ptgLE', $result, $result2);
+        }
+        elseif ($this->_current_token == SPREADSHEET_EXCEL_WRITER_GE) 
+        {
+            $this->_advance();
+            $result2 = $this->_expression();
+            if($this->isError($result2)) {
+                return $result2;
+            }
+            $result = $this->_createTree('ptgGE', $result, $result2);
+        }
+        elseif ($this->_current_token == SPREADSHEET_EXCEL_WRITER_EQ) 
+        {
+            $this->_advance();
+            $result2 = $this->_expression();
+            if($this->isError($result2)) {
+                return $result2;
+            }
+            $result = $this->_createTree('ptgEQ', $result, $result2);
+        }
+        return $result;
+    }
     /**
     * It parses a expression. It assumes the following rule:
     * Expr -> Term [("+" | "-") Term]
@@ -1051,6 +1180,13 @@ class Parser extends PEAR
     */
     function _expression()
     {
+        // If it's a string return a string node
+        if (ereg("^\"[^\"]{0,255}\"$", $this->_current_token))
+        {
+            $result = $this->_current_token;
+            $this->_advance();
+            return($result);
+        }
         $result = $this->_term();
         if($this->isError($result)) {
             return($result);
@@ -1148,7 +1284,7 @@ class Parser extends PEAR
         if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_OPEN)
         {
             $this->_advance();         // eat the "("
-            $result = $this->_parenthesizedExpression();//$this->_expression();
+            $result = $this->_parenthesizedExpression();
             if ($this->_current_token != SPREADSHEET_EXCEL_WRITER_CLOSE) {
                 return($this->raiseError("')' token expected."));
             }
@@ -1222,14 +1358,14 @@ class Parser extends PEAR
                 else {
                     return($this->raiseError("Sintactic error: coma expected $num_args"));
                 }
-                $result2 = $this->_expression();
+                $result2 = $this->_condition(); //$this->_expression();
                 if($this->isError($result2)) {
                     return($result2);
                 }
                 $result = $this->_createTree('arg', $result, $result2);
             }
             else {
-                $result2 = $this->_expression();
+                $result2 = $this->_condition(); //$this->_expression();
                 if($this->isError($result2)) {
                     return($result2);
                 }
