@@ -555,14 +555,21 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     function _calcSheetOffsets()
     {
-        $BOF     = 11;
-        $EOF     = 4;
-        $offset  = $this->_datasize;
+        $boundsheet_length = 12;  // fixed length for a BOUNDSHEET record
+        $EOF               = 4;
+        $offset            = $this->_datasize;
+
+        // add the length of the SST
+        $offset += 12; // FIXME: update when updating _storeSharedStringsTable()
+        // add the lenght of SUPBOOK, EXTERNSHEET and NAME records
+        $offset += 0; // FIXME: calculate real value when storing the records
         $total_worksheets = count($this->_worksheets);
+        // add the length of the BOUNDSHEET records 
         for ($i=0; $i < $total_worksheets; $i++) {
-            $offset += $BOF + strlen($this->_worksheets[$i]->name);
+            $offset += $boundsheet_length + strlen($this->_worksheets[$i]->name);
         }
         $offset += $EOF;
+
         for ($i=0; $i < $total_worksheets; $i++) {
             $this->_worksheets[$i]->offset = $offset;
             $offset += $this->_worksheets[$i]->_datasize;
@@ -1213,6 +1220,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     *
     * @access private
     */
+    /* FIXME: update _calcSheetOffsets() when updating this method */
     function _storeSharedStringsTable()
     {
         $record          = 0x00fc;  // Record identifier

@@ -102,28 +102,28 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     /**
     * First row for the DIMENSIONS record
     * @var integer
-    * @see storeDimensions()
+    * @see _storeDimensions()
     */
     var $_dim_rowmin;
 
     /**
     * Last row for the DIMENSIONS record
     * @var integer
-    * @see storeDimensions()
+    * @see _storeDimensions()
     */
     var $_dim_rowmax;
 
     /**
     * First column for the DIMENSIONS record
     * @var integer
-    * @see storeDimensions()
+    * @see _storeDimensions()
     */
     var $_dim_colmin;
 
     /**
     * Last column for the DIMENSIONS record
     * @var integer
-    * @see storeDimensions()
+    * @see _storeDimensions()
     */
     var $_dim_colmax;
 
@@ -470,7 +470,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         */
     
         // Prepend the sheet dimensions
-        $this->storeDimensions();
+        $this->_storeDimensions();
     
         // Prepend the sheet password
         $this->_storePassword();
@@ -481,6 +481,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Prepend the page setup
         $this->_storeSetup();
     
+        /* FIXME: margins are actually appended */
         // Prepend the bottom margin
         $this->_storeMarginBottom();
     
@@ -2053,14 +2054,14 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access private
     */
-    function storeDimensions()
+    function _storeDimensions()
     {
-        $record    = 0x0200;               // Record identifier
-        $row_min   = $this->_dim_rowmin;   // First row
-        $row_max   = $this->_dim_rowmax;   // Last row plus 1
-        $col_min   = $this->_dim_colmin;   // First column
-        $col_max   = $this->_dim_colmax;   // Last column plus 1
-        $reserved  = 0x0000;               // Reserved by Excel
+        $record    = 0x0200;                 // Record identifier
+        $row_min   = $this->_dim_rowmin;     // First row
+        $row_max   = $this->_dim_rowmax + 1; // Last row plus 1
+        $col_min   = $this->_dim_colmin;     // First column
+        $col_max   = $this->_dim_colmax + 1; // Last column plus 1
+        $reserved  = 0x0000;                 // Reserved by Excel
     
         if ($this->_BIFF_version == 0x0500) {
             $length    = 0x000A;               // Number of bytes to follow
