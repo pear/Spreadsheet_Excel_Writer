@@ -284,6 +284,54 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     var $print_colmax;
 
     /**
+    * Whether to use outline.
+    * @var bool
+    */
+    var $_outline_on;
+  
+    /**
+    * Auto outline styles.
+    * @var bool
+    */
+    var $_outline_style;
+ 
+    /**
+    * Whether to have outline summary below.
+    * @var bool
+    */
+    var $_outline_below;
+ 
+    /**
+    * Whether to have outline summary at the right.
+    * @var bool
+    */
+    var $_outline_right;
+ 
+    /**
+    * Outline row level.
+    * @var integer
+    */
+    var $_outline_row_level;
+ 
+    /**
+    * Whether to fit to page when printing or not.
+    * @var bool
+    */
+    var $_fit_page;
+
+    /** 
+    * Number of pages to fit wide
+    * @var integer
+    */
+    var $_fit_width;
+
+    /** 
+    * Number of pages to fit high
+    * @var integer
+    */
+    var $_fit_height;
+
+    /**
     * Constructor
     *
     * @param string  $name         The name of the new worksheet
@@ -368,7 +416,13 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         $this->_zoom            = 100;
         $this->_print_scale     = 100;
-    
+ 
+        $this->_outline_row_level = 0;
+        $this->_outline_style     = 0;
+        $this->_outline_below     = 1;
+        $this->_outline_right     = 1;
+        $this->_outline_on        = 1;
+
         $this->_initialize();
     }
     
@@ -457,7 +511,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         // Prepend GRIDSET
         $this->_storeGridset();
-    
+
+        //  Prepend GUTS
+        $this->_storeGuts();
+ 
         // Prepend PRINTGRIDLINES
         $this->_storePrintGridlines();
     
@@ -477,7 +534,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Prepend the COLINFO records if they exist
         if (!empty($this->_colinfo))
         {
-            for($i=0; $i < count($this->_colinfo); $i++) {
+            for ($i=0; $i < count($this->_colinfo); $i++) {
                 $this->_storeColinfo($this->_colinfo[$i]);
             }
             $this->_storeDefcol();
@@ -604,15 +661,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $width    width to set
     * @param mixed   $format   The optional XF format to apply to the columns
     * @param integer $hidden   The optional hidden atribute
+    * @param integer $level    The optional outline level
     */
-    function setColumn($firstcol, $lastcol, $width, $format = 0, $hidden = 0)
+    function setColumn($firstcol, $lastcol, $width, $format = 0, $hidden = 0, $level = 0)
     {
-        $this->_colinfo[] = array($firstcol, $lastcol, $width, &$format, $hidden);
+        $this->_colinfo[] = array($firstcol, $lastcol, $width, &$format, $hidden, $level);
     
         // Set width to zero if column is hidden
         $width = ($hidden) ? 0 : $width;
     
-        for($col = $firstcol; $col <= $lastcol; $col++) {
+        for ($col = $firstcol; $col <= $lastcol; $col++) {
             $this->col_sizes[$col] = $width;
         }
     }
@@ -1245,7 +1303,28 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         return($password);
     }
 
-    
+    /**
+    * This method sets the properties for outlining and grouping. The defaults
+    * correspond to Excel's defaults.
+    *
+    * @param bool $visible
+    * @param bool $symbols_below
+    * @param bool $symbols_right
+    * @param bool $auto_style
+    */
+    function setOutline($visible = true, $symbols_below = true, $symbols_right = true, $auto_style = false)
+    {
+        $this->_outline_on    = $visible;
+        $this->_outline_below = $symbols_below;
+        $this->_outline_right = $symbols_right;
+        $this->_outline_style = $auto_style;
+
+        // Ensure this is a boolean vale for Window2
+        if ($this->_outline_on) {
+            $this->_outline_on = true;
+        }
+     }
+
     /******************************************************************************
     *******************************************************************************
     *
@@ -1915,8 +1994,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $height Height we are giving to the row. 
     *                        Use NULL to set XF without setting height
     * @param mixed   $format XF format we are giving to the row
+    * @param bool    $hidden The optional hidden attribute
+    * @param integer $level  The optional outline level for row, in range [0,7]
     */
-    function setRow($row, $height, $format = 0)
+    function setRow($row, $height, $format = 0, $hidden = false, $level = 0)
     {
         $record      = 0x0208;               // Record identifier
         $length      = 0x0010;               // Number of bytes to follow
@@ -1925,7 +2006,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $colMac      = 0x0000;               // Last defined column
         $irwMac      = 0x0000;               // Used by Excel to optimise loading
         $reserved    = 0x0000;               // Reserved
-        $grbit       = 0x01C0;               // Option flags. (monkey) see $1 do
+        $grbit       = 0x0000;               // Option flags
         $ixfe        = $this->_XF($format);  // XF index
     
         // Use setRow($row, NULL, $XF) to set XF format without setting height
@@ -1935,7 +2016,23 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         else {
             $miyRw = 0xff;          // default row height is 256
         }
-    
+
+        $level = max(0, min($level, 7));  // level should be between 0 and 7
+        $this->_outline_row_level = max($level, $this->_outline_row_level);
+
+
+        // Set the options flags. fUnsynced is used to show that the font and row
+        // heights are not compatible. This is usually the case for WriteExcel.
+        // The collapsed flag 0x10 doesn't seem to be used to indicate that a row
+        // is collapsed. Instead it is used to indicate that the previous row is
+        // collapsed. The zero height flag, 0x20, is used to collapse a row.
+
+        $grbit |= $level;
+        if($hidden) $grbit |= 0x0020;
+        $grbit |= 0x0040; # fUnsynced
+        if($format) $grbit |= 0x0080;
+        $grbit |= 0x0100;
+
         $header   = pack("vv",       $record, $length);
         $data     = pack("vvvvvvvv", $row, $colMic, $colMac, $miyRw,
                                      $irwMac,$reserved, $grbit, $ixfe);
@@ -1986,7 +2083,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $fDspZeros      = 1;                     // 4
         $fDefaultHdr    = 1;                     // 5
         $fArabic        = 0;                     // 6
-        $fDspGuts       = 1;                     // 7
+        $fDspGuts       = $this->_outline_on;    // 7
         $fFrozenNoSplit = 0;                     // 0 - bit
         $fSelected      = $this->selected;       // 1
         $fPaged         = 1;                     // 2
@@ -2037,6 +2134,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *                2 => Col width (8.43 is Excel default),
     *                3 => The optional XF format of the column,
     *                4 => Option flags.
+    *                5 => Optional outline level
     */
     function _storeColinfo($col_array)
     {
@@ -2064,6 +2162,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         else {
             $grbit = 0;
         }
+        if (isset($col_array[5])) {
+            $level = $col_array[5];
+        }
+        else {
+            $level = 0;
+        }
         $record   = 0x007D;          // Record identifier
         $length   = 0x000B;          // Number of bytes to follow
     
@@ -2072,7 +2176,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         $ixfe     = $this->_XF($format);
         $reserved = 0x00;            // Reserved
-    
+
+        $level = max(0, min($level, 7));
+        $grbit |= $level << 8;
+
         $header   = pack("vv",     $record, $length);
         $data     = pack("vvvvvC", $colFirst, $colLast, $coldx,
                                    $ixfe, $grbit, $reserved);
@@ -2571,7 +2678,54 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $data        = pack("v",   $fGridSet);
         $this->_prepend($header.$data);
     }
-    
+ 
+    /**
+    * Write the GUTS BIFF record. This is used to configure the gutter margins
+    * where Excel outline symbols are displayed. The visibility of the gutters is
+    * controlled by a flag in WSBOOL.
+    *
+    * @see _storeWsbool()
+    * @access private
+    */
+    function _storeGuts()
+    {
+        $record      = 0x0080;   // Record identifier
+        $length      = 0x0008;   // Bytes to follow
+   
+        $dxRwGut     = 0x0000;   // Size of row gutter
+        $dxColGut    = 0x0000;   // Size of col gutter
+   
+        $row_level   = $this->_outline_row_level;
+        $col_level   = 0;
+   
+        // Calculate the maximum column outline level. The equivalent calculation
+        // for the row outline level is carried out in setRow().
+        for ($i=0; $i < count($this->_colinfo); $i++)
+        {
+           // Skip cols without outline level info.
+           if (count($col_level) >= 6) {
+              $col_level = max($this->_colinfo[$i][5], $col_level);
+           }
+        }
+   
+        // Set the limits for the outline levels (0 <= x <= 7).
+        $col_level = max(0, min($col_level, 7));
+   
+        // The displayed level is one greater than the max outline levels
+        if ($row_level) {
+            $row_level++;
+        }
+        if ($col_level) {
+            $col_level++;
+        }
+   
+        $header      = pack("vv",   $record, $length);
+        $data        = pack("vvvv", $dxRwGut, $dxColGut, $row_level, $col_level);
+   
+        $this->_prepend($header.$data);
+    }
+
+
     /**
     * Write the WSBOOL BIFF record, mainly for fit-to-page. Used in conjunction
     * with the SETUP record.
@@ -2582,23 +2736,40 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     {
         $record      = 0x0081;   // Record identifier
         $length      = 0x0002;   // Bytes to follow
+        $grbit       = 0x0000;
     
         // The only option that is of interest is the flag for fit to page. So we
         // set all the options in one go.
         //
-        if ($this->_fit_page) {
+        /*if ($this->_fit_page) {
             $grbit = 0x05c1;
         }
         else {
             $grbit = 0x04c1;
+        }*/
+        // Set the option flags
+        $grbit |= 0x0001;                           // Auto page breaks visible
+        if ($this->_outline_style) {
+            $grbit |= 0x0020; // Auto outline styles
         }
-    
+        if ($this->_outline_below) {
+            $grbit |= 0x0040; // Outline summary below
+        }
+        if ($this->_outline_right) {
+            $grbit |= 0x0080; // Outline summary right
+        }
+        if ($this->_fit_page) {
+            $grbit |= 0x0100; // Page setup fit to page
+        }
+        if ($this->_outline_on) {
+            $grbit |= 0x0400; // Outline symbols displayed
+        }
+
         $header      = pack("vv", $record, $length);
         $data        = pack("v",  $grbit);
         $this->_prepend($header.$data);
     }
-    
-    
+
     /**
     * Write the HORIZONTALPAGEBREAKS BIFF record.
     *
