@@ -2975,14 +2975,24 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         $record  = 0x001b;               // Record identifier
         $cbrk    = count($breaks);       // Number of page breaks
-        $length  = 2 + 6*$cbrk;          // Bytes to follow
-    
+        if ($this->_BIFF_version == 0x0600) {
+            $length  = 2 + 6*$cbrk;      // Bytes to follow
+        }
+        else {
+            $length  = 2 + 2*$cbrk;      // Bytes to follow
+        }
+
         $header  = pack("vv", $record, $length);
         $data    = pack("v",  $cbrk);
     
         // Append each page break
         foreach($breaks as $break) {
-            $data .= pack("vvv", $break, 0x0000, 0x00ff);
+            if ($this->_BIFF_version == 0x0600) {
+                $data .= pack("vvv", $break, 0x0000, 0x00ff);
+            }
+            else {
+                $data .= pack("v", $break);
+            }
         }
     
         $this->_prepend($header.$data);
@@ -3013,14 +3023,23 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
         $record  = 0x001a;               // Record identifier
         $cbrk    = count($breaks);       // Number of page breaks
-        $length  = 2 + 6*$cbrk;          // Bytes to follow
+        if ($this->_BIFF_version == 0x0600)
+            $length  = 2 + 6*$cbrk;      // Bytes to follow
+        else {
+            $length  = 2 + 2*$cbrk;      // Bytes to follow
+        }
     
         $header  = pack("vv",  $record, $length);
         $data    = pack("v",   $cbrk);
     
         // Append each page break
         foreach ($breaks as $break) {
-            $data .= pack("vvv", $break, 0x0000, 0xffff);
+            if ($this->_BIFF_version == 0x0600) {
+                $data .= pack("vvv", $break, 0x0000, 0xffff);
+            }
+            else {
+                $data .= pack("v", $break);
+            }
         }
     
         $this->_prepend($header.$data);
