@@ -537,15 +537,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             return($this->_convertRef2d($token));
         }
-        // match external references like Sheet1!A1
-        elseif (preg_match("/^([A-Za-z0-9_]+\![A-I]?[A-Z])(\d+)$/",$token))
-        {
-            return($this->_convertRef3d($token));
-        }
         // match external references like Sheet1:Sheet2!A1
-        elseif (preg_match("/^([A-Za-z0-9_]+\:[A-Za-z0-9_]+\![A-I]?[A-Z])(\d+)$/",$token))
+        elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\![A-I]?[A-Z](\d+)$/",$token))
         {
-            return($this->_convertRef3d($token));
+            return $this->_convertRef3d($token);
         }
         // match ranges like A1:B2
         elseif(preg_match("/^(\$)?[A-I]?[A-Z](\$)?(\d+)\:(\$)?[A-I]?[A-Z](\$)?(\d+)$/",$token))
@@ -557,15 +552,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         {
             return($this->_convertRange2d($token));
         }
-        // match external ranges like Sheet1!A1:B2
-        elseif (preg_match("/^([A-Za-z0-9_]+\![A-I]?[A-Z])(\d+)\:([A-I]?[A-Z])(\d+)$/",$token))
-        {
-            return($this->_convertRange3d($token));
-        }
         // match external ranges like Sheet1:Sheet2!A1:B2
-        elseif (preg_match("/^([A-Za-z0-9_]+\:[A-Za-z0-9_]+\![A-I]?[A-Z])(\d+)\:([A-I]?[A-Z])(\d+)$/",$token))
+        elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\!([A-I]?[A-Z])?(\d+)\:([A-I]?[A-Z])?(\d+)$/",$token))
         {
-            return($this->_convertRange3d($token));
+            return $this->_convertRange3d($token);
         }
         elseif(isset($this->ptg[$token])) // operators (including parentheses)
         {
@@ -720,16 +710,26 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         list($cell1, $cell2) = split(':', $range);
  
         // Convert the cell references
-        $cell_array1 = $this->_cellToPackedRowcol($cell1);
-        if ($this->isError($cell_array1)) {
-            return $cell_array1;
+        if (preg_match("/^(\$)?[A-I]?[A-Z](\$)?(\d+)$/", $cell1))
+        {
+            $cell_array1 = $this->_cellToPackedRowcol($cell1);
+            if (PEAR::isError($cell_array1)) {
+                return $cell_array1;
+            }
+            list($row1, $col1) = $cell_array1;
+            $cell_array2 = $this->_cellToPackedRowcol($cell2);
+            if (PEAR::isError($cell_array2)) {
+                return $cell_array2;
+            }
+            list($row2, $col2) = $cell_array2;
         }
-        list($row1, $col1) = $cell_array1;
-        $cell_array2 = $this->_cellToPackedRowcol($cell2);
-        if ($this->isError($cell_array2)) {
-            return $cell_array2;
+        else { // It's a columns range (like 26:27)
+             $cells_array = $this->_rangeToPackedRange($cell1.':'.$cell2);
+             if (PEAR::isError($cells_array)) {
+                 return $cells_array;
+             }
+             list($row1, $col1, $row2, $col2) = $cells_array;
         }
-        list($row2, $col2) = $cell_array2;
  
         // The ptg value depends on the class of the ptg.
         if ($class == 0) {
@@ -930,6 +930,46 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     }
     
     /**
+    * pack() row range into the required 3 byte format.
+    * Just using maximun col/rows, which is probably not the correct solution
+    *
+    * @access private
+    * @param string $range The Excel range to be packed
+    * @return array Array containing (row1,col1,row2,col2) in packed() format
+    */
+    function _rangeToPackedRange($range)
+    {
+        preg_match('/(\$)?(\d+)\:(\$)?(\d+)/', $range, $match);
+        // return absolute rows if there is a $ in the ref
+        $row1_rel = empty($match[1]) ? 1 : 0;
+        $row1     = $match[2];
+        $row2_rel = empty($match[3]) ? 1 : 0;
+        $row2     = $match[4];
+        // Convert 1-index to zero-index
+        $row1--;
+        $row2--;
+        // Trick poor inocent Excel
+        $col1 = 0;
+        $col2 = 16383; // maximum possible value for Excel 5 (change this!!!)
+
+        //list($row, $col, $row_rel, $col_rel) = $this->_cellToRowcol($cell);
+        if (($row1 >= 16384) or ($row2 >= 16384)) {
+            return new PEAR_Error("Row in: $range greater than 16384 ");
+        }
+    
+        // Set the high bits to indicate if rows are relative.
+        $row1    |= $row1_rel << 14;
+        $row2    |= $row2_rel << 15;
+    
+        $row1     = pack('v', $row1);
+        $row2     = pack('v', $row2);
+        $col1     = pack('C', $col1);
+        $col2     = pack('C', $col2);
+    
+        return array($row1, $col1, $row2, $col2);
+    }
+
+    /**
     * Convert an Excel cell reference such as A1 or $B2 or C$3 or $D$4 to a zero
     * indexed row and column number. Also returns two (0,1) values to indicate
     * whether the row or column are relative references.
@@ -1092,14 +1132,14 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                     return $token;
                 }
                 // If it's an external range
-                elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\![A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$/",$token) and
+                elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\!([A-I]?[A-Z])?[0-9]+:([A-I]?[A-Z])?[0-9]+$/",$token) and
                        !ereg("[0-9]",$this->_lookahead))
                 {
                     return $token;
                 }
-                // If it's a number (check that it's not a sheet name)
+                // If it's a number (check that it's not a sheet name or range)
                 elseif (is_numeric($token) and !is_numeric($token.$this->_lookahead) and
-                        ($this->_lookahead != '!'))
+                        ($this->_lookahead != '!') and (($this->_lookahead != ':')))
                 {
                     return $token;
                 }
@@ -1347,7 +1387,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return $result;
         }
         // If it's an external range (Sheet1!A1:B2)
-        elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\![A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$/",$this->_current_token))
+        elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\!([A-I]?[A-Z])?[0-9]+:([A-I]?[A-Z])?[0-9]+$/",$this->_current_token))
         {
             $result = $this->_current_token;
             $this->_advance();
