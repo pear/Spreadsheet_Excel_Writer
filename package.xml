@@ -31,8 +31,7 @@
       - added hideScreenGridlines() (Paul Osman)
      Bug fixes:
       - Fixed SST table (long strings) (Bernd Jaenichen)
-      - Fixed bug #1218,  (boucher dot stephane at free dot fr)
-      - Fixed bug #1344,  ()
+      - Fixed bug #1218, SST table (boucher dot stephane at free dot fr)
       - Fixed bug #781, insertBitmap ignores row height
       - Fixed bug #578, setVPageBreaks doesn't handle multiple value arrays (natel at tocquigny dot com)
     </notes>
