@@ -390,7 +390,6 @@ class Format extends PEAR
     /**
     * Generate an Excel BIFF FONT record.
     *
-    * @see Workbook::_storeAllFonts()
     * @return string The FONT record
     */
     function getFont()

@@ -498,8 +498,8 @@ class Worksheet extends BIFFwriter
     }
     
     /**
-    * Retrieve the worksheet name. This is usefull when creating worksheets
-    * without a name.
+    * Retrieve the worksheet name.
+    * This is usefull when creating worksheets without a name.
     *
     * @access public
     * @return string The worksheet's name
@@ -543,8 +543,8 @@ class Worksheet extends BIFFwriter
     }
     
     /**
-    * Set this worksheet as a selected worksheet, i.e. the worksheet has its tab
-    * highlighted.
+    * Set this worksheet as a selected worksheet,
+    * i.e. the worksheet has its tab highlighted.
     *
     * @access public
     */
@@ -567,9 +567,9 @@ class Worksheet extends BIFFwriter
     }
     
     /**
-    * Set this worksheet as the first visible sheet. This is necessary
-    * when there are a large number of worksheets and the activated
-    * worksheet is not visible on the screen.
+    * Set this worksheet as the first visible sheet.
+    * This is necessary when there are a large number of worksheets and the
+    * activated worksheet is not visible on the screen.
     *
     * @access public
     */
@@ -579,7 +579,8 @@ class Worksheet extends BIFFwriter
     }
  
     /**
-    * Set the worksheet protection flag to prevent accidental modification and to
+    * Set the worksheet protection flag
+    * to prevent accidental modification and to
     * hide formulas if the locked and hidden format properties have been set.
     *
     * @access public
@@ -595,7 +596,6 @@ class Worksheet extends BIFFwriter
     * Set the width of a single column or a range of columns.
     *
     * @access public
-    * @see _storeColinfo()
     * @param integer $firstcol first column on the range
     * @param integer $lastcol  last column on the range
     * @param integer $width    width to set
@@ -622,7 +622,6 @@ class Worksheet extends BIFFwriter
     * @param integer $first_column first column in the selected quadrant
     * @param integer $last_row     last row in the selected quadrant
     * @param integer $last_column  last column in the selected quadrant
-    * @see _storeSelection()
     */
     function setSelection($first_row,$first_column,$last_row,$last_column)
     {
@@ -834,8 +833,7 @@ class Worksheet extends BIFFwriter
     }
     
     /**
-    * Set the rows to repeat at the top of each printed page. See also the
-    * _store_name_xxxx() methods in Workbook.php
+    * Set the rows to repeat at the top of each printed page.
     *
     * @access public
     * @param integer $first_row First row to repeat
@@ -854,7 +852,6 @@ class Worksheet extends BIFFwriter
     
     /**
     * Set the columns to repeat at the left hand side of each printed page.
-    * See also the _storeNames() methods in Workbook.php
     *
     * @access public
     * @param integer $first_col First column to repeat
@@ -875,7 +872,6 @@ class Worksheet extends BIFFwriter
     * Set the area of each worksheet that will be printed.
     *
     * @access public
-    * @see Workbook::_storeNames()
     * @param integer $first_row First row of the area to print
     * @param integer $first_col First column of the area to print
     * @param integer $last_row  Last row of the area to print
@@ -894,7 +890,6 @@ class Worksheet extends BIFFwriter
     * Set the option to hide gridlines on the printed page. 
     *
     * @access public
-    * @see _storePrintGridlines(), _storeGridset()
     */
     function hideGridlines()
     {
@@ -903,10 +898,8 @@ class Worksheet extends BIFFwriter
     
     /**
     * Set the option to print the row and column headers on the printed page.
-    * See also the _storePrintHeaders() method below.
     *
     * @access public
-    * @see _storePrintHeaders()
     * @param integer $print Whether to print the headers or not. Defaults to 1 (print).
     */
     function printRowColHeaders($print = 1)
@@ -915,8 +908,8 @@ class Worksheet extends BIFFwriter
     }
     
     /**
-    * Store the vertical and horizontal number of pages that will define the
-    * maximum area printed. It doesn't seem to work with OpenOffice.
+    * Set the vertical and horizontal number of pages that will define the maximum area printed.
+    * It doesn't seem to work with OpenOffice.
     *
     * @access public
     * @param  integer $width  Maximun width of printed area in pages
@@ -1219,14 +1212,10 @@ class Worksheet extends BIFFwriter
     * @param integer $col    Zero indexed column
     * @param float   $num    The number to write
     * @param mixed   $format The optional XF format
+    * @return integer
     */
     function writeNumber($row, $col, $num, $format = 0)
     {
-        // Check for a cell reference in A1 notation and substitute row and column
-        /*if ($_[0] =~ /^\D/) {
-            @_ = $this->substitute_cellref(@_);
-        }*/
-    
         $record    = 0x0203;                 // Record identifier
         $length    = 0x000E;                 // Number of bytes to follow
     
@@ -1275,7 +1264,6 @@ class Worksheet extends BIFFwriter
     * NOTE: there is an Excel 5 defined limit of 255 characters.
     * $format is optional.
     * Returns  0 : normal termination
-    *         -1 : insufficient number of arguments
     *         -2 : row or column out of range
     *         -3 : long string truncated to 255 chars
     *
@@ -1284,14 +1272,10 @@ class Worksheet extends BIFFwriter
     * @param integer $col    Zero indexed column
     * @param string  $str    The string to write
     * @param mixed   $format The XF format for the cell
+    * @return integer
     */
     function writeString($row, $col, $str, $format = 0)
     {
-        // Check for a cell reference in A1 notation and substitute row and column
-        /*if (preg("/^\D/",$row)) {
-            @_ = $this->_substituteCellref(@_);
-        }*/
-    
         $strlen    = strlen($str);
         $record    = 0x0204;                   // Record identifier
         $length    = 0x0008 + $strlen;         // Bytes to follow
@@ -1404,8 +1388,7 @@ class Worksheet extends BIFFwriter
     * or a number.
     *
     * A blank cell without a format serves no purpose. Therefore, we don't write
-    * a BLANK record unless a format is specified. This is mainly an optimisation
-    * for the write_row() and write_col() methods.
+    * a BLANK record unless a format is specified.
     *
     * Returns  0 : normal termination (including no format)
     *         -1 : insufficient number of arguments
@@ -1466,6 +1449,7 @@ class Worksheet extends BIFFwriter
     * Parser.php which returns a packed binary string.
     *
     * Returns  0 : normal termination
+    *         -1 : formula errors (bad formula)
     *         -2 : row or column out of range
     *
     * @access public
@@ -1473,6 +1457,7 @@ class Worksheet extends BIFFwriter
     * @param integer $col     Zero indexed column
     * @param string  $formula The formula text string
     * @param mixed   $format  The optional XF format
+    * @return integer
     */
     function writeFormula($row, $col, $formula, $format = 0)
     {
@@ -1524,10 +1509,9 @@ class Worksheet extends BIFFwriter
         }
         else
         {
-            //die("Unrecognised character for formula");
             // Error handling
             $this->writeString($row, $col, 'Unrecognised character for formula');
-            return;
+            return -1;
         }
     
         // Parse the formula using the parser in Parser.php
@@ -1535,14 +1519,14 @@ class Worksheet extends BIFFwriter
         if ($this->isError($error))
         {
             $this->writeString($row, $col, $error->getMessage()); 
-            return;
+            return -1;
         }
     
         $formula = $this->_parser->toReversePolish();
         if ($this->isError($formula))
         {
             $this->writeString($row, $col, $formula->getMessage());
-            return;
+            return -1;
         }
     
         $formlen    = strlen($formula);    // Length of the binary string
@@ -1557,17 +1541,17 @@ class Worksheet extends BIFFwriter
     }
     
     /**
-    * Write a hyperlink. This is comprised of two elements: the visible label and
+    * Write a hyperlink.
+    * This is comprised of two elements: the visible label and
     * the invisible link. The visible label is the same as the link unless an
     * alternative string is specified. The label is written using the
     * writeString() method. Therefore the 255 characters string limit applies.
-    * $string and $format are optional and their order is interchangeable.
+    * $string and $format are optional.
     *
-    * The hyperlink can be to a http, ftp, mail, internal sheet, or external
+    * The hyperlink can be to a http, ftp, mail, internal sheet (not yet), or external
     * directory url.
     *
     * Returns  0 : normal termination
-    *         -1 : insufficient number of arguments
     *         -2 : row or column out of range
     *         -3 : long string truncated to 255 chars
     *
@@ -1577,6 +1561,7 @@ class Worksheet extends BIFFwriter
     * @param string  $url    URL string
     * @param string  $string Alternative label
     * @param mixed   $format The cell format
+    * @return integer
     */
     function writeUrl($row, $col, $url, $string = '', $format = 0)
     {
@@ -1599,6 +1584,7 @@ class Worksheet extends BIFFwriter
     * @param string  $url    URL string
     * @param string  $string Alternative label
     * @param mixed   $format The cell format
+    * @return integer
     */
     
     function _writeUrl_range($row1, $col1, $row2, $col2, $url, $string = '', $format = 0)
@@ -1629,6 +1615,7 @@ class Worksheet extends BIFFwriter
     * @param string  $url    URL string
     * @param string  $str    Alternative label
     * @param mixed   $format The cell format
+    * @return integer
     */
     function _writeUrlWeb($row1, $col1, $row2, $col2, $url, $str, $format = 0)
     {
@@ -1644,8 +1631,8 @@ class Worksheet extends BIFFwriter
             $str = $url;
         }
         $str_error = $this->writeString($row1, $col1, $str, $format);
-        if ($str_error == -2) {
-            return($str_error);
+        if (($str_error == -2) or ($str_error == -3)) {
+            return $str_error;
         }
     
         // Pack the undocumented parts of the hyperlink stream
@@ -1688,6 +1675,7 @@ class Worksheet extends BIFFwriter
     * @param string  $url    URL string
     * @param string  $str    Alternative label
     * @param mixed   $format The cell format
+    * @return integer
     */
     function _writeUrlInternal($row1, $col1, $row2, $col2, $url, $str, $format = 0)
     {
@@ -1706,8 +1694,8 @@ class Worksheet extends BIFFwriter
             $str = $url;
         }
         $str_error = $this->writeString($row1, $col1, $str, $format);
-        if ($str_error == -2) {
-            return($str_error);
+        if (($str_error == -2) or ($str_error == -3)) {
+            return $str_error;
         }
     
         // Pack the undocumented parts of the hyperlink stream
@@ -1753,6 +1741,7 @@ class Worksheet extends BIFFwriter
     * @param string  $url    URL string
     * @param string  $str    Alternative label
     * @param mixed   $format The cell format
+    * @return integer
     */
     function _writeUrlExternal($row1, $col1, $row2, $col2, $url, $str, $format = 0)
     {
@@ -1779,8 +1768,8 @@ class Worksheet extends BIFFwriter
             $str = preg_replace('[\#]', ' - ', $url);
         }
         $str_error = $this->writeString($row1, $col1, $str, $format);
-        if ($str_error == -2) {
-            return($str_error);
+        if (($str_error == -2) or ($str_error == -3)) {
+            return $str_error;
         }
     
         // Determine if the link is relative or absolute:
@@ -1865,8 +1854,7 @@ class Worksheet extends BIFFwriter
     
     
     /**
-    * This method is used to set the height and XF format for a row.
-    * Writes the  BIFF record ROW.
+    * This method is used to set the height and format for a row.
     *
     * @access public
     * @param integer $row    The row to set
@@ -1886,7 +1874,7 @@ class Worksheet extends BIFFwriter
         $grbit       = 0x01C0;               // Option flags. (monkey) see $1 do
         $ixfe        = $this->_XF($format);  // XF index
     
-        // Use setRow($row, NULL, $XF) to set XF without setting height
+        // Use setRow($row, NULL, $XF) to set XF format without setting height
         if ($height != NULL) {
             $miyRw = $height * 20;  // row height
         }
@@ -2445,9 +2433,9 @@ class Worksheet extends BIFFwriter
     }
 
     /**
+    * Merges the area given by its arguments.
     * This is an Excel97/2000 method. It is required to perform more complicated
-    * merging than the normal set_align('merge'). It merges the area given by 
-    * its arguments.
+    * merging than the normal setAlign('merge').
     *
     * @access public
     * @param integer $first_row First row of the area to merge
@@ -2677,8 +2665,7 @@ class Worksheet extends BIFFwriter
     
 
     /**
-    * Insert a 24bit bitmap image in a worksheet. The main record required is
-    * IMDATA but it must be proceeded by a OBJ record to define its position.
+    * Insert a 24bit bitmap image in a worksheet.
     *
     * @access public
     * @param integer $row     The row we are going to insert the bitmap into
