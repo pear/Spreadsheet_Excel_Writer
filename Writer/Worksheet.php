@@ -1084,15 +1084,15 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
         // Match http or ftp URL
         elseif (preg_match("/^[fh]tt?p:\/\//",$token)) {
-            return $this->writeUrl($row, $col, $token, $format);
+            return $this->writeUrl($row, $col, $token, '', $format);
         }
         // Match mailto:
         elseif (preg_match("/^mailto:/",$token)) {
-            return $this->writeUrl($row, $col, $token, $format);
+            return $this->writeUrl($row, $col, $token, '', $format);
         }
         // Match internal or external sheet link
         elseif (preg_match("/^(?:in|ex)ternal:/",$token)) {
-            return $this->writeUrl($row, $col, $token, $format);
+            return $this->writeUrl($row, $col, $token, '', $format);
         }
         // Match formula
         elseif (preg_match("/^=/",$token)) {
@@ -1709,7 +1709,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     function writeUrl($row, $col, $url, $string = '', $format = 0)
     {
         // Add start row and col to arg list
-        return($this->_writeUrl_range($row, $col, $row, $col, $url, $string, $format));
+        return($this->_writeUrlRange($row, $col, $row, $col, $url, $string, $format));
     }
     
     /**
@@ -1730,7 +1730,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @return integer
     */
     
-    function _writeUrl_range($row1, $col1, $row2, $col2, $url, $string = '', $format = 0)
+    function _writeUrlRange($row1, $col1, $row2, $col2, $url, $string = '', $format = 0)
     {
     
         // Check for internal/external sheet links or default to web link
