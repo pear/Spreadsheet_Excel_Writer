@@ -270,7 +270,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->_num_format     = 0;
                                
         $this->_hidden         = 0;
-        $this->_locked         = 1;
+        $this->_locked         = 0;
 
         $this->_text_h_align   = 0;
         $this->_text_wrap      = 0;
@@ -335,7 +335,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $atr_pat     = (($this->_fg_color != 0x40) ||
                         ($this->_bg_color != 0x41) ||
                         $this->_pattern)?1:0;
-        $atr_prot    = 0;
+        $atr_prot    = $this->_locked | $this->_hidden;
     
         // Zero the default border colour if the border has not been set.
         if ($this->_bottom == 0) {
@@ -999,6 +999,16 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     {
         $this->_font_script = $script;
     }
+
+     /**
+     * Locks a cell.
+     *
+     * @access public
+     */
+     function setLocked()
+     {
+         $this->_locked = 1;
+     }
 
     /**
     * Unlocks a cell. Useful for unprotecting particular cells of a protected sheet.
