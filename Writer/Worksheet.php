@@ -1117,6 +1117,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
     function writeRow($row, $col, $val, $format=0)
     {   
+        $retval = '';
         if (is_array($val)) {
             foreach($val as $v) {
                 if (is_array($v)) {
@@ -1145,6 +1146,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     
     function writeCol($row, $col, $val, $format=0)
     {
+        $retval = '';
         if (is_array($val)) {
             foreach($val as $v) { 
                 $this->write($row, $col, $v, $format);
