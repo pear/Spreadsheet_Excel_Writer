@@ -938,12 +938,12 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $row     = $match[4];
         
         // Convert base26 column string to a number.
-        $expn   = 0;
+        $expn   = strlen($col_ref) - 1;
         $col    = 0;
         for($i=0; $i < strlen($col_ref); $i++)
         {
             $col += (ord($col_ref{$i}) - ord('A') + 1) * pow(26, $expn);
-            $expn++;
+            $expn--;
         }
     
         // Convert 1-index to zero-index
