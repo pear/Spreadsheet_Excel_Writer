@@ -910,6 +910,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     */
     function _cellToPackedRowcol($cell)
     {
+        $cell = strtoupper($cell);
         list($row, $col, $row_rel, $col_rel) = $this->_cellToRowcol($cell);
         if ($col >= 256) {
             $this->raiseError("Column in: $cell greater than 255");
