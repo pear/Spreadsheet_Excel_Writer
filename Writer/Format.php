@@ -249,10 +249,10 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * @param integer $index the XF index for the format.
     * @param array   $properties array with properties to be set on initialization.
     */
-    function Spreadsheet_Excel_Writer_Format($index = 0,$properties =  array())
+    function Spreadsheet_Excel_Writer_Format($BIFF_version, $index = 0,$properties =  array())
     {
         $this->_xf_index       = $index;
-                               
+        $this->_BIFF_version   = $BIFF_version;
         $this->font_index      = 0;
         $this->_font_name      = 'Arial';
         $this->_size           = 10;
@@ -287,11 +287,13 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->_top            = 0;
         $this->_left           = 0;
         $this->_right          = 0;
+        $this->_diag           = 0;
                                
         $this->_bottom_color   = 0x40;
         $this->_top_color      = 0x40;
         $this->_left_color     = 0x40;
         $this->_right_color    = 0x40;
+        $this->_diag_color     = 0x40;
     
         // Set properties passed to Spreadsheet_Excel_Writer_Workbook::addFormat()
         foreach($properties as $property => $value)
@@ -338,54 +340,104 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         // Zero the default border colour if the border has not been set.
         if ($this->_bottom == 0) {
             $this->_bottom_color = 0;
-            }
+        }
         if ($this->_top  == 0) {
             $this->_top_color = 0;
-            }
+        }
         if ($this->_right == 0) {
             $this->_right_color = 0;
-            }
+        }
         if ($this->_left == 0) {
             $this->_left_color = 0;
-            }
+        }
     
         $record         = 0x00E0;              // Record identifier
-        $length         = 0x0010;              // Number of bytes to follow
+        if ($this->_BIFF_version == 0x0500) {
+            $length         = 0x0010;              // Number of bytes to follow
+        }
+        if ($this->_BIFF_version == 0x0600) {
+            $length         = 0x0014;
+        }
                                                
         $ifnt           = $this->font_index;   // Index to FONT record
         $ifmt           = $this->_num_format;  // Index to FORMAT record
-    
-        $align          = $this->_text_h_align;       // Alignment
-        $align         |= $this->_text_wrap     << 3;
-        $align         |= $this->_text_v_align  << 4;
-        $align         |= $this->_text_justlast << 7;
-        $align         |= $this->_rotation      << 8;
-        $align         |= $atr_num                << 10;
-        $align         |= $atr_fnt                << 11;
-        $align         |= $atr_alc                << 12;
-        $align         |= $atr_bdr                << 13;
-        $align         |= $atr_pat                << 14;
-        $align         |= $atr_prot               << 15;
-    
-        $icv            = $this->_fg_color;           // fg and bg pattern colors
-        $icv           |= $this->_bg_color      << 7;
-    
-        $fill           = $this->_pattern;            // Fill and border line style
-        $fill          |= $this->_bottom        << 6;
-        $fill          |= $this->_bottom_color  << 9;
-    
-        $border1        = $this->_top;                // Border line style and color
-        $border1       |= $this->_left          << 3;
-        $border1       |= $this->_right         << 6;
-        $border1       |= $this->_top_color     << 9;
-    
-        $border2        = $this->_left_color;         // Border color
-        $border2       |= $this->_right_color   << 7;
-    
-        $header      = pack("vv",       $record, $length);
-        $data        = pack("vvvvvvvv", $ifnt, $ifmt, $style, $align,
-                                        $icv, $fill,
-                                        $border1, $border2);
+        if ($this->_BIFF_version == 0x0500)
+        {
+            $align          = $this->_text_h_align;       // Alignment
+            $align         |= $this->_text_wrap     << 3;
+            $align         |= $this->_text_v_align  << 4;
+            $align         |= $this->_text_justlast << 7;
+            $align         |= $this->_rotation      << 8;
+            $align         |= $atr_num                << 10;
+            $align         |= $atr_fnt                << 11;
+            $align         |= $atr_alc                << 12;
+            $align         |= $atr_bdr                << 13;
+            $align         |= $atr_pat                << 14;
+            $align         |= $atr_prot               << 15;
+ 
+            $icv            = $this->_fg_color;       // fg and bg pattern colors
+            $icv           |= $this->_bg_color      << 7;
+     
+            $fill           = $this->_pattern;        // Fill and border line style
+            $fill          |= $this->_bottom        << 6;
+            $fill          |= $this->_bottom_color  << 9;
+     
+            $border1        = $this->_top;            // Border line style and color
+            $border1       |= $this->_left          << 3;
+            $border1       |= $this->_right         << 6;
+            $border1       |= $this->_top_color     << 9;
+     
+            $border2        = $this->_left_color;     // Border color
+            $border2       |= $this->_right_color   << 7;
+         
+            $header      = pack("vv",       $record, $length);
+            $data        = pack("vvvvvvvv", $ifnt, $ifmt, $style, $align,
+                                            $icv, $fill,
+                                            $border1, $border2);
+        }
+        elseif ($this->_BIFF_version == 0x0600)
+        {
+            $align          = $this->_text_h_align;       // Alignment
+            $align         |= $this->_text_wrap     << 3;
+            $align         |= $this->_text_v_align  << 4;
+            $align         |= $this->_text_justlast << 7;
+
+            $used_attrib    = $atr_num              << 2;
+            $used_attrib   |= $atr_fnt              << 3;
+            $used_attrib   |= $atr_alc              << 4;
+            $used_attrib   |= $atr_bdr              << 5;
+            $used_attrib   |= $atr_pat              << 6;
+            $used_attrib   |= $atr_prot             << 7;
+
+            $icv            = $this->_fg_color;      // fg and bg pattern colors
+            $icv           |= $this->_bg_color      << 7;
+   
+            $border1        = $this->_left;          // Border line style and color
+            $border1       |= $this->_right         << 4;
+            $border1       |= $this->_top           << 8;
+            $border1       |= $this->_bottom        << 12;
+            $border1       |= $this->_left_color    << 16;
+            $border1       |= $this->_right_color   << 23;
+            $diag_tl_to_rb = 0; // FIXME: add method
+            $diag_tr_to_lb = 0; // FIXME: add method
+            $border1       |= $diag_tl_to_rb        << 30;
+            $border1       |= $diag_tr_to_lb        << 31;
+     
+            $border2        = $this->_top_color;    // Border color
+            $border2       |= $this->_bottom_color   << 7;
+            $border2       |= $this->_diag_color     << 14;
+            $border2       |= $this->_diag           << 21;
+            $border2       |= $this->_pattern        << 26;
+
+            $header      = pack("vv",       $record, $length);
+
+            $rotation      = 0x00;
+            $biff8_options = 0x00;
+            $data  = pack("vvvC", $ifnt, $ifmt, $style, $align);
+            $data .= pack("CCC", $rotation, $biff8_options, $used_attrib);
+            $data .= pack("VVv", $border1, $border2, $icv);
+        }
+
         return($header.$data);
     }
     
