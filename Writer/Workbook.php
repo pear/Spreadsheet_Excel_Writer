@@ -296,8 +296,8 @@ class Workbook extends BIFFwriter
         }
     
         // Check that the colour components are in the right range
-        if ( ($red   < 0 or $red   > 255) ||
-             ($green < 0 or $green > 255) ||
+        if ( ($red   < 0 or $red   > 255) or
+             ($green < 0 or $green > 255) or
              ($blue  < 0 or $blue  > 255) )  
         {
             $this->raiseError("Color component outside range: 0 <= color <= 255");
@@ -630,15 +630,15 @@ class Workbook extends BIFFwriter
         // Create the print area NAME records
         foreach ($this->_worksheets as $worksheet) {
             // Write a Name record if the print area has been defined
-            if (isset($worksheet->_print_rowmin))
+            if (isset($worksheet->print_rowmin))
             {
                 $this->_storeNameShort(
                     $worksheet->index,
                     0x06, // NAME type
-                    $worksheet->_print_rowmin,
-                    $worksheet->_print_rowmax,
-                    $worksheet->_print_colmin,
-                    $worksheet->_print_colmax
+                    $worksheet->print_rowmin,
+                    $worksheet->print_rowmax,
+                    $worksheet->print_colmin,
+                    $worksheet->print_colmax
                     );
             }
         }
@@ -646,15 +646,15 @@ class Workbook extends BIFFwriter
         // Create the print title NAME records
         foreach ($this->_worksheets as $worksheet)
         {
-            $rowmin = $worksheet->_title_rowmin;
-            $rowmax = $worksheet->_title_rowmax;
-            $colmin = $worksheet->_title_colmin;
-            $colmax = $worksheet->_title_colmax;
+            $rowmin = $worksheet->title_rowmin;
+            $rowmax = $worksheet->title_rowmax;
+            $colmin = $worksheet->title_colmin;
+            $colmax = $worksheet->title_colmax;
     
             // Determine if row + col, row, col or nothing has been defined
             // and write the appropriate record
             //
-            if (isset($rowmin) && isset($colmin)) {
+            if (isset($rowmin) and isset($colmin)) {
                 // Row and column titles have been defined.
                 // Row title has been defined.
                 $this->_storeNameLong(
