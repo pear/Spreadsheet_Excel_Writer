@@ -196,17 +196,20 @@ class Workbook extends BIFFwriter
     /**
     * An accessor for the _worksheets[] array
     * Returns an array of the worksheet objects in a workbook
+    * It actually calls to worksheets()
     *
     * @access public
+    * @see worksheets()
     * @return array
     */
     function sheets()
     {
-        return($this->_worksheets());
+        return $this->worksheets();
     }
     
     /**
     * An accessor for the _worksheets[] array.
+    * Returns an array of the worksheet objects in a workbook
     *
     * @access public
     * @return array
