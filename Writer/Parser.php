@@ -1086,10 +1086,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 {
                     return($token);
                 }
-                // If it's a number
-                elseif(is_numeric($token) and !is_numeric($token.$this->_lookahead))
+                // If it's a number (check that it's not a sheet name)
+                elseif (is_numeric($token) and !is_numeric($token.$this->_lookahead) and
+                        ($this->_lookahead != '!'))
                 {
-                    return($token);
+                    return $token;
                 }
                 // If it's a string (of maximum 255 characters)
                 elseif(ereg("^\"[^\"]{0,255}\"$",$token))

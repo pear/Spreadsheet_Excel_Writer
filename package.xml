@@ -25,7 +25,7 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.2</version>
+    <version>0.3</version>
     <date>2003-03-17</date>
     <notes>
       -added several formatting methods: setTextRotation(), setStrikeOut(), 
@@ -50,6 +50,9 @@
         </dir>
       </dir>
     </filelist>
+    <deps>
+      <dep type="pkg" rel="has">OLE</dep>
+    </deps>
   </release>
   <changelog>
     <release>
