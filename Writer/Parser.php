@@ -33,11 +33,6 @@ define('SPREADSHEET_EXCEL_WRITER_ADD',"+");
 define('SPREADSHEET_EXCEL_WRITER_SUB',"-");
 
 /**
-* @const SPREADSHEET_EXCEL_WRITER_EQUAL token identifier for character "="
-*/
-define('SPREADSHEET_EXCEL_WRITER_EQUAL',"=");
-
-/**
 * @const SPREADSHEET_EXCEL_WRITER_MUL token identifier for character "*"
 */
 define('SPREADSHEET_EXCEL_WRITER_MUL',"*");
@@ -86,6 +81,11 @@ define('SPREADSHEET_EXCEL_WRITER_GE',">=");
 * @const SPREADSHEET_EXCEL_WRITER_EQ token identifier for character "="
 */
 define('SPREADSHEET_EXCEL_WRITER_EQ',"=");
+
+/**
+* @const SPREADSHEET_EXCEL_WRITER_NE token identifier for character "<>"
+*/
+define('SPREADSHEET_EXCEL_WRITER_NE',"<>");
 
 
 require_once('PEAR.php');
@@ -1028,7 +1028,8 @@ class Parser extends PEAR
                 return($token);
                 break;
             case SPREADSHEET_EXCEL_WRITER_LT:
-                if ($this->_lookahead == '=') { // it's a LE token
+                // it's a LE or a NE token
+                if (($this->_lookahead == '=') or ($this->_lookahead == '>')) {
                     break;
                 }
                 return($token);
@@ -1040,6 +1041,9 @@ class Parser extends PEAR
                 return($token);
                 break;
             case SPREADSHEET_EXCEL_WRITER_EQ:
+                return($token);
+                break;
+            case SPREADSHEET_EXCEL_WRITER_NE:
                 return($token);
                 break;
             default:
@@ -1169,6 +1173,15 @@ class Parser extends PEAR
                 return $result2;
             }
             $result = $this->_createTree('ptgEQ', $result, $result2);
+        }
+        elseif ($this->_current_token == SPREADSHEET_EXCEL_WRITER_NE) 
+        {
+            $this->_advance();
+            $result2 = $this->_expression();
+            if($this->isError($result2)) {
+                return $result2;
+            }
+            $result = $this->_createTree('ptgNE', $result, $result2);
         }
         return $result;
     }
