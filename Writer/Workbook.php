@@ -224,7 +224,7 @@ class Workbook extends BIFFwriter
     *
     * @access public
     * @param string $name the optional name of the worksheet
-    * @return &object reference to a worksheet object
+    * @return &Worksheet reference to a worksheet object
     */
     function &addWorksheet($name = '')
     {
@@ -264,7 +264,7 @@ class Workbook extends BIFFwriter
     *
     * @access public
     * @param array $properties array with properties for initializing the format (see Format.php)
-    * @return &object reference to an XF format
+    * @return &Format reference to an XF format
     */
     function &addFormat($properties = array())
     {

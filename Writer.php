@@ -48,7 +48,7 @@ class Spreadsheet_Excel_Writer extends Workbook
     * The constructor. It just creates a Workbook
     *
     * @param string $filename The optional filename for the Workbook.
-    * @return object The Workbook created
+    * @return Workbook The Workbook created
     */
     function Spreadsheet_Excel_Writer($filename = '')
     {
