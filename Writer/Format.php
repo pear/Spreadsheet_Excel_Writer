@@ -691,7 +691,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     *
     * @access public
     * @param mixed $color The color we are setting. Either a string (like 'blue'), 
-    *                     or an integer (like 0x41).
+    *                     or an integer (range is [8...63]).
     */
     function setBorderColor($color)
     {
@@ -729,7 +729,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Sets the cell's left border color
     *
     * @access public
-    * @param mixed $color either a string (like 'blue'), or an integer (like 0x41).
+    * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
     */
     function setLeftColor($color)
     {
@@ -741,7 +741,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Sets the cell's right border color
     *
     * @access public
-    * @param mixed $color either a string (like 'blue'), or an integer (like 0x41).
+    * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
     */
     function setRightColor($color)
     {
@@ -754,7 +754,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Sets the cell's foreground color
     *
     * @access public
-    * @param mixed $color either a string (like 'blue'), or an integer (like 0x41).
+    * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
     */
     function setFgColor($color)
     {
@@ -766,7 +766,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Sets the cell's background color
     *
     * @access public
-    * @param mixed $color either a string (like 'blue'), or an integer (like 0x41).
+    * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
     */
     function setBgColor($color)
     {
@@ -778,7 +778,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Sets the cell's color
     *
     * @access public
-    * @param mixed $color either a string (like 'blue'), or an integer (like 0x41).
+    * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
     */
     function setColor($color)
     {
