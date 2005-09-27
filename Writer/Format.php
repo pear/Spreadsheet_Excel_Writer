@@ -315,7 +315,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     function getXf($style)
     {
         // Set the type of the XF record and some of the attributes.
-        if ($style == "style") {
+        if ($style == 'style') {
             $style = 0xFFF5;
         } else {
             $style   = $this->_locked;
@@ -436,7 +436,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
             $data .= pack("VVv", $border1, $border2, $icv);
         }
 
-        return($header.$data);
+        return($header . $data);
     }
 
     /**
@@ -487,7 +487,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                                            $sss, $uls, $bFamily,
                                            $bCharSet, $reserved, $cch, $encoding);
         }
-        return($header . $data. $this->_font_name);
+        return($header . $data . $this->_font_name);
     }
 
     /**
@@ -507,7 +507,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $key .= "$this->_font_strikeout$this->_bold$this->_font_outline";
         $key .= "$this->_font_family$this->_font_charset";
         $key .= "$this->_font_shadow$this->_color$this->_italic";
-        $key  = str_replace(" ","_",$key);
+        $key  = str_replace(' ', '_', $key);
         return ($key);
     }
 

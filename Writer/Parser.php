@@ -170,7 +170,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $this->_current_char  = 0;
         $this->_BIFF_version  = $biff_version;
         $this->_current_token = '';       // The token we are working on.
-        $this->_formula       = "";       // The formula to parse.
+        $this->_formula       = '';       // The formula to parse.
         $this->_lookahead     = '';       // The character ahead of the current char.
         $this->_parse_tree    = '';       // The parse tree to be generated.
         $this->_initializeHashes();      // Initialize the hashes: ptg's and function's ptg's
@@ -542,25 +542,25 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return $this->_convertString($token);
         } elseif (is_numeric($token)) {
             return $this->_convertNumber($token);
-        } elseif (preg_match('/^\$?([A-Ia-i]?[A-Za-z])\$?(\d+)$/',$token)) {
+        } elseif (preg_match('/^\$?([A-Ia-i]?[A-Za-z])\$?(\d+)$/', $token)) {
             // match references like A1 or $A$1
             return $this->_convertRef2d($token);
-        } elseif (preg_match("/^\w+(\:\w+)?\![A-Ia-i]?[A-Za-z](\d+)$/",$token)) {
+        } elseif (preg_match("/^\w+(\:\w+)?\![A-Ia-i]?[A-Za-z](\d+)$/", $token)) {
             // match external references like Sheet1!A1 or Sheet1:Sheet2!A1
             return $this->_convertRef3d($token);
-        } elseif (preg_match("/^'\w+(\:\w+)?'\![A-Ia-i]?[A-Za-z](\d+)$/",$token)) {
+        } elseif (preg_match("/^'\w+(\:\w+)?'\![A-Ia-i]?[A-Za-z](\d+)$/", $token)) {
             // match external references like Sheet1!A1 or Sheet1:Sheet2!A1
             return $this->_convertRef3d($token);
-        } elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)\:(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/",$token)) {
+        } elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)\:(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/", $token)) {
              // match ranges like A1:B2
             return $this->_convertRange2d($token);
-        } elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)\.\.(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/",$token)) {
+        } elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)\.\.(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/", $token)) {
             // match ranges like A1..B2
             return $this->_convertRange2d($token);
-        } elseif (preg_match("/^\w+(\:\w+)?\!([A-Ia-i]?[A-Za-z])?(\d+)\:([A-Ia-i]?[A-Za-z])?(\d+)$/",$token)) {
+        } elseif (preg_match("/^\w+(\:\w+)?\!([A-Ia-i]?[A-Za-z])?(\d+)\:([A-Ia-i]?[A-Za-z])?(\d+)$/", $token)) {
             // match external ranges like Sheet1!A1 or Sheet1:Sheet2!A1:B2
             return $this->_convertRange3d($token);
-        } elseif (preg_match("/^'\w+(\:\w+)?'\!([A-Ia-i]?[A-Za-z])?(\d+)\:([A-Ia-i]?[A-Za-z])?(\d+)$/",$token)) {
+        } elseif (preg_match("/^'\w+(\:\w+)?'\!([A-Ia-i]?[A-Za-z])?(\d+)\:([A-Ia-i]?[A-Za-z])?(\d+)$/", $token)) {
             // match external ranges like 'Sheet1'!A1 or 'Sheet1:Sheet2'!A1:B2
             return $this->_convertRange3d($token);
         } elseif (isset($this->ptg[$token])) {
@@ -586,7 +586,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     function _convertNumber($num)
     {
         // Integer in the range 0..2**16-1
-        if ((preg_match("/^\d+$/",$num)) and ($num <= 65535)) {
+        if ((preg_match("/^\d+$/", $num)) and ($num <= 65535)) {
             return pack("Cv", $this->ptg['ptgInt'], $num);
         } else { // A float
             if ($this->_byte_order) { // if it's Big Endian
@@ -611,6 +611,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         if (strlen($string) > 255) {
             return $this->raiseError("String is too long");
         }
+
         if ($this->_BIFF_version == 0x0500) {
             return pack("CC", $this->ptg['ptgStr'], strlen($string)).$string;
         } elseif ($this->_BIFF_version == 0x0600) {
@@ -654,9 +655,9 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $class = 2; // as far as I know, this is magick.
 
         // Split the range into 2 cell refs
-        if (preg_match("/^([A-Ia-i]?[A-Za-z])(\d+)\:([A-Ia-i]?[A-Za-z])(\d+)$/",$range)) {
+        if (preg_match("/^([A-Ia-i]?[A-Za-z])(\d+)\:([A-Ia-i]?[A-Za-z])(\d+)$/", $range)) {
             list($cell1, $cell2) = split(':', $range);
-        } elseif (preg_match("/^([A-Ia-i]?[A-Za-z])(\d+)\.\.([A-Ia-i]?[A-Za-z])(\d+)$/",$range)) {
+        } elseif (preg_match("/^([A-Ia-i]?[A-Za-z])(\d+)\.\.([A-Ia-i]?[A-Za-z])(\d+)$/", $range)) {
             list($cell1, $cell2) = split('\.\.', $range);
 
         } else {
@@ -1069,7 +1070,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         // Convert base26 column string to a number.
         $expn   = strlen($col_ref) - 1;
         $col    = 0;
-        for ($i = 0; $i < strlen($col_ref); $i++) {
+        $col_ref_length = strlen($col_ref);
+        for ($i = 0; $i < $col_ref_length; $i++) {
             $col += (ord($col_ref{$i}) - ord('A') + 1) * pow(26, $expn);
             $expn--;
         }
@@ -1089,23 +1091,27 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     function _advance()
     {
         $i = $this->_current_char;
+        $formula_length = strlen($this->_formula);
         // eat up white spaces
-        if ($i < strlen($this->_formula)) {
+        if ($i < $formula_length) {
             while ($this->_formula{$i} == " ") {
                 $i++;
             }
-            if ($i < strlen($this->_formula) - 1) {
+
+            if ($i < ($formula_length - 1)) {
                 $this->_lookahead = $this->_formula{$i+1};
             }
-            $token = "";
+            $token = '';
         }
-        while ($i < strlen($this->_formula)) {
+
+        while ($i < $formula_length) {
             $token .= $this->_formula{$i};
-            if ($i < strlen($this->_formula) - 1) {
+            if ($i < ($formula_length - 1)) {
                 $this->_lookahead = $this->_formula{$i+1};
             } else {
                 $this->_lookahead = '';
             }
+
             if ($this->_match($token) != '') {
                 //if ($i < strlen($this->_formula) - 1) {
                 //    $this->_lookahead = $this->_formula{$i+1};
@@ -1114,7 +1120,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 $this->_current_token = $token;
                 return 1;
             }
-            if ($i < strlen($this->_formula) - 2) {
+
+            if ($i < ($formula_length - 2)) {
                 $this->_lookahead = $this->_formula{$i+2};
             } else { // if we run out of characters _lookahead becomes empty
                 $this->_lookahead = '';

@@ -98,7 +98,7 @@ class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
         $chr2 = chr(ord('A') + $frac);
         $row++;
 
-        return $chr1.$chr2.$row;
+        return $chr1 . $chr2 . $row;
     }
 }
 ?>

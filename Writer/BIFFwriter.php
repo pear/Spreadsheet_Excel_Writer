@@ -181,7 +181,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
 
         $header  = pack("vv",   $record, $length);
         $data    = pack("vvvv", $version, $type, $build, $year);
-        $this->_prepend($header.$data.$unknown);
+        $this->_prepend($header . $data . $unknown);
     }
 
     /**
@@ -211,8 +211,8 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
     */
     function _addContinue($data)
     {
-        $limit      = $this->_limit;
-        $record     = 0x003C;         // Record identifier
+        $limit  = $this->_limit;
+        $record = 0x003C;         // Record identifier
 
         // The first 2080/8224 bytes remain intact. However, we have to change
         // the length field of the record.
@@ -221,7 +221,8 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $header = pack("vv", $record, $limit);  // Headers for continue records
 
         // Retrieve chunks of 2080/8224 bytes +4 for the header.
-        for ($i = $limit; $i < strlen($data) - $limit; $i += $limit) {
+        $data_length = strlen($data);
+        for ($i = $limit; $i <  ($data_length - $limit); $i += $limit) {
             $tmp .= $header;
             $tmp .= substr($data, $i, $limit);
         }

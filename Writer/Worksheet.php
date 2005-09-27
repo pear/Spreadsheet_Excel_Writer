@@ -383,7 +383,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_parser         = &$parser;
 
         //$this->ext_sheets      = array();
-        $this->_filehandle     = "";
+        $this->_filehandle     = '';
         $this->_using_tmpfile  = true;
         //$this->fileclosed      = 0;
         //$this->offset          = 0;
@@ -414,14 +414,14 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_margin_top      = 1.00;
         $this->_margin_bottom   = 1.00;
 
-        $this->title_rowmin     = NULL;
-        $this->title_rowmax     = NULL;
-        $this->title_colmin     = NULL;
-        $this->title_colmax     = NULL;
-        $this->print_rowmin     = NULL;
-        $this->print_rowmax     = NULL;
-        $this->print_colmin     = NULL;
-        $this->print_colmax     = NULL;
+        $this->title_rowmin     = null;
+        $this->title_rowmax     = null;
+        $this->title_colmin     = null;
+        $this->title_colmax     = null;
+        $this->print_rowmin     = null;
+        $this->print_rowmax     = null;
+        $this->print_colmin     = null;
+        $this->print_colmax     = null;
 
         $this->_print_gridlines  = 1;
         $this->_screen_gridlines = 1;
@@ -435,7 +435,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_vbreaks         = array();
 
         $this->_protect         = 0;
-        $this->_password        = NULL;
+        $this->_password        = null;
 
         $this->col_sizes        = array();
         $this->_row_sizes        = array();
@@ -467,7 +467,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     {
         // Open tmp file for storing Worksheet data
         $fh = tmpfile();
-        if ( $fh) {
+        if ($fh) {
             // Store filehandle
             $this->_filehandle = $fh;
         } else {
@@ -568,7 +568,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Prepend the COLINFO records if they exist
         if (!empty($this->_colinfo)) {
-            for ($i = 0; $i < count($this->_colinfo); $i++) {
+            $colcount = count($this->_colinfo);
+            for ($i = 0; $i < $colcount; $i++) {
                 $this->_storeColinfo($this->_colinfo[$i]);
             }
             $this->_storeDefcol();
@@ -956,7 +957,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $first_row First row to repeat
     * @param integer $last_row  Last row to repeat. Optional.
     */
-    function repeatRows($first_row, $last_row = NULL)
+    function repeatRows($first_row, $last_row = null)
     {
         $this->title_rowmin  = $first_row;
         if (isset($last_row)) { //Second row is optional
@@ -973,7 +974,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $first_col First column to repeat
     * @param integer $last_col  Last column to repeat. Optional.
     */
-    function repeatColumns($first_col, $last_col = NULL)
+    function repeatColumns($first_col, $last_col = null)
     {
         $this->title_colmin  = $first_col;
         if (isset($last_col)) { // Second col is optional
@@ -1057,8 +1058,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function setHPagebreaks($breaks)
     {
-        foreach($breaks as $break) {
-            array_push($this->_hbreaks,$break);
+        foreach ($breaks as $break) {
+            array_push($this->_hbreaks, $break);
         }
     }
 
@@ -1071,8 +1072,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function setVPagebreaks($breaks)
     {
-        foreach($breaks as $break) {
-            array_push($this->_vbreaks,$break);
+        foreach ($breaks as $break) {
+            array_push($this->_vbreaks, $break);
         }
     }
 
@@ -1086,7 +1087,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     function setZoom($scale = 100)
     {
         // Confine the scale to Excel's range
-        if ($scale < 10 || $scale > 400)  {
+        if ($scale < 10 || $scale > 400) {
             $this->raiseError("Zoom factor $scale outside range: 10 <= zoom <= 400");
             $scale = 100;
         }
@@ -1110,7 +1111,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
 
         // Turn off "fit to page" option
-        $this->_fit_page    = 0;
+        $this->_fit_page = 0;
 
         $this->_print_scale = floor($scale);
     }
@@ -1131,30 +1132,30 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             @_ = $this->_substituteCellref(@_);
     }*/
 
-        if (preg_match("/^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/",$token)) {
+        if (preg_match("/^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/", $token)) {
             // Match number
-            return $this->writeNumber($row,$col,$token,$format);
-        } elseif (preg_match("/^[fh]tt?p:\/\//",$token)) {
+            return $this->writeNumber($row, $col, $token, $format);
+        } elseif (preg_match("/^[fh]tt?p:\/\//", $token)) {
             // Match http or ftp URL
             return $this->writeUrl($row, $col, $token, '', $format);
-        } elseif (preg_match("/^mailto:/",$token)) {
+        } elseif (preg_match("/^mailto:/", $token)) {
             // Match mailto:
             return $this->writeUrl($row, $col, $token, '', $format);
-        } elseif (preg_match("/^(?:in|ex)ternal:/",$token)) {
+        } elseif (preg_match("/^(?:in|ex)ternal:/", $token)) {
             // Match internal or external sheet link
             return $this->writeUrl($row, $col, $token, '', $format);
-        } elseif (preg_match("/^=/",$token)) {
+        } elseif (preg_match("/^=/", $token)) {
             // Match formula
             return $this->writeFormula($row, $col, $token, $format);
-        } elseif (preg_match("/^@/",$token)) {
+        } elseif (preg_match("/^@/", $token)) {
             // Match formula
             return $this->writeFormula($row, $col, $token, $format);
         } elseif ($token == '') {
             // Match blank
-            return $this->writeBlank($row,$col,$format);
+            return $this->writeBlank($row, $col, $format);
         } else {
             // Default: match string
-            return $this->writeString($row,$col,$token,$format);
+            return $this->writeString($row, $col, $token, $format);
         }
     }
 
@@ -1169,11 +1170,11 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @return mixed PEAR_Error on failure
     */
 
-    function writeRow($row, $col, $val, $format=0)
+    function writeRow($row, $col, $val, $format = 0)
     {
         $retval = '';
         if (is_array($val)) {
-            foreach($val as $v) {
+            foreach ($val as $v) {
                 if (is_array($v)) {
                     $this->writeCol($row, $col, $v, $format);
                 } else {
@@ -1202,7 +1203,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     {
         $retval = '';
         if (is_array($val)) {
-            foreach($val as $v) {
+            foreach ($val as $v) {
                 $this->write($row, $col, $v, $format);
                 $row++;
             }
@@ -1341,7 +1342,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // split the plain text password in its component characters
         $chars = preg_split('//', $plaintext, -1, PREG_SPLIT_NO_EMPTY);
-        foreach($chars as $char) {
+        foreach ($chars as $char) {
             $value        = ord($char) << $i;   // shifted ASCII value
             $rotated_bits = $value >> 15;       // rotated bits beyond bit 15
             $value       &= 0x7fff;             // first 15 bits
@@ -1493,7 +1494,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header    = pack("vv",   $record, $length);
         $data      = pack("vvvv", $row, $col, $xf, $strlen);
-        $this->_append($header.$data.$str);
+        $this->_append($header . $data . $str);
         return($str_error);
     }
 
@@ -1599,9 +1600,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $length    = 0x0006 + min($note_length, 2048);
         $header    = pack("vv",   $record, $length);
         $data      = pack("vvv", $row, $col, $note_length);
-        $this->_append($header.$data.substr($note, 0, 2048));
+        $this->_append($header . $data . substr($note, 0, 2048));
 
-        for($i = $max_length; $i < $note_length; $i += $max_length) {
+        for ($i = $max_length; $i < $note_length; $i += $max_length) {
             $chunk  = substr($note, $i, $max_length);
             $length = 0x0006 + strlen($chunk);
             $header = pack("vv",   $record, $length);
@@ -1661,7 +1662,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header    = pack("vv",  $record, $length);
         $data      = pack("vvv", $row, $col, $xf);
-        $this->_append($header.$data);
+        $this->_append($header . $data);
         return 0;
     }
 
@@ -1702,10 +1703,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
 
         // Strip the '=' or '@' sign at the beginning of the formula string
-        if (preg_match("/^=/",$formula)) {
-            $formula = preg_replace("/(^=)/","",$formula);
-        } elseif (preg_match("/^@/",$formula)) {
-            $formula = preg_replace("/(^@)/","",$formula);
+        if (preg_match("/^=/", $formula)) {
+            $formula = preg_replace("/(^=)/", "", $formula);
+        } elseif (preg_match("/^@/", $formula)) {
+            $formula = preg_replace("/(^@)/", "", $formula);
         } else {
             // Error handling
             $this->writeString($row, $col, 'Unrecognised character for formula');
@@ -1732,7 +1733,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $data      = pack("vvvdvVv", $row, $col, $xf, $num,
                                      $grbit, $unknown, $formlen);
 
-        $this->_append($header.$data.$formula);
+        $this->_append($header . $data . $formula);
         return 0;
     }
 
@@ -1853,9 +1854,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $data        = pack("vvvv", $row1, $row2, $col1, $col2);
 
         // Write the packed data
-        $this->_append( $header. $data.
-                        $unknown1. $options.
-                        $unknown2. $url_len. $url);
+        $this->_append($header . $data .
+                       $unknown1 . $options .
+                       $unknown2 . $url_len . $url);
         return($str_error);
     }
 
@@ -1915,9 +1916,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $data        = pack("vvvv", $row1, $row2, $col1, $col2);
 
         // Write the packed data
-        $this->_append($header. $data.
-                       $unknown1. $options.
-                       $url_len. $url);
+        $this->_append($header . $data .
+                       $unknown1 . $options .
+                       $url_len . $url);
         return($str_error);
     }
 
@@ -1992,8 +1993,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $sheet_len  = pack("V", strlen($sheet) + 0x01);
             $sheet      = join("\0", split('', $sheet));
             $sheet     .= "\0\0\0";
-        }
-        else {
+        } else {
             $sheet_len   = '';
             $sheet       = '';
         }
@@ -2055,7 +2055,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access public
     * @param integer $row    The row to set
     * @param integer $height Height we are giving to the row.
-    *                        Use NULL to set XF without setting height
+    *                        Use null to set XF without setting height
     * @param mixed   $format XF format we are giving to the row
     * @param bool    $hidden The optional hidden attribute
     * @param integer $level  The optional outline level for row, in range [0,7]
@@ -2075,8 +2075,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // set _row_sizes so _sizeRow() can use it
         $this->_row_sizes[$row] = $height;
 
-        // Use setRow($row, NULL, $XF) to set XF format without setting height
-        if ($height != NULL) {
+        // Use setRow($row, null, $XF) to set XF format without setting height
+        if ($height != null) {
             $miyRw = $height * 20;  // row height
         } else {
             $miyRw = 0xff;          // default row height is 256
@@ -2207,7 +2207,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header   = pack("vv", $record, $length);
         $data     = pack("v",  $colwidth);
-        $this->_prepend($header.$data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2311,7 +2311,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
                                        $irefAct, $cref,
                                        $rwFirst, $rwLast,
                                        $colFirst, $colLast);
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -2333,7 +2333,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         foreach ($this->_merged_ranges as $range) {
             $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
         }
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -2351,12 +2351,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function _storeExterncount($count)
     {
-        $record   = 0x0016;          // Record identifier
-        $length   = 0x0002;          // Number of bytes to follow
+        $record = 0x0016;          // Record identifier
+        $length = 0x0002;          // Number of bytes to follow
 
-        $header   = pack("vv", $record, $length);
-        $data     = pack("v",  $count);
-        $this->_prepend($header.$data);
+        $header = pack("vv", $record, $length);
+        $data   = pack("v",  $count);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2386,9 +2386,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $rgch      = 0x03;  // Reference to a sheet in the current workbook
         }
 
-        $header     = pack("vv",  $record, $length);
-        $data       = pack("CC", $cch, $rgch);
-        $this->_prepend($header.$data.$sheetname);
+        $header = pack("vv",  $record, $length);
+        $data   = pack("CC", $cch, $rgch);
+        $this->_prepend($header . $data . $sheetname);
     }
 
     /**
@@ -2414,7 +2414,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if (count($panes) > 4) { // if Active pane was received
             $pnnAct = $panes[4];
         } else {
-            $pnnAct = NULL;
+            $pnnAct = null;
         }
         $record  = 0x0041;       // Record identifier
         $length  = 0x000A;       // Number of bytes to follow
@@ -2469,7 +2469,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header     = pack("vv",    $record, $length);
         $data       = pack("vvvvv", $x, $y, $rwTop, $colLeft, $pnnAct);
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -2530,7 +2530,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
                                    $iVRes);
         $data2  = $numHdr.$numFtr;
         $data3  = pack("v", $iCopies);
-        $this->_prepend($header.$data1.$data2.$data3);
+        $this->_prepend($header . $data1 . $data2 . $data3);
     }
 
     /**
@@ -2550,6 +2550,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         } else {
             $length  = 1 + $cch;             // Bytes to follow
         }
+
         $header   = pack("vv", $record, $length);
         if ($this->_BIFF_version == 0x0600) {
             $data     = pack("vC",  $cch, $encoding);
@@ -2577,6 +2578,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         } else {
             $length  = 1 + $cch;
         }
+
         $header    = pack("vv", $record, $length);
         if ($this->_BIFF_version == 0x0600) {
             $data      = pack("vC",  $cch, $encoding);
@@ -2584,7 +2586,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data      = pack("C",  $cch);
         }
 
-        $this->_append($header.$data.$str);
+        $this->_append($header . $data . $str);
     }
 
     /**
@@ -2619,7 +2621,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header    = pack("vv", $record, $length);
         $data      = pack("v",  $fVCenter);
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -2640,7 +2642,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data = strrev($data);
         }
 
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -2661,7 +2663,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data = strrev($data);
         }
 
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -2682,7 +2684,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data = strrev($data);
         }
 
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -2703,7 +2705,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data = strrev($data);
         }
 
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -2753,7 +2755,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header      = pack("vv", $record, $length);
         $data        = pack("v", $fPrintRwCol);
-        $this->_prepend($header.$data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2771,7 +2773,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header      = pack("vv", $record, $length);
         $data        = pack("v", $fPrintGrid);
-        $this->_prepend($header.$data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2789,7 +2791,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header      = pack("vv",  $record, $length);
         $data        = pack("v",   $fGridSet);
-        $this->_prepend($header.$data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2813,7 +2815,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Calculate the maximum column outline level. The equivalent calculation
         // for the row outline level is carried out in setRow().
-        for ($i = 0; $i < count($this->_colinfo); $i++) {
+        $colcount = count($this->_colinfo);
+        for ($i = 0; $i < $colcount; $i++) {
            // Skip cols without outline level info.
            if (count($col_level) >= 6) {
               $col_level = max($this->_colinfo[$i][5], $col_level);
@@ -2878,7 +2881,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header      = pack("vv", $record, $length);
         $data        = pack("v",  $grbit);
-        $this->_prepend($header.$data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2912,7 +2915,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $data    = pack("v",  $cbrk);
 
         // Append each page break
-        foreach($breaks as $break) {
+        foreach ($breaks as $break) {
             if ($this->_BIFF_version == 0x0600) {
                 $data .= pack("vvv", $break, 0x0000, 0x00ff);
             } else {
@@ -2966,7 +2969,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             }
         }
 
-        $this->_prepend($header.$data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -3012,7 +3015,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $header      = pack("vv", $record, $length);
         $data        = pack("v",  $wPassword);
 
-        $this->_prepend($header.$data);
+        $this->_prepend($header . $data);
     }
 
 
@@ -3157,11 +3160,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $x2 = $width  / $this->_sizeCol($col_end)     * 1024; // Distance to right side of object
         $y2 = $height / $this->_sizeRow($row_end)     *  256; // Distance to bottom of object
 
-        $this->_storeObjPicture( $col_start, $x1,
-                                  $row_start, $y1,
-                                  $col_end, $x2,
-                                  $row_end, $y2
-                                );
+        $this->_storeObjPicture($col_start, $x1,
+                                 $row_start, $y1,
+                                 $col_end, $x2,
+                                 $row_end, $y2);
     }
 
     /**
@@ -3288,7 +3290,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $data       .= pack("v", $grbit2);
         $data       .= pack("V", $Reserved5);
 
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -3396,7 +3398,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header      = pack("vv", $record, $length);
         $data        = pack("vv", $this->_zoom, 100);
-        $this->_append($header.$data);
+        $this->_append($header . $data);
     }
 
     /**
@@ -3429,10 +3431,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_append($header.$data);
 
         $record = 0x01be;              // Record identifier
-        foreach($this->_dv as $dv) {
+        foreach ($this->_dv as $dv) {
             $length = strlen($dv);      // Bytes to follow
             $header = pack("vv", $record, $length);
-            $this->_append($header.$dv);
+            $this->_append($header . $dv);
         }
     }
 }

@@ -107,8 +107,8 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     function Spreadsheet_Excel_Writer_OLEwriter($OLEfilename)
     {
         $this->_OLEfilename  = $OLEfilename;
-        $this->_filehandle   = "";
-        $this->_tmp_filename = "";
+        $this->_filehandle   = '';
+        $this->_tmp_filename = '';
         $this->_fileclosed   = 0;
         $this->_biff_only    = 0;
         //$this->_size_allowed = 0;
@@ -299,15 +299,17 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         $end_of_chain = pack("V", -2);
         $unused       = pack("V", -1);
 
-        for ($i=1; $i < $num_blocks; $i++) {
+        for ($i = 1; $i < $num_blocks; $i++) {
             fwrite($this->_filehandle, pack("V",$i));
         }
+
         fwrite($this->_filehandle, $end_of_chain);
         fwrite($this->_filehandle, $end_of_chain);
-        for ($i=0; $i < $num_lists; $i++) {
+        for ($i = 0; $i < $num_lists; $i++) {
             fwrite($this->_filehandle, $marker);
         }
-        for ($i=$used_blocks; $i <= $total_blocks; $i++) {
+
+        for ($i = $used_blocks; $i <= $total_blocks; $i++) {
             fwrite($this->_filehandle, $unused);
         }
     }
@@ -344,7 +346,8 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
 
         if ($name != '') {
             $name = $name . "\0";
-            for ($i = 0; $i < strlen($name); $i++) {
+            $name_length = strlen($name);
+            for ($i = 0; $i < $name_length; $i++) {
                 // Simulate a Unicode string
                 $rawname .= pack("H*",dechex(ord($name{$i}))).pack("C",0);
             }

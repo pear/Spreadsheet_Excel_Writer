@@ -82,8 +82,8 @@ class Spreadsheet_Excel_Writer_Validator
         $this->_title_error  = "\x00";
         $this->_descr_error  = "\x00";
         $this->_operator     = 0x00; // default is equal
-        $this->_formula1    = "";
-        $this->_formula2    = "";
+        $this->_formula1    = '';
+        $this->_formula2    = '';
     }
 
    function setPrompt($promptTitle = "\x00", $promptDescription = "\x00", $showPrompt = true)
