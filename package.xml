@@ -3,7 +3,7 @@
 <package version="1.0">
   <name>Spreadsheet_Excel_Writer</name>
   <summary>Package for generating Excel spreadsheets</summary>
-  <description> Spreadsheet_Excel_Writer was born as a porting of the Spreadsheet::WriteExcel Perl module to PHP. 
+  <description> Spreadsheet_Excel_Writer was born as a porting of the Spreadsheet::WriteExcel Perl module to PHP.
  It allows writing of Excel spreadsheets without the need for COM objects.
  It supports formulas, images (BMP) and all kinds of formatting for text and cells.
  It currently supports the BIFF5 format (Excel 5.0), so functionality appeared in the latest Excel versions is not yet available.
@@ -24,16 +24,11 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.8</version>
-    <date>2004-06-22</date>
+    <version>0.9.0</version>
+    <date>2005-?-?</date>
     <notes>
-     New features:
-      - added hideScreenGridlines() (Paul Osman)
      Bug fixes:
-      - Fixed SST table (long strings) (Bernd Jaenichen)
-      - Fixed bug #1218, SST table (boucher dot stephane at free dot fr)
-      - Fixed bug #781, insertBitmap ignores row height
-      - Fixed bug #578, setVPageBreaks doesn't handle multiple value arrays (natel at tocquigny dot com)
+     - Fixed Bug #1796 Wrong regular expression in _writeUrlInternal
     </notes>
     <deps>
       <dep type="pkg" rel="ge" version="0.5">OLE</dep>
@@ -59,9 +54,9 @@
       <state>beta</state>
       <date>2003-03-17</date>
       <notes>
-      -added several formatting methods: setTextRotation(), setStrikeOut(), 
+      -added several formatting methods: setTextRotation(), setStrikeOut(),
       setOutLine(), setShadow(), setScript().
-      -fixed bug in Workbook::sheets() (Björn Schotte).
+      -fixed bug in Workbook::sheets() (Bjï¿½n Schotte).
       -fixed range for references in formulas (Edward).
       -added support for external references in formulas.
       -added support for comparisons in formulas.
@@ -142,5 +137,18 @@ $woorrkbook->setVersion(8);
         - Fixed bug #415, typo in BIFF8 code (papercrane at reversefold dot com)
       </notes>
     </release>
+    <release>
+      <version>0.8</version>
+      <date>2004-06-22</date>
+      <notes>
+        New features:
+         - added hideScreenGridlines() (Paul Osman)
+        Bug fixes:
+         - Fixed SST table (long strings) (Bernd Jaenichen)
+         - Fixed bug #1218, SST table (boucher dot stephane at free dot fr)
+         - Fixed bug #781, insertBitmap ignores row height
+         - Fixed bug #578, setVPageBreaks doesn't handle multiple value arrays (natel at tocquigny dot com)
+     </notes>
+   </release>
   </changelog>
 </package>
