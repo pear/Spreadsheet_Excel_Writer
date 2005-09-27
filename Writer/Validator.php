@@ -170,7 +170,7 @@ class Spreadsheet_Excel_Writer_Validator
             $options |= 0x80000;
         }
       $options |= $this->_operator << 20;
-      
+
       return $options;
    }
 
@@ -180,7 +180,7 @@ class Spreadsheet_Excel_Writer_Validator
       $descr_prompt_len = strlen($this->_descr_prompt);
       $title_error_len = strlen($this->_title_error);
       $descr_error_len = strlen($this->_descr_error);
-      
+
       $formula1_size = strlen($this->_formula1);
       $formula2_size = strlen($this->_formula2);
 
@@ -209,7 +209,7 @@ class Spreadsheet_Excel_Writer_Validator
    {
       $this->_incell = $incell;
       $this->_fixedList = true;
-      
+
       $source = implode("\x00", $source);
       $this->_formula1 = pack("CCC", 0x17, strlen($source), 0x0c) . $source;
    }

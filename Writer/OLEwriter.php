@@ -5,7 +5,7 @@
 *  The majority of this is _NOT_ my code.  I simply ported it from the
 *  PERL Spreadsheet::WriteExcel module.
 *
-*  The author of the Spreadsheet::WriteExcel module is John McNamara 
+*  The author of the Spreadsheet::WriteExcel module is John McNamara
 *  <jmcnamara@cpan.org>
 *
 *  I _DO_ maintain this code, and John McNamara has nothing to do with the
@@ -130,7 +130,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     function _initialize()
     {
         $OLEfile = $this->_OLEfilename;
- 
+
         if (($OLEfile == '-') or ($OLEfile == '')) {
             $this->_tmp_filename = tempnam("/tmp", "OLEwriter");
             $fh = fopen($this->_tmp_filename, "wb");
@@ -144,7 +144,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
                 $this->raiseError("Can't open $OLEfile. It may be in use or protected.");
             }
         }
- 
+
         // Store filehandle
         $this->_filehandle = $fh;
     }
@@ -165,11 +165,11 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     function setSize($biffsize)
     {
         $maxsize = 7087104; // TODO: extend max size
- 
+
         if ($biffsize > $maxsize) {
             $this->raiseError("Maximum file size, $maxsize, exceeded.");
         }
- 
+
         $this->_biffsize = $biffsize;
         // Set the min file size to 4k to avoid having to use small blocks
         if ($biffsize > 4096) {
@@ -209,13 +209,13 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     * @access public
     * @see Spreadsheet_Excel_Writer_Workbook::store_OLE_file()
     */
-    function close() 
+    function close()
     {
         //return if not $this->{_size_allowed};
         $this->_writePadding();
         $this->_writePropertyStorage();
         $this->_writeBigBlockDepot();
-        // Close the filehandle 
+        // Close the filehandle
         fclose($this->_filehandle);
         if (($this->_OLEfilename == '-') or ($this->_OLEfilename == '')) {
             $fh = fopen($this->_tmp_filename, "rb");
@@ -260,7 +260,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         $sbd_startblock  = pack("V",    -2);
         $unknown7        = pack("VVV",  0x00, -2 ,0x00);
         $unused          = pack("V",    -1);
- 
+
         fwrite($this->_filehandle, $id);
         fwrite($this->_filehandle, $unknown1);
         fwrite($this->_filehandle, $unknown2);
@@ -272,7 +272,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         fwrite($this->_filehandle, $unknown6);
         fwrite($this->_filehandle, $sbd_startblock);
         fwrite($this->_filehandle, $unknown7);
- 
+
         for ($i=1; $i <= $num_lists; $i++) {
             $root_start++;
             fwrite($this->_filehandle, pack("V",$root_start));
@@ -294,11 +294,11 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
         $num_lists    = $this->_list_blocks;
         $total_blocks = $num_lists *128;
         $used_blocks  = $num_blocks + $num_lists +2;
- 
+
         $marker       = pack("V", -3);
         $end_of_chain = pack("V", -2);
         $unused       = pack("V", -1);
- 
+
         for ($i=1; $i < $num_blocks; $i++) {
             fwrite($this->_filehandle, pack("V",$i));
         }
@@ -341,7 +341,7 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     {
         $length  = 0;
         $rawname = '';
- 
+
         if ($name != '') {
             $name = $name . "\0";
             for ($i = 0; $i < strlen($name); $i++) {
@@ -350,24 +350,24 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
             }
             $length = strlen($name) * 2;
         }
-       
+
         $zero            = pack("C",  0);
         $pps_sizeofname  = pack("v",  $length);    // 0x40
         $pps_type        = pack("v",  $type);      // 0x42
         $pps_prev        = pack("V",  -1);         // 0x44
         $pps_next        = pack("V",  -1);         // 0x48
         $pps_dir         = pack("V",  $dir);       // 0x4c
-       
+
         $unknown1        = pack("V",  0);
-       
+
         $pps_ts1s        = pack("V",  0);          // 0x64
         $pps_ts1d        = pack("V",  0);          // 0x68
         $pps_ts2s        = pack("V",  0);          // 0x6c
         $pps_ts2d        = pack("V",  0);          // 0x70
         $pps_sb          = pack("V",  $start);     // 0x74
         $pps_size        = pack("V",  $size);      // 0x78
-       
-       
+
+
         fwrite($this->_filehandle, $rawname);
         for ($i = 0; $i < (64 -$length); $i++) {
             fwrite($this->_filehandle, $zero);
@@ -398,8 +398,8 @@ class Spreadsheet_Excel_Writer_OLEwriter extends PEAR
     {
         $biffsize = $this->_biffsize;
         if ($biffsize < 4096) {
-	        $min_size = 4096;
-        } else {    
+            $min_size = 4096;
+        } else {
             $min_size = 512;
         }
         if ($biffsize % $min_size != 0) {
