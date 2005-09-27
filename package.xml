@@ -56,7 +56,7 @@
       <notes>
       -added several formatting methods: setTextRotation(), setStrikeOut(),
       setOutLine(), setShadow(), setScript().
-      -fixed bug in Workbook::sheets() (Bjï¿½n Schotte).
+      -fixed bug in Workbook::sheets() (Björn Schotte).
       -fixed range for references in formulas (Edward).
       -added support for external references in formulas.
       -added support for comparisons in formulas.
