@@ -350,6 +350,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     var $_merged_ranges;
 
     /**
+    * Charset encoding currently used when calling writeString()
+    * @var string
+    */
+    var $_input_encoding;
+
+    /**
     * Constructor
     *
     * @param string  $name         The name of the new worksheet
@@ -450,6 +456,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_outline_on        = 1;
 
         $this->_merged_ranges     = array();
+
+        $this->_input_encoding    = '';
 
         $this->_dv                = array();
 
@@ -1498,13 +1506,56 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         return($str_error);
     }
 
+    /**
+    * Sets Input Encoding for writing strings
+    *
+    * @access public
+    * @param string $encoding The encoding. Ex: 'UTF-16LE', 'utf-8', 'ISO-859-7'
+    */
+    function setInputEncoding($encoding)
+    {
+         if ($encoding != 'UTF-16LE' && !function_exists('iconv')) {
+             $this->raiseError("Using an input encoding other than UTF-16LE requires PHP support for iconv");
+         }
+         $this->_input_encoding = $encoding;
+    }
+
+    /**
+    * Write a string to the specified row and column (zero indexed).
+    * This is the BIFF8 version (no 255 chars limit).
+    * $format is optional.
+    * Returns  0 : normal termination
+    *         -2 : row or column out of range
+    *         -3 : long string truncated to 255 chars
+    *
+    * @access public
+    * @param integer $row    Zero indexed row
+    * @param integer $col    Zero indexed column
+    * @param string  $str    The string to write
+    * @param mixed   $format The XF format for the cell
+    * @return integer
+    */
     function writeStringBIFF8($row, $col, $str, $format = 0)
     {
-        $strlen    = strlen($str);
+        if ($this->_input_encoding == 'UTF-16LE')
+        {
+            $strlen = function_exists('mb_strlen') ? mb_strlen($str, 'UTF-16LE') : (strlen($str) / 2);
+            $encoding  = 0x1;
+        }
+        elseif ($this->_input_encoding != '')
+        {
+            $str = iconv($this->_input_encoding, 'UTF-16LE', $str);
+            $strlen = function_exists('mb_strlen') ? mb_strlen($str, 'UTF-16LE') : (strlen($str) / 2);
+            $encoding  = 0x1;
+        }
+        else
+        {
+            $strlen    = strlen($str);
+            $encoding  = 0x0;
+        }
         $record    = 0x00FD;                   // Record identifier
         $length    = 0x000A;                   // Bytes to follow
         $xf        = $this->_XF($format);      // The cell format
-        $encoding  = 0x0;
 
         $str_error = 0;
 
