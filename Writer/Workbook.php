@@ -322,9 +322,12 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             $name = $sheetname.($index+1);
         }
 
-        // Check that sheetname is <= 31 chars (Excel limit).
-        if (strlen($name) > 31) {
-            return $this->raiseError("Sheetname $name must be <= 31 chars");
+        // Check that sheetname is <= 31 chars (Excel limit before BIFF8).
+        if ($this->_BIFF_version != 0x0600)
+        {
+            if (strlen($name) > 31) {
+                return $this->raiseError("Sheetname $name must be <= 31 chars");
+            }
         }
 
         // Check that the worksheet name doesn't already exist: a fatal Excel error.
