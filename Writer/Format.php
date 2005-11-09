@@ -641,6 +641,80 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     }
 
     /**
+    * Set cell horizontal alignment.
+    *
+    * @access public
+    * @param string $location alignment for the cell ('left', 'right', etc...).
+    */
+    function setHAlign($location)
+    {
+        if (preg_match("/\d/",$location)) {
+            return;                      // Ignore numbers
+        }
+    
+        $location = strtolower($location);
+    
+        if ($location == 'left') {
+            $this->_text_h_align = 1;
+        }
+        if ($location == 'centre') {
+            $this->_text_h_align = 2;
+        }
+        if ($location == 'center') {
+            $this->_text_h_align = 2;
+        }
+        if ($location == 'right') {
+            $this->_text_h_align = 3;
+        }
+        if ($location == 'fill') {
+            $this->_text_h_align = 4;
+        }
+        if ($location == 'justify') {
+            $this->_text_h_align = 5;
+        }
+        if ($location == 'merge') {
+            $this->_text_h_align = 6;
+        }
+        if ($location == 'equal_space') { // For T.K.
+            $this->_text_h_align = 7;
+        }
+    }
+
+    /**
+    * Set cell vertical alignment.
+    *
+    * @access public
+    * @param string $location alignment for the cell ('top', 'vleft', 'vright', etc...).
+    */
+    function setVAlign($location)
+    {
+        if (preg_match("/\d/",$location)) {
+            return;                      // Ignore numbers
+        }
+    
+        $location = strtolower($location);
+ 
+        if ($location == 'top') {
+            $this->_text_v_align = 0;
+        }
+        if ($location == 'vcentre') {
+            $this->_text_v_align = 1;
+        }
+        if ($location == 'vcenter') {
+            $this->_text_v_align = 1;
+        }
+        if ($location == 'bottom') {
+            $this->_text_v_align = 2;
+        }
+        if ($location == 'vjustify') {
+            $this->_text_v_align = 3;
+        }
+        if ($location == 'vequal_space') { // For T.K.
+            $this->_text_v_align = 4;
+        }
+    }
+
+    /**
     * This is an alias for the unintuitive setAlign('merge')
     *
     * @access public
