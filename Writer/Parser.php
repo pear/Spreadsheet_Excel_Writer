@@ -1387,7 +1387,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         if (PEAR::isError($result)) {
             return $result;
         }
-        while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_ADD) ||
+        while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_ADD) or
                ($this->_current_token == SPREADSHEET_EXCEL_WRITER_SUB))
         {
             if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_ADD) {
@@ -1436,7 +1436,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         if (PEAR::isError($result)) {
             return $result;
         }
-        while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL) ||
+        while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL) or
                ($this->_current_token == SPREADSHEET_EXCEL_WRITER_DIV))
         {
             if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL)
@@ -1554,9 +1554,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $function = $this->_current_token;
         $this->_advance();
         $this->_advance();         // eat the "("
-        while ($this->_current_token != ')') {
+        while ($this->_current_token != ')')
+        {
             if ($num_args > 0) {
-                if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_COMA ||
+                if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_COMA or
                     $this->_current_token == SPREADSHEET_EXCEL_WRITER_SEMICOLON)
                 {
                     $this->_advance();  // eat the "," or ";"
@@ -1664,10 +1665,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             $polish .= $converted_tree;
         }
         // if it's a function convert it here (so we can set it's arguments)
-        if (preg_match("/^[A-Z0-9\xc0-\xdc\.]+$/",$tree['value']) &&
-            !preg_match('/^([A-Ia-i]?[A-Za-z])(\d+)$/',$tree['value']) &&
-            !preg_match("/^[A-Ia-i]?[A-Za-z](\d+)\.\.[A-Ia-i]?[A-Za-z](\d+)$/",$tree['value']) &&
-            !is_numeric($tree['value']) &&
+        if (preg_match("/^[A-Z0-9\xc0-\xdc\.]+$/",$tree['value']) and
+            !preg_match('/^([A-Ia-i]?[A-Za-z])(\d+)$/',$tree['value']) and
+            !preg_match("/^[A-Ia-i]?[A-Za-z](\d+)\.\.[A-Ia-i]?[A-Za-z](\d+)$/",$tree['value']) and
+            !is_numeric($tree['value']) and
             !isset($this->ptg[$tree['value']]))
         {
             // left subtree for a function is always an array.
