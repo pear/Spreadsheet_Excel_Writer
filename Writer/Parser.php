@@ -1550,7 +1550,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     function _func()
     {
         $num_args = 0; // number of arguments received
-        $function = $this->_current_token;
+        $function = strtoupper($this->_current_token);
         $result   = ''; // initialize result
         $this->_advance();
         $this->_advance();         // eat the "("
@@ -1578,6 +1578,9 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 $result = $this->_createTree('arg', '', $result2);
             }
             $num_args++;
+        }
+        if (!isset($this->_functions[$function])) {
+            return $this->raiseError("Function $function() doesn't exist");
         }
         $args = $this->_functions[$function][1];
         // If fixed number of args eg. TIME($i,$j,$k). Check that the number of args is valid.
