@@ -2621,7 +2621,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data      = pack("C",  $cch);
         }
 
-        $this->_append($header.$data.$str);
+        $this->_prepend($header.$data.$str);
     }
 
     /**
@@ -2649,7 +2649,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data      = pack("C",  $cch);
         }
 
-        $this->_append($header . $data . $str);
+        $this->_prepend($header . $data . $str);
     }
 
     /**
@@ -2667,7 +2667,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $header    = pack("vv", $record, $length);
         $data      = pack("v",  $fHCenter);
 
-        $this->_append($header.$data);
+        $this->_prepend($header.$data);
     }
 
     /**
@@ -2684,7 +2684,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header    = pack("vv", $record, $length);
         $data      = pack("v",  $fVCenter);
-        $this->_append($header . $data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2705,7 +2705,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data = strrev($data);
         }
 
-        $this->_append($header . $data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2726,7 +2726,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data = strrev($data);
         }
 
-        $this->_append($header . $data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2747,7 +2747,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data = strrev($data);
         }
 
-        $this->_append($header . $data);
+        $this->_prepend($header . $data);
     }
 
     /**
@@ -2768,7 +2768,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data = strrev($data);
         }
 
-        $this->_append($header . $data);
+        $this->_prepend($header . $data);
     }
 
     /**
