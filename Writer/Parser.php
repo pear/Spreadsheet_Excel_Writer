@@ -1388,8 +1388,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return $result;
         }
         while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_ADD) or
-               ($this->_current_token == SPREADSHEET_EXCEL_WRITER_SUB))
-        {
+               ($this->_current_token == SPREADSHEET_EXCEL_WRITER_SUB)) {
+        /**/
             if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_ADD) {
                 $this->_advance();
                 $result2 = $this->_term();
@@ -1437,10 +1437,9 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return $result;
         }
         while (($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL) or
-               ($this->_current_token == SPREADSHEET_EXCEL_WRITER_DIV))
-        {
-            if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL)
-            {
+               ($this->_current_token == SPREADSHEET_EXCEL_WRITER_DIV)) {
+        /**/
+            if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_MUL) {
                 $this->_advance();
                 $result2 = $this->_fact();
                 if (PEAR::isError($result2)) {
@@ -1554,8 +1553,8 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         $function = $this->_current_token;
         $this->_advance();
         $this->_advance();         // eat the "("
-        while ($this->_current_token != ')')
-        {
+        while ($this->_current_token != ')') {
+        /**/
             if ($num_args > 0) {
                 if ($this->_current_token == SPREADSHEET_EXCEL_WRITER_COMA or
                     $this->_current_token == SPREADSHEET_EXCEL_WRITER_SEMICOLON)
