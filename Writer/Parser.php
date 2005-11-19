@@ -538,61 +538,52 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     */
     function _convert($token)
     {
-        if (preg_match("/^\"[^\"]{0,255}\"$/", $token))
-        {
+        if (preg_match("/^\"[^\"]{0,255}\"$/", $token)) {
             return $this->_convertString($token);
-        }
-        elseif (is_numeric($token))
-        {
+
+        } elseif (is_numeric($token)) {
             return $this->_convertNumber($token);
-        }
+
         // match references like A1 or $A$1
-        elseif (preg_match('/^\$?([A-Ia-i]?[A-Za-z])\$?(\d+)$/',$token))
-        {
+        } elseif (preg_match('/^\$?([A-Ia-i]?[A-Za-z])\$?(\d+)$/',$token)) {
             return $this->_convertRef2d($token);
-        }
+
         // match external references like Sheet1!A1 or Sheet1:Sheet2!A1
-        elseif (preg_match("/^\w+(\:\w+)?\![A-Ia-i]?[A-Za-z](\d+)$/u",$token))
-        {
+        } elseif (preg_match("/^\w+(\:\w+)?\![A-Ia-i]?[A-Za-z](\d+)$/u",$token)) {
             return $this->_convertRef3d($token);
-        }
+
         // match external references like 'Sheet1'!A1 or 'Sheet1:Sheet2'!A1
-        elseif (preg_match("/^'[\w -]+(\:[\w -]+)?'\![A-Ia-i]?[A-Za-z](\d+)$/u",$token))
-        {
+        } elseif (preg_match("/^'[\w -]+(\:[\w -]+)?'\![A-Ia-i]?[A-Za-z](\d+)$/u",$token)) {
             return $this->_convertRef3d($token);
-        }
+
         // match ranges like A1:B2
-        elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)\:(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/",$token))
-        {
+        } elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)\:(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/",$token)) {
             return $this->_convertRange2d($token);
-        }
+
         // match ranges like A1..B2
-        elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)\.\.(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/",$token))
-        {
+        } elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)\.\.(\$)?[A-Ia-i]?[A-Za-z](\$)?(\d+)$/",$token)) {
             return $this->_convertRange2d($token);
-        }
+
         // match external ranges like Sheet1!A1 or Sheet1:Sheet2!A1:B2
-        elseif (preg_match("/^\w+(\:\w+)?\!([A-Ia-i]?[A-Za-z])?(\d+)\:([A-Ia-i]?[A-Za-z])?(\d+)$/u",$token))
-        {
+        } elseif (preg_match("/^\w+(\:\w+)?\!([A-Ia-i]?[A-Za-z])?(\d+)\:([A-Ia-i]?[A-Za-z])?(\d+)$/u",$token)) {
             return $this->_convertRange3d($token);
-        }
+
         // match external ranges like 'Sheet1'!A1 or 'Sheet1:Sheet2'!A1:B2
-        elseif (preg_match("/^'[\w -]+(\:[\w -]+)?'\!([A-Ia-i]?[A-Za-z])?(\d+)\:([A-Ia-i]?[A-Za-z])?(\d+)$/u",$token))
-        {
+        } elseif (preg_match("/^'[\w -]+(\:[\w -]+)?'\!([A-Ia-i]?[A-Za-z])?(\d+)\:([A-Ia-i]?[A-Za-z])?(\d+)$/u",$token)) {
             return $this->_convertRange3d($token);
-        }
-        elseif (isset($this->ptg[$token])) // operators (including parentheses)
-        {
+
+        // operators (including parentheses)
+        } elseif (isset($this->ptg[$token])) {
             return pack("C", $this->ptg[$token]);
-        }
+
         // commented so argument number can be processed correctly. See toReversePolish().
         /*elseif (preg_match("/[A-Z0-9\xc0-\xdc\.]+/",$token))
         {
             return($this->_convertFunction($token,$this->_func_args));
         }*/
+
         // if it's an argument, ignore the token (the argument remains)
-        elseif ($token == 'arg')
-        {
+        } elseif ($token == 'arg') {
             return '';
         }
         // TODO: use real error codes
