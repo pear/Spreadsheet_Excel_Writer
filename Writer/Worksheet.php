@@ -2039,8 +2039,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Split the dir name and sheet name (if it exists)
         /*if (preg_match("/\#/", $url)) {
             list($dir_long, $sheet) = split("\#", $url);
-        }
-        else {
+        } else {
             $dir_long = $url;
         }
     
@@ -2049,8 +2048,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $sheet_len  = pack("V", strlen($sheet) + 0x01);
             $sheet      = join("\0", split('', $sheet));
             $sheet     .= "\0\0\0";
-        }
-        else {
+        } else {
             $sheet_len   = '';
             $sheet       = '';
         }*/
