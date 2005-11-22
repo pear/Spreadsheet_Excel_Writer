@@ -25,13 +25,26 @@
   </maintainers>
   <release>
     <version>0.9.0</version>
-    <date>2005-?-?</date>
+    <date>2005-11-21</date>
     <notes>
+     New features:
+     - adding new methods Format::setVAlign() and Format::setHAlign()
+     - adding support for uncapitalized functions in formulas (ej: "=sum(B27:B31)")
+     - adding support for different charsets with method Worksheet::setInputEncoding()
+     - adding support for sheetnames longer than 31 chars when using setVersion(8).
      Bug fixes:
-     - Fixed Bug #1796 Wrong regular expression in _writeUrlInternal
+     - Fixed Bug #1796, wrong regular expression in _writeUrlInternal
+     - Fixed Bug #2363, wrong export filename with spaces
+     - Fixed Bug #2425, Error using writeFormula with Now() and TODAY()
+     - Fixed Bug #2876, German Umlauts destroy sheet references
+     - Fixed Bug #1706, Formulas refer to other Worksheets with "spezial" names don't work
+     - Fixed Bug #2748, setMargins(), setHeader() and setFooter() work in excel but not in openoffice.
+     - Fixed Bug #5698, preg_replace in _writeUrlInternal
+     - Fixed Bug #2823, Inpropper results from writeUrl() method
     </notes>
     <deps>
       <dep type="pkg" rel="ge" version="0.5">OLE</dep>
+      <dep type="php" rel="ge" version="4.1.0"/>
     </deps>
     <state>beta</state>
     <filelist>
