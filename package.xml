@@ -24,12 +24,9 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.9.1</version>
-    <date>2006-09-26</date>
+    <version>x.x.x</version>
+    <date>200x-xx-xx</date>
     <notes>
-     Bug fixes:
-     - Fixed Bug #6509, Object of class Spreadsheet_Excel_Writer_Format could not be converted to int (Christian Schmidt)
-     - Fixed Bug #7840, Notices on default formats (Christian Schmidt)
     </notes>
     <deps>
       <dep type="pkg" rel="ge" version="0.5">OLE</dep>
