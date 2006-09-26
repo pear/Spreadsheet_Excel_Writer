@@ -25,7 +25,7 @@
   </maintainers>
   <release>
     <version>0.9.1</version>
-    <date>2006-09-21</date>
+    <date>2006-09-26</date>
     <notes>
      Bug fixes:
      - Fixed Bug #6509, Object of class Spreadsheet_Excel_Writer_Format could not be converted to int (Christian Schmidt)
