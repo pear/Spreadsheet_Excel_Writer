@@ -663,10 +663,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     * @access private
     * @param string $range An Excel range in the A1:A2 or A1..A2 format.
     */
-    function _convertRange2d($range)
+    function _convertRange2d($range, $class=0)
     {
-        $class = 2; // as far as I know, this is magick.
 
+        // TODO: possible class value 0,1,2 check Formula.pm
         // Split the range into 2 cell refs
         if (preg_match("/^([A-Ia-i]?[A-Za-z])(\d+)\:([A-Ia-i]?[A-Za-z])(\d+)$/", $range)) {
             list($cell1, $cell2) = split(':', $range);
