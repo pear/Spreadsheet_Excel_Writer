@@ -495,6 +495,10 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     function _storeWorkbook()
     {
+        if (count($this->_worksheets) == 0) {
+            return true;
+        }
+
         // Ensure that at least one worksheet has been selected.
         if ($this->_activesheet == 0) {
             $this->_worksheets[0]->selected = 1;
