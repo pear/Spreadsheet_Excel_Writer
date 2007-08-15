@@ -2879,7 +2879,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $colcount = count($this->_colinfo);
         for ($i = 0; $i < $colcount; $i++) {
            // Skip cols without outline level info.
-           if (count($col_level) >= 6) {
+           if (count($this->_colinfo[$i]) >= 6) {
               $col_level = max($this->_colinfo[$i][5], $col_level);
            }
         }
@@ -2895,8 +2895,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $col_level++;
         }
 
-        $header      = pack("vv",   $record, $length);
-        $data        = pack("vvvv", $dxRwGut, $dxColGut, $row_level, $col_level);
+        $header = pack("vv",   $record, $length);
+        $data   = pack("vvvv", $dxRwGut, $dxColGut, $row_level, $col_level);
 
         $this->_prepend($header.$data);
     }
@@ -2940,8 +2940,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $grbit |= 0x0400; // Outline symbols displayed
         }
 
-        $header      = pack("vv", $record, $length);
-        $data        = pack("v",  $grbit);
+        $header = pack("vv", $record, $length);
+        $data   = pack("v",  $grbit);
         $this->_prepend($header . $data);
     }
 
