@@ -391,6 +391,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         //$this->ext_sheets      = array();
         $this->_filehandle     = '';
         $this->_using_tmpfile  = true;
+        $this->_tmp_dir        = '';
         //$this->fileclosed      = 0;
         //$this->offset          = 0;
         $this->_xls_rowmax     = $rowmax;
@@ -473,15 +474,48 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function _initialize()
     {
+        if ($this->_using_tmpfile == false) {
+            return;
+        }
+
+        if ($this->_tmp_dir === '' && ini_get('open_basedir') === false) {
+            //return new PEAR_Error('open_basedir restriction in effect, please use setTmpDir() for this to work');
+            return;
+        }
+
         // Open tmp file for storing Worksheet data
-        $fh = tmpfile();
-        if ($fh) {
-            // Store filehandle
-            $this->_filehandle = $fh;
+        if ($this->_tmp_dir === '') {
+            $fh = tmpfile();
         } else {
+            // For people with open base dir restriction
+            $tmpfilename = tempnam($this->_tmp_dir, "Spreadsheet_Excel_Writer");
+            $fh = @fopen($tmpfilename, "w+b");
+        }
+
+        if ($fh === false) {
             // If tmpfile() fails store data in memory
             $this->_using_tmpfile = false;
+        } else {
+            // Store filehandle
+            $this->_filehandle = $fh;
         }
+    }
+
+    /**
+    * Sets the temp dir used for storing the Excel file
+    *
+    * @access public
+    * @param string $dir The dir to be used as temp dir
+    * @return true if given dir is valid, false otherwise
+    */
+    function setTempDir($dir)
+    {
+        if (is_dir($dir)) {
+            $this->_tmp_dir = $dir;
+            return true;
+        }
+
+        return false;
     }
 
     /**
