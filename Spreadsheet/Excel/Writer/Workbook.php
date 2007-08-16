@@ -160,12 +160,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     var $_country_code;
 
     /**
-    * The temporary dir for storing the OLE file
-    * @var string
-    */
-    var $_tmp_dir;
-
-    /**
     * number of bytes for sizeinfo of strings
     * @var integer
     */
@@ -207,7 +201,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_str_unique      = 0;
         $this->_str_table       = array();
         $this->_setPaletteXl97();
-        $this->_tmp_dir         = '';
     }
 
     /**
@@ -561,22 +554,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             return $this->raiseError($res->getMessage());
         }
         return true;
-    }
-
-    /**
-    * Sets the temp dir used for storing the OLE file
-    *
-    * @access public
-    * @param string $dir The dir to be used as temp dir
-    * @return true if given dir is valid, false otherwise
-    */
-    function setTempDir($dir)
-    {
-        if (is_dir($dir)) {
-            $this->_tmp_dir = $dir;
-            return true;
-        }
-        return false;
     }
 
     /**
