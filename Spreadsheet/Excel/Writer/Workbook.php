@@ -269,6 +269,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             $this->_tmp_format->_BIFF_version = $version;
             $this->_url_format->_BIFF_version = $version;
             $this->_parser->_BIFF_version = $version;
+            $this->_codepage = 0x04B0;
 
             $total_worksheets = count($this->_worksheets);
             // change version for all worksheets too
