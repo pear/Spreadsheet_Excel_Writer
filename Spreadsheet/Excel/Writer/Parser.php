@@ -92,6 +92,10 @@ define('SPREADSHEET_EXCEL_WRITER_EQ', "=");
 */
 define('SPREADSHEET_EXCEL_WRITER_NE', "<>");
 
+/**
+* * @const SPREADSHEET_EXCEL_WRITER_CONCAT token identifier for character "&"
+*/
+define('SPREADSHEET_EXCEL_WRITER_CONCAT', "&");
 
 require_once 'PEAR.php';
 
@@ -1203,6 +1207,9 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             case SPREADSHEET_EXCEL_WRITER_NE:
                 return $token;
                 break;
+            case SPREADSHEET_EXCEL_WRITER_CONCAT:
+                return $token;
+                break;
             default:
                 // if it's a reference
                 if (preg_match('/^\$?[A-Ia-i]?[A-Za-z]\$?[0-9]+$/',$token) and
@@ -1347,6 +1354,13 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 return $result2;
             }
             $result = $this->_createTree('ptgNE', $result, $result2);
+        } elseif ($this->_current_token == SPREADSHEET_EXCEL_WRITER_CONCAT) {
+            $this->_advance();
+            $result2 = $this->_expression();
+            if (PEAR::isError($result2)) {
+                return $result2;
+        }
+            $result = $this->_createTree('ptgConcat', $result, $result2);
         }
         return $result;
     }
