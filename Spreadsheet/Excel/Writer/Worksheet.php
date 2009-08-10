@@ -364,13 +364,15 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   &$firstsheet  The first worksheet in the workbook we belong to
     * @param mixed   &$url_format  The default format for hyperlinks
     * @param mixed   &$parser      The formula parser created for the Workbook
+    * @param string  $tmp_dir      The path to the directory for temporary files
     * @access private
     */
     function Spreadsheet_Excel_Writer_Worksheet($BIFF_version, $name,
                                                 $index, &$activesheet,
                                                 &$firstsheet, &$str_total,
                                                 &$str_unique, &$str_table,
-                                                &$url_format, &$parser)
+                                                &$url_format, &$parser,
+                                                $tmp_dir)
     {
         // It needs to call its parent's constructor explicitly
         $this->Spreadsheet_Excel_Writer_BIFFwriter();
@@ -460,6 +462,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_input_encoding    = '';
 
         $this->_dv                = array();
+        
+        $this->_tmp_dir = $tmp_dir;
 
         $this->_initialize();
     }

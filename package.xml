@@ -46,6 +46,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
   first value of the text [progi1984]
 - Fix Bug #14932: The name of the Workbook stream MUST be "Workbook", not
   "Book" [progi1984]
+- Fix Bug #14587: tmpfile() used despite setTempDir() [sberg]
  </notes>
 
  <contents>
