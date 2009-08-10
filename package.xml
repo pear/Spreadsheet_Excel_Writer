@@ -44,6 +44,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
 - Fix Bug #2405: Text concat operator &amp; truncate formula [progi1984]
 - Fix Bug #2261: Excel 2002 crashes when use write() with @ as
   first value of the text [progi1984]
+- Fix Bug #14932: The name of the Workbook stream MUST be "Workbook", not
+  "Book" [progi1984]
  </notes>
 
  <contents>

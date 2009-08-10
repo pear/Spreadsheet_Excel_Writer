@@ -565,7 +565,11 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     function _storeOLEFile()
     {
-        $OLE = new OLE_PPS_File(OLE::Asc2Ucs('Book'));
+        if($this->_BIFF_version == 0x0600) {
+            $OLE = new OLE_PPS_File(OLE::Asc2Ucs('Workbook'));
+        } else {
+            $OLE = new OLE_PPS_File(OLE::Asc2Ucs('Book'));
+        }
         if ($this->_tmp_dir != '') {
             $OLE->setTempDir($this->_tmp_dir);
         }
