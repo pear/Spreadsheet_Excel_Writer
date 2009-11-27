@@ -14,19 +14,31 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </description>
 
  <lead>
+  <name>Carsten Schmitz</name>
+  <user>cschmitz</user>
+  <email>cschmitz@limesurvey.org</email>
+  <active>yes</active>
+ </lead>
+ <lead>
   <name>Xavier Noguer</name>
   <user>xnoguer</user>
   <email>xnoguer@php.net</email>
-  <active>yes</active>
+  <active>no</active>
  </lead>
+ <developer>
+  <name>Franck Lefevre</name>
+  <user>progi1984</user>
+  <email>progi1984@gmail.com</email>
+  <active>yes</active>
+ </developer>
  <developer>
   <name>Mika Tuupola</name>
   <user>tuupola</user>
   <email>tuupola@appelsiini.net</email>
-  <active>yes</active>
+  <active>no</active>
  </developer>
 
- <date>2009-08-08</date>
+ <date>2009-11-28</date>
 
  <version>
   <release>0.9.2</release><!-- last release was 0.9.1 -->
@@ -40,14 +52,20 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
 
  <notes>
-- Fix Bug #10399: Fatal error when closing workbook with no worksheets.
-- Fix Bug #2405: Text concat operator &amp; truncate formula [progi1984]
-- Fix Bug #2261: Excel 2002 crashes when use write() with @ as
-  first value of the text [progi1984]
-- Fix Bug #14932: The name of the Workbook stream MUST be "Workbook", not
-  "Book" [progi1984]
-- Fix Bug #14587: tmpfile() used despite setTempDir() [sberg]
-- Fix Bug #8701: Problems with the method setTextRotation() [progi1984]
++Added feature: setTmpDir property for people that have openbase_dir. (dufuz)
+-Fixed bug #14932: The name of the Workbook stream MUST be "Workbook", not "Book" (progi1984)
+-Fixed bug #10399: Fatal error when closing workbook with no worksheets. (cweiske)
+-Fixed bug #9511 Shared /tmp dir assumed (dufuz)
+-Fixed bug #8701: Problems with the method setTextRotation() (progi1984)
+-Fixed bug #6640: Illegal character for XML encoding of pear package (mj)
+-Fixed bug #2405: Text concat operator & truncate formula (progi1984)
+-Fixed bug #2261: Excel 2002 crashes when use write() with @ as first value of the text in behalf of progi1984 (cweiske)
+-Fixed bug #1572 & #2942 - Problems with files with over 200 row / or 30kb of filesize - patch originally by michal dot fapso at goldenboat dot net - tested and reviewed (alan_k)
+-Fixed bug #1730 Wrong operand class used for A1:A2 (tuupola)
+-Fixed bug #608 Column guts always hidden, i.e. always displayed with zero height (dufuz)
+-Fixed bug: Proper codepage for BIFF8 (arnaud)
+-Fixed deprecated eregi function calls (cschmitz)
+-Fixed a huge number of wrong MIME types. UGH. (gwynne)
  </notes>
 
  <contents>
