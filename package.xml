@@ -79,6 +79,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
       <file name="Validator.php" role="php" />
       <file name="Workbook.php" role="php" />
       <file name="Worksheet.php" role="php" />
+      <file name="OLEwriter.php" role="php" />   
      </dir>
      <file name="Writer.php" role="php" />
     </dir>
