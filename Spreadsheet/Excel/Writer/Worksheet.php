@@ -482,8 +482,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
 
         if ($this->_tmp_dir === '' && ini_get('open_basedir') === false) {
-            //return new PEAR_Error('open_basedir restriction in effect, please use setTmpDir() for this to work');
-            return;
+            // open_basedir restriction in effect - store data in memory
+            // ToDo: Let the error actually have an effect somewhere
+            $this->_using_tmpfile = false;  
+            return new PEAR_Error('Temp file could not be opened since open_basedir restriction in effect - please use setTmpDir() - using memory storage instead');
         }
 
         // Open tmp file for storing Worksheet data
