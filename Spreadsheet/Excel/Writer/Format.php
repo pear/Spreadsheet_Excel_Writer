@@ -533,24 +533,24 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     function _getColor($name_color = '')
     {
         $colors = array(
-                        'aqua'    => 0x0F,
-                        'cyan'    => 0x0F,
-                        'black'   => 0x08,
-                        'blue'    => 0x0C,
-                        'brown'   => 0x10,
-                        'magenta' => 0x0E,
-                        'fuchsia' => 0x0E,
-                        'gray'    => 0x17,
-                        'grey'    => 0x17,
-                        'green'   => 0x11,
-                        'lime'    => 0x0B,
-                        'navy'    => 0x12,
-                        'orange'  => 0x35,
-                        'purple'  => 0x14,
-                        'red'     => 0x0A,
-                        'silver'  => 0x16,
-                        'white'   => 0x09,
-                        'yellow'  => 0x0D
+                          'aqua'    => 0x07,
+                          'cyan'    => 0x07,
+                          'black'   => 0x00,
+                          'blue'    => 0x04,
+                          'brown'   => 0x10,
+                          'magenta' => 0x06,
+                          'fuchsia' => 0x06,
+                          'gray'    => 0x17,
+                          'grey'    => 0x17,
+                          'green'   => 0x11,
+                          'lime'    => 0x03,
+                          'navy'    => 0x12,
+                          'orange'  => 0x35,
+                          'purple'  => 0x14,
+                          'red'     => 0x02,
+                          'silver'  => 0x16,
+                          'white'   => 0x01,
+                          'yellow'  => 0x05
                        );
 
         // Return the default color, 0x7FFF, if undef,
@@ -566,11 +566,6 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         // or the default color if string is unrecognised,
         if (preg_match("/\D/",$name_color)) {
             return(0x7FFF);
-        }
-
-        // or an index < 8 mapped into the correct range,
-        if ($name_color < 8) {
-            return($name_color + 8);
         }
 
         // or the default color if arg is outside range,
