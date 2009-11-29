@@ -988,6 +988,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
 
     /**
     * pack() row and column into the required 3 or 4 byte format.
+    * If col or row exceeds valid format bounds the maximum row/col will be used
     *
     * @access private
     * @param string $cell The Excel cell reference to be packed
@@ -997,13 +998,18 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     {
         $cell = strtoupper($cell);
         list($row, $col, $row_rel, $col_rel) = $this->_cellToRowcol($cell);
-        if ($col >= 256) {
-            return $this->raiseError("Column in: $cell greater than 255");
+
+        if ($col > 255) {
+            $col=255;
         }
-        // FIXME: change for BIFF8
-        if ($row >= 16384) {
-            return $this->raiseError("Row in: $cell greater than 16384 ");
+        if ($row > 16383 && $this->_BIFF_version == 0x0500) {
+           $row=16383; 
+        } 
+        elseif ($row > 65535 && $this->_BIFF_version == 0x0600) {
+           $row=65535;
         }
+        
+
 
         // Set the high bits to indicate if row or col are relative.
         if ($this->_BIFF_version == 0x0500) {
