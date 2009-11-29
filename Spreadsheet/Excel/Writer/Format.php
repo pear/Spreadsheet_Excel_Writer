@@ -554,7 +554,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                        );
 
         // Return the default color, 0x7FFF, if undef,
-        if ($name_color == '') {
+        if ($name_color === '') {
             return(0x7FFF);
         }
 
