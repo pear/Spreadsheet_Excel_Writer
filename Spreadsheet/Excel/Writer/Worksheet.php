@@ -750,16 +750,40 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $hidden   The optional hidden atribute
     * @param integer $level    The optional outline level
     */
-    function setColumn($firstcol, $lastcol, $width, $format = null, $hidden = 0, $level = 0)
-    {
-        $this->_colinfo[] = array($firstcol, $lastcol, $width, &$format, $hidden, $level);
-
-        // Set width to zero if column is hidden
-        $width = ($hidden) ? 0 : $width;
-
-        for ($col = $firstcol; $col <= $lastcol; $col++) {
-            $this->col_sizes[$col] = $width;
-        }
+    function setColumn($firstcol, $lastcol, $width, $format = null, $hidden = 0, $level = 0) 
+    { // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06 
+        // look for any ranges this might overlap and remove, size or split where necessary 
+        foreach ($this->_colinfo as $key => $colinfo) 
+        {
+            $existing_start = $colinfo[0]; $existing_end = $colinfo[1]; 
+            // if the new range starts within another range 
+            if ($firstcol > $existing_start && $firstcol < $existing_end) 
+            { // trim the existing range to the beginning of the new range 
+                $this->_colinfo[$key][1] = $firstcol - 1; 
+                // if the new range lies WITHIN the existing range 
+                if ($lastcol < $existing_end) 
+                { // split the existing range by adding a range after our new range 
+                    $this->_colinfo[] = array($lastcol+1, $existing_end, $colinfo[2], &$colinfo[3], $colinfo[4], $colinfo[5]); 
+                } 
+            } // if the new range ends inside an existing range 
+            elseif ($lastcol > $existing_start && $lastcol < $existing_end) 
+            { // trim the existing range to the end of the new range 
+                $this->_colinfo[$key][0] = $lastcol + 1; 
+            } // if the new range completely overlaps the existing range 
+            elseif ($firstcol <= $existing_start && $lastcol >= $existing_end) 
+            { 
+                unset($this->_colinfo[$key]); 
+            } 
+        } // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06 
+        // regenerate keys 
+        $this->_colinfo = array_values($this->_colinfo); 
+        $this->_colinfo[] = array($firstcol, $lastcol, $width, &$format, $hidden, $level); 
+        // Set width to zero if column is hidden 
+        $width = ($hidden) ? 0 : $width; 
+        for ($col = $firstcol; $col <= $lastcol; $col++) 
+        { 
+            $this->col_sizes[$col] = $width; 
+        } 
     }
 
     /**
