@@ -1014,12 +1014,23 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             $length    = 3 + strlen($format);      // Number of bytes to follow
         }
 
-        $cch       = strlen($format);             // Length of format string
+        if ( $this->_BIFF_version == 0x0600 && function_exists('iconv') ) {     // Encode format String
+            if (mb_detect_encoding($format, 'auto') !== 'UTF-16LE'){
+                $format = iconv(mb_detect_encoding($format, 'auto'),'UTF-16LE',$format);
+            }
+            $encoding = 1;
+            $cch = function_exists('mb_strlen') ? mb_strlen($format, 'UTF-16LE') : (strlen($format) / 2);
+        } else {
+            $encoding = 0;
+            $cch  = strlen($format);             // Length of format string
+        }
+        $length = strlen($format);
 
-        $header    = pack("vv", $record, $length);
         if ($this->_BIFF_version == 0x0600) {
+            $header    = pack("vv", $record, 5 + $length);
             $data      = pack("vvC", $ifmt, $cch, $encoding);
         } elseif ($this->_BIFF_version == 0x0500) {
+            $header    = pack("vv", $record, 3 + $length);
             $data      = pack("vC", $ifmt, $cch);
         }
         $this->_append($header . $data . $format);
