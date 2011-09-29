@@ -481,7 +481,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             return;
         }
 
-        if ($this->_tmp_dir === '' && ini_get('open_basedir') === false) {
+        if ($this->_tmp_dir === '' && ini_get('open_basedir') === true) {
             // open_basedir restriction in effect - store data in memory
             // ToDo: Let the error actually have an effect somewhere
             $this->_using_tmpfile = false;  
