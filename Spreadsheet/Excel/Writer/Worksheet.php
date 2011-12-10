@@ -344,6 +344,18 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     var $_str_table;
 
     /**
+     * Number of merged cell ranges in actual record
+     * @var int $_merged_cells_counter
+     */
+    var $_merged_cells_counter = 0;
+
+    /**
+     * Number of actual mergedcells record
+     * @var int $_merged_cells_record
+     */
+    var $_merged_cells_record = 0;
+
+    /**
     * Merged cell ranges
     * @var array
     */
@@ -695,9 +707,18 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if (($last_row < $first_row) || ($last_col < $first_col)) {
             return;
         }
+
+        $max_record_ranges = floor(($this->_limit - 6) / 8);
+        if($this->_merged_cells_counter >= $max_record_ranges)
+          {
+            $this->_merged_cells_record++;
+            $this->_merged_cells_counter = 0;
+          }
+
         // don't check rowmin, rowmax, etc... because we don't know when this
         // is going to be called
-        $this->_merged_ranges[] = array($first_row, $first_col, $last_row, $last_col);
+        $this->_merged_ranges[$this->_merged_cells_record][] = array($first_row, $first_col, $last_row, $last_col);
+        $this->_merged_cells_counter++;
     }
 
     /**
@@ -2441,14 +2462,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             return;
         }
         $record   = 0x00E5;
-        $length   = 2 + count($this->_merged_ranges) * 8;
-
-        $header   = pack('vv', $record, $length);
-        $data     = pack('v',  count($this->_merged_ranges));
-        foreach ($this->_merged_ranges as $range) {
-            $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
-        }
-        $this->_append($header . $data);
+        foreach($this->_merged_ranges as $ranges)
+          {
+            $length   = 2 + count($ranges) * 8; 
+            $header   = pack('vv', $record, $length);
+            $data     = pack('v',  count($ranges));
+            foreach($ranges as $range) 
+              $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
+            $string=$header.$data;
+            $this->_append(&$string, true);
+          }
     }
 
     /**
