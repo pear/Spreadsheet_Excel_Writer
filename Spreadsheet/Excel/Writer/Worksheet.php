@@ -463,7 +463,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $this->_dv                = array();
         
-        $this->_tmp_dir = $tmp_dir;
+        $this->_tmp_dir           = $tmp_dir;
+        $this->_tmp_file          = '';
 
         $this->_initialize();
     }
@@ -493,8 +494,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $fh = tmpfile();
         } else {
             // For people with open base dir restriction
-            $tmpfilename = tempnam($this->_tmp_dir, "Spreadsheet_Excel_Writer");
-            $fh = @fopen($tmpfilename, "w+b");
+            $this->_tmp_file = tempnam($this->_tmp_dir, "Spreadsheet_Excel_Writer");
+            $fh = @fopen($this->_tmp_file, "w+b");
         }
 
         if ($fh === false) {
@@ -625,6 +626,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $this->_storeDataValidity();
         }*/
         $this->_storeEof();
+
+        if ( $this->_tmp_file != '' ) {
+          if ( $this->_filehandle ) {
+            fclose($this->_filehandle);
+            $this->_filehandle = '';
+          }
+          @unlink($this->_tmp_file);
+          $this->_tmp_file      = '';
+          $this->_using_tmpfile = true;
+        }
     }
 
     /**

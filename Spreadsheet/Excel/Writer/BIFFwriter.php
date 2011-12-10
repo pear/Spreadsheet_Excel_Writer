@@ -91,6 +91,12 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
     var $_tmp_dir;
 
     /**
+    * The temporary file for storing the OLE file
+    * @var string
+    */
+    var $_tmp_file;
+
+    /**
     * Constructor
     *
     * @access public
