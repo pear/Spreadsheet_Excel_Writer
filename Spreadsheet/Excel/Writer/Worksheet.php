@@ -278,6 +278,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     var $print_colmax;
 
     /**
+    * Whether to display RightToLeft.
+    * @var integer
+    */
+    var $_Arabic;
+
+    /**
     * Whether to use outline.
     * @var integer
     */
@@ -468,6 +474,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_outline_below     = 1;
         $this->_outline_right     = 1;
         $this->_outline_on        = 1;
+        $this->_Arabic            = 0;
 
         $this->_merged_ranges     = array();
 
@@ -1461,6 +1468,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
      }
 
+    /**
+    * This method sets the worksheet direction to right-to-left (RTL)
+    *
+    * @param bool $rtl
+    */
+    function setRTL($rtl = true)
+    {
+        $this->_Arabic = ($rtl ? 1 : 0);
+     }
+
     /******************************************************************************
     *******************************************************************************
     *
@@ -2297,7 +2314,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $fFrozen        = $this->_frozen;        // 3
         $fDspZeros      = 1;                     // 4
         $fDefaultHdr    = 1;                     // 5
-        $fArabic        = 0;                     // 6
+        $fArabic        = $this->_Arabic;        // 6
         $fDspGuts       = $this->_outline_on;    // 7
         $fFrozenNoSplit = 0;                     // 0 - bit
         $fSelected      = $this->selected;       // 1
