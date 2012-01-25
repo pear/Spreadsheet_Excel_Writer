@@ -1970,7 +1970,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($str == '') {
             $str = $url;
         }
-        $str_error = $this->writeString($row1, $col1, $str, $format);
+        $str_error = is_numeric($str) ? $this->writeNumber($row1, $col1, $str, $format) : $this->writeString($row1, $col1, $str, $format);
         if (($str_error == -2) || ($str_error == -3)) {
             return $str_error;
         }
@@ -2033,7 +2033,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($str == '') {
             $str = $url;
         }
-        $str_error = $this->writeString($row1, $col1, $str, $format);
+        $str_error = is_numeric($str) ? $this->writeNumber($row1, $col1, $str, $format) : $this->writeString($row1, $col1, $str, $format);
         if (($str_error == -2) || ($str_error == -3)) {
             return $str_error;
         }
@@ -2107,7 +2107,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($str == '') {
             $str = preg_replace('/\#/', ' - ', $url);
         }
-        $str_error = $this->writeString($row1, $col1, $str, $format);
+        $str_error = is_numeric($str) ? $this->writeNumber($row1, $col1, $str, $format) : $this->writeString($row1, $col1, $str, $format);
         if (($str_error == -2) or ($str_error == -3)) {
             return $str_error;
         }
