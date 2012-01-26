@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.5.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
-http://pear.php.net/dtd/tasks-1.0.xsd
-http://pear.php.net/dtd/package-2.0
-http://pear.php.net/dtd/package-2.0.xsd">
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>Spreadsheet_Excel_Writer</name>
  <channel>pear.php.net</channel>
  <summary>Package for generating Excel spreadsheets</summary>
- <description>
-  Spreadsheet_Excel_Writer was born as a porting of the Spreadsheet::WriteExcel Perl module to PHP.
+ <description>Spreadsheet_Excel_Writer was born as a porting of the Spreadsheet::WriteExcel Perl module to PHP.
   It allows writing of Excel spreadsheets without the need for COM objects.
   It supports formulas, images (BMP) and all kinds of formatting for text and cells.
-  It currently supports the BIFF5 format (Excel 5.0), so functionality appeared in the latest Excel versions is not yet available.
- </description>
-
+  It currently supports the BIFF5 format (Excel 5.0), so functionality appeared in the latest Excel versions is not yet available.</description>
  <lead>
   <name>Carsten Schmitz</name>
   <user>cschmitz</user>
@@ -37,54 +31,44 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>tuupola@appelsiini.net</email>
   <active>no</active>
  </developer>
-
- <date>2009-11-28</date>
-
+ <date>2012-01-26</date>
+ <time>12:41:37</time>
  <version>
-  <release>0.9.2</release><!-- last release was 0.9.1 -->
-  <api>0.9.2</api>
+  <release>0.9.3</release>
+  <api>0.9.3</api>
  </version>
  <stability>
   <release>beta</release>
   <api>beta</api>
  </stability>
-
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-
  <notes>
-+Added feature: setTmpDir property for people that have openbase_dir. (dufuz)
--Fixed bug #14932: The name of the Workbook stream MUST be "Workbook", not "Book" (progi1984)
--Fixed bug #10399: Fatal error when closing workbook with no worksheets. (cweiske)
--Fixed bug #9511 Shared /tmp dir assumed (dufuz)
--Fixed bug #8701: Problems with the method setTextRotation() (progi1984)
--Fixed bug #6640: Illegal character for XML encoding of pear package (mj)
--Fixed bug #2405: Text concat operator and truncate formula (progi1984)
--Fixed bug #2261: Excel 2002 crashes when use write() with @ as first value of the text in behalf of progi1984 (cweiske)
--Fixed bug #1572 &amp; #2942 - Problems with files with over 200 row / or 30kb of filesize - patch originally by michal dot fapso at goldenboat dot net - tested and reviewed (alan_k)
--Fixed bug #1730 Wrong operand class used for A1:A2 (tuupola)
--Fixed bug #608 Column guts always hidden, i.e. always displayed with zero height (dufuz)
--Fixed bug: Proper codepage for BIFF8 (arnaud)
--Fixed deprecated eregi function calls (cschmitz)
+QA release
+Bug #18590	Impossible to work from IIS7
+Bug #18024	deprecated line 180, 186 with php 5.3.2
+Bug #16025	MERGEDCELLS record split by CONTINUE record
+Bug #17766	Patch: Avoid deprecated split
+Bug #17572	Temporary files are not removed
+Bug #16938	open_basedir check is wrong in Spreadsheet_Excel_Writer_Worksheet::_initialize
+Bug #14585	open_basedir workaround doesn&apos;t work
+Bug #12362	named worksheets &amp; utf-8
+Bug #14515	writeUrl only uses writeString, never writeNumber
+Bug #14281	Using a row &gt; 16,384 reports error
+Request #13486	Set the worksheet direction to right-to-left (RTL)
+Bug #12720	Notice thrown when using setColumn (undefined colFirst and colLast)
+Bug #12053	With SetVersion(8) setting bottom border color to 0 gives cross borders (!)
  </notes>
-
  <contents>
-  <dir name="/">
-   <dir name="Spreadsheet">
-    <dir name="Excel">
-     <dir name="Writer">
-      <file name="BIFFwriter.php" role="php" />
-      <file name="Format.php" role="php" />
-      <file name="Parser.php" role="php" />
-      <file name="Validator.php" role="php" />
-      <file name="Workbook.php" role="php" />
-      <file name="Worksheet.php" role="php" />
-     </dir>
-     <file name="Writer.php" role="php" />
-    </dir>
-   </dir>
+  <dir baseinstalldir="/" name="/">
+   <file baseinstalldir="/" md5sum="7448239c89e753412d5569cc09d30933" name="Spreadsheet/Excel/Writer.php" role="php" />
+   <file baseinstalldir="/" md5sum="bb2b725101184e64af80c7154b57daef" name="Spreadsheet/Excel/Writer/BIFFwriter.php" role="php" />
+   <file baseinstalldir="/" md5sum="812943982b578cc358dbd4d04b79bfb6" name="Spreadsheet/Excel/Writer/Format.php" role="php" />
+   <file baseinstalldir="/" md5sum="02159f2a71b8760af84f1809a573a06f" name="Spreadsheet/Excel/Writer/Parser.php" role="php" />
+   <file baseinstalldir="/" md5sum="90fe536e6333170d39a975503263201b" name="Spreadsheet/Excel/Writer/Validator.php" role="php" />
+   <file baseinstalldir="/" md5sum="189a3f6bf2230887250cb71381148400" name="Spreadsheet/Excel/Writer/Workbook.php" role="php" />
+   <file baseinstalldir="/" md5sum="bb1da4cd0465c92dab8c49a79b86f896" name="Spreadsheet/Excel/Writer/Worksheet.php" role="php" />
   </dir>
  </contents>
-
  <dependencies>
   <required>
    <php>
@@ -101,7 +85,6 @@ http://pear.php.net/dtd/package-2.0.xsd">
   </required>
  </dependencies>
  <phprelease />
-
  <changelog>
   <release>
    <version>
@@ -114,14 +97,14 @@ http://pear.php.net/dtd/package-2.0.xsd">
    </stability>
    <date>2003-03-17</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>-added several formatting methods: setTextRotation(), setStrikeOut(),
+   <notes>
+-added several formatting methods: setTextRotation(), setStrikeOut(),
 setOutLine(), setShadow(), setScript().
 -fixed bug in Workbook::sheets() (Bjoern Schotte).
 -fixed range for references in formulas (Edward).
 -added support for external references in formulas.
 -added support for comparisons in formulas.
 -added support for strings in formulas.
-
    </notes>
   </release>
   <release>
@@ -135,7 +118,8 @@ setOutLine(), setShadow(), setScript().
    </stability>
    <date>2003-05-02</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>New features:
+   <notes>
+New features:
  -added support for row ranges (JT Hughes)
  -added method method Format::setUnLocked() (Ajit Dixit)
  -added Worksheet::writeRow() and Worksheet::writeCol()
@@ -145,7 +129,6 @@ Bug fixes:
  -fixed swapping of columns in formulas (JT Hughes)
  -fixed assorted bugs in tokenizing formulas (JT Hughes)
  -fixed Worksheet::activate() (JT Hughes)
-
    </notes>
   </release>
   <release>
@@ -159,7 +142,8 @@ Bug fixes:
    </stability>
    <date>2003-08-21</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>New features:
+   <notes>
+New features:
  -using OLE package (&gt;= 0.3) to generate files bigger than 7MB
  -changed setFgColor() and setBgColor()&apos;s behavior to something more intuitive.
 Bug fixes:
@@ -180,7 +164,8 @@ Bug fixes:
    </stability>
    <date>2003-10-01</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>New features:
+   <notes>
+New features:
  -added rowcolToCell() utility method for easy writing of formula&apos;s cell references (JT Hughes).
  -added Worksheet::setOutline() method (Herman Kuiper)
  -added Format::setFontFamily() method (Donnie Miller)
@@ -199,7 +184,8 @@ Bug fixes:
    </stability>
    <date>2003-11-15</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>New features:
+   <notes>
+New features:
  - allow semicolon as argument separator (Axel Pratzner)
  - added experimental Excel97 generation. You can test it with setVersion():
    Beware! this method will be deprecated in a future release (when
@@ -223,7 +209,8 @@ Bug fixes:
    </stability>
    <date>2004-02-27</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>New features:
+   <notes>
+New features:
  - allow setting temp dir other than default using setTempDir() (using OLE 5.0 for this).
  - added setMerge() for merging (only for experimental Excel97 generation)
  - added setCountry() method.
@@ -243,7 +230,8 @@ Bug fixes:
    </stability>
    <date>2004-06-22</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>New features:
+   <notes>
+New features:
  - added hideScreenGridlines() (Paul Osman)
 Bug fixes:
  - Fixed SST table (long strings) (Bernd Jaenichen)
@@ -252,7 +240,6 @@ Bug fixes:
  - Fixed bug #578, setVPageBreaks doesn&apos;t handle multiple value arrays (natel at tocquigny dot com)
    </notes>
   </release>
-
   <release>
    <version>
     <release>0.9.0</release>
@@ -264,7 +251,8 @@ Bug fixes:
    </stability>
    <date>2005-11-21</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
-   <notes>New features:
+   <notes>
+New features:
 - adding new methods Format::setVAlign() and Format::setHAlign()
 - adding support for uncapitalized functions in formulas (ej: &quot;=sum(B27:B31)&quot;)
 - adding support for different charsets with method Worksheet::setInputEncoding()
@@ -280,7 +268,6 @@ Bug fixes:
 - Fixed Bug #2823, Inpropper results from writeUrl() method
    </notes>
   </release>
-
   <release>
    <version>
     <release>0.9.1</release>
@@ -293,10 +280,8 @@ Bug fixes:
    <date>2006-09-26</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
+
    </notes>
-Bug fixes:
-- Fixed Bug #6509, Object of class Spreadsheet_Excel_Writer_Format could not be converted to int (Christian Schmidt)
-- Fixed Bug #7840, Notices on default formats (Christian Schmidt)
   </release>
   <release>
    <version>
@@ -310,21 +295,36 @@ Bug fixes:
    <date>2009-11-28</date>
    <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
    <notes>
+
    </notes>
-+Added feature: setTmpDir property for people that have openbase_dir. (dufuz)
--Fixed bug #14932: The name of the Workbook stream MUST be "Workbook", not "Book" (progi1984)
--Fixed bug #10399: Fatal error when closing workbook with no worksheets. (cweiske)
--Fixed bug #9511 Shared /tmp dir assumed (dufuz)
--Fixed bug #8701: Problems with the method setTextRotation() (progi1984)
--Fixed bug #6640: Illegal character for XML encoding of pear package (mj)
--Fixed bug #2405: Text concat operator and truncate formula (progi1984)
--Fixed bug #2261: Excel 2002 crashes when use write() with @ as first value of the text in behalf of progi1984 (cweiske)
--Fixed bug #1572 &amp; #2942 - Problems with files with over 200 row / or 30kb of filesize - patch originally by michal dot fapso at goldenboat dot net - tested and reviewed (alan_k)
--Fixed bug #1730 Wrong operand class used for A1:A2 (tuupola)
--Fixed bug #608 Column guts always hidden, i.e. always displayed with zero height (dufuz)
--Fixed bug: Proper codepage for BIFF8 (arnaud)
--Fixed deprecated eregi function calls (cschmitz)
   </release>
-  
+  <release>
+   <version>
+    <release>0.9.3</release>
+    <api>0.9.3</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-01-26</date>
+   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
+   <notes>
+QA release
+Bug #18590	Impossible to work from IIS7
+Bug #18024	deprecated line 180, 186 with php 5.3.2
+Bug #16025	MERGEDCELLS record split by CONTINUE record
+Bug #17766	Patch: Avoid deprecated split
+Bug #17572	Temporary files are not removed
+Bug #16938	open_basedir check is wrong in Spreadsheet_Excel_Writer_Worksheet::_initialize
+Bug #14585	open_basedir workaround doesn&apos;t work
+Bug #12362	named worksheets &amp; utf-8
+Bug #14515	writeUrl only uses writeString, never writeNumber
+Bug #14281	Using a row &gt; 16,384 reports error
+Request #13486	Set the worksheet direction to right-to-left (RTL)
+Bug #12720	Notice thrown when using setColumn (undefined colFirst and colLast)
+Bug #12053	With SetVersion(8) setting bottom border color to 0 gives cross borders (!)
+   </notes>
+  </release>
  </changelog>
 </package>
