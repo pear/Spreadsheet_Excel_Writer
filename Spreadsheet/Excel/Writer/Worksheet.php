@@ -2484,10 +2484,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $length   = 2 + count($ranges) * 8; 
             $header   = pack('vv', $record, $length);
             $data     = pack('v',  count($ranges));
-            foreach($ranges as $range) 
+            foreach ($ranges as $range) 
               $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
-            $string=$header.$data;
-            $this->_append(&$string, true);
+            $string = $header.$data;
+            $this->_append($string, true);
           }
     }
 
