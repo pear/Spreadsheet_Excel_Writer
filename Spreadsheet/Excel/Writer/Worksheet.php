@@ -1629,20 +1629,25 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function writeStringBIFF8($row, $col, $str, $format = null)
     {
+        // If the string is Unicode and contains any "surrogate pairs" then using mb_strlen($str, 'UTF-16LE')
+        // as the string length will cause a "found unreadable content" error when opening the worksheet in Excel
+        // (apparently the length is expected to be the number of 16-bit code points, not the number of characters).
+        // Instead, always use the byte length divided by two for Unicode strings, and if mb_strlen() exists use
+        // mb_strlen($str, '8bit') just in case mbstring.func_overload is set to overload strlen().
         if ($this->_input_encoding == 'UTF-16LE')
         {
-            $strlen = function_exists('mb_strlen') ? mb_strlen($str, 'UTF-16LE') : (strlen($str) / 2);
+            $strlen = (function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str)) / 2;
             $encoding  = 0x1;
         }
         elseif ($this->_input_encoding != '')
         {
             $str = iconv($this->_input_encoding, 'UTF-16LE', $str);
-            $strlen = function_exists('mb_strlen') ? mb_strlen($str, 'UTF-16LE') : (strlen($str) / 2);
+            $strlen = (function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str)) / 2;
             $encoding  = 0x1;
         }
         else
         {
-            $strlen    = strlen($str);
+            $strlen    = function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str);
             $encoding  = 0x0;
         }
         $record    = 0x00FD;                   // Record identifier
