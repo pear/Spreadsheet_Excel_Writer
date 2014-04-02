@@ -934,7 +934,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
         $grbit     = 0x0000;                    // Visibility and sheet type
         if ($this->_BIFF_version == 0x0600) {
-            $cch       = mb_strlen($sheetname,'UTF-16LE'); // Length of sheet name
+            $cch = function_exists('mb_strlen') ? mb_strlen($sheetname, 'UTF-16LE') : (strlen($sheetname) / 2); // Length of sheet name
         } else {
             $cch       = strlen($sheetname);        // Length of sheet name
         }
@@ -1608,4 +1608,4 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
 
 }
-
+?>
