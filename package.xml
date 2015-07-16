@@ -66,7 +66,7 @@ Bug #12053	With SetVersion(8) setting bottom border color to 0 gives cross borde
    <file baseinstalldir="/" md5sum="02159f2a71b8760af84f1809a573a06f" name="Spreadsheet/Excel/Writer/Parser.php" role="php" />
    <file baseinstalldir="/" md5sum="90fe536e6333170d39a975503263201b" name="Spreadsheet/Excel/Writer/Validator.php" role="php" />
    <file baseinstalldir="/" md5sum="189a3f6bf2230887250cb71381148400" name="Spreadsheet/Excel/Writer/Workbook.php" role="php" />
-   <file baseinstalldir="/" md5sum="bb1da4cd0465c92dab8c49a79b86f896" name="Spreadsheet/Excel/Writer/Worksheet.php" role="php" />
+   <file baseinstalldir="/" md5sum="f8ecf2c6443420917d5fcff06ec5863e" name="Spreadsheet/Excel/Writer/Worksheet.php" role="php" />
   </dir>
  </contents>
  <dependencies>
