@@ -59,14 +59,20 @@ Bug #12720	Notice thrown when using setColumn (undefined colFirst and colLast)
 Bug #12053	With SetVersion(8) setting bottom border color to 0 gives cross borders (!)
  </notes>
  <contents>
-  <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="/" md5sum="7448239c89e753412d5569cc09d30933" name="Spreadsheet/Excel/Writer.php" role="php" />
-   <file baseinstalldir="/" md5sum="bb2b725101184e64af80c7154b57daef" name="Spreadsheet/Excel/Writer/BIFFwriter.php" role="php" />
-   <file baseinstalldir="/" md5sum="812943982b578cc358dbd4d04b79bfb6" name="Spreadsheet/Excel/Writer/Format.php" role="php" />
-   <file baseinstalldir="/" md5sum="02159f2a71b8760af84f1809a573a06f" name="Spreadsheet/Excel/Writer/Parser.php" role="php" />
-   <file baseinstalldir="/" md5sum="90fe536e6333170d39a975503263201b" name="Spreadsheet/Excel/Writer/Validator.php" role="php" />
-   <file baseinstalldir="/" md5sum="189a3f6bf2230887250cb71381148400" name="Spreadsheet/Excel/Writer/Workbook.php" role="php" />
-   <file baseinstalldir="/" md5sum="bb1da4cd0465c92dab8c49a79b86f896" name="Spreadsheet/Excel/Writer/Worksheet.php" role="php" />
+  <dir name="/">
+   <dir name="Spreadsheet">
+    <dir name="Excel">
+     <dir name="Writer">
+      <file name="BIFFwriter.php" role="php" />
+      <file name="Format.php" role="php" />
+      <file name="Parser.php" role="php" />
+      <file name="Validator.php" role="php" />
+      <file name="Workbook.php" role="php" />
+      <file name="Worksheet.php" role="php" />
+     </dir>
+     <file name="Writer.php" role="php" />
+    </dir>
+   </dir>
   </dir>
  </contents>
  <dependencies>
