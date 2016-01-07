@@ -31,8 +31,7 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once 'PEAR.php';
-require_once 'Spreadsheet/Excel/Writer/Workbook.php';
+require_once __DIR__ . '/Writer/Workbook.php';
 
 /**
 * Class for writing Excel Spreadsheets. This class should change COMPLETELY.
@@ -47,13 +46,12 @@ class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
     /**
     * The constructor. It just creates a Workbook
     *
-    * @param string $filename The optional filename for the Workbook.
-    * @return Spreadsheet_Excel_Writer_Workbook The Workbook created
+    * @param string $fileName The optional filename for the Workbook.
     */
-    function Spreadsheet_Excel_Writer($filename = '')
+    public function __construct($fileName = '')
     {
-        $this->_filename = $filename;
-        $this->Spreadsheet_Excel_Writer_Workbook($filename);
+        $this->fileName = $fileName;
+        parent::__construct($fileName);
     }
 
     /**
@@ -62,13 +60,13 @@ class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
     * @param string $filename The filename to use for HTTP headers
     * @access public
     */
-    function send($filename)
+    public function send($filename)
     {
-        header("Content-type: application/vnd.ms-excel");
-        header("Content-Disposition: attachment; filename=\"$filename\"");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
-        header("Pragma: public");
+        header('Content-type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="' . $filename .'"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0,pre-check=0');
+        header('Pragma: public');
     }
 
     /**
@@ -78,27 +76,26 @@ class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
     * @access public
     * @static
     * @param integer $row Row for the cell to convert (0-indexed).
-    * @param integer $col Column for the cell to convert (0-indexed).
+    * @param integer $column Column for the cell to convert (0-indexed).
     * @return string The cell identifier in A1 format
     */
-    function rowcolToCell($row, $col)
+    public function rowcolToCell($row, $column)
     {
-        if ($col > 255) { //maximum column value exceeded
-            return new PEAR_Error("Maximum column value exceeded: $col");
+        if ($column > 255) { //maximum column value exceeded
+            return new PEAR_Error('Maximum column value exceeded: ' . $column);
         }
 
-        $int = (int)($col / 26);
-        $frac = $col % 26;
-        $chr1 = '';
+        $int    = (int)($column / 26);
+        $frac   = $column % 26;
+        $chr1   = '';
 
         if ($int > 0) {
             $chr1 = chr(ord('A') + $int - 1);
         }
 
         $chr2 = chr(ord('A') + $frac);
-        $row++;
+        ++$row;
 
         return $chr1 . $chr2 . $row;
     }
 }
-?>

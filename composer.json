@@ -31,6 +31,7 @@
         "./"
     ],
     "license": "LGPL",
+    "minimum-stability": "dev",
     "name": "pear/spreadsheet_excel_writer",
     "support": {
         "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Spreadsheet_Excel_Writer",
@@ -38,8 +39,9 @@
     },
     "type": "library",
     "require": {
-        "pear/pear_exception": "*",
-        "pear/ole": "*"
+        "pear/pear": "*",
+        "pear/ole": "*",
+        "php": ">=5.3.3"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
