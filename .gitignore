@@ -1,3 +1,5 @@
+# ide related
+.idea
 # composer related
 composer.lock
 composer.phar
