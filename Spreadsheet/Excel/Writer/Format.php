@@ -43,16 +43,22 @@
 class Spreadsheet_Excel_Writer_Format extends PEAR
 {
     /**
+     * The BIFF version for the workbook
+     * @var integer
+     */
+    public $_BIFF_version;
+
+    /**
+     * Index to the FONT record.
+     * @var integer
+     */
+    public $font_index;
+
+    /**
     * The index given by the workbook when creating a new format.
     * @var integer
     */
     protected $_xf_index;
-
-    /**
-    * Index to the FONT record.
-    * @var integer
-    */
-    public $font_index;
 
     /**
     * The font name (ASCII).
@@ -244,6 +250,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Constructor
     *
     * @access private
+    * @param integer $BIFF_version
     * @param integer $index the XF index for the format.
     * @param array   $properties array with properties to be set on initialization.
     */
@@ -1096,7 +1103,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Sets the font family name.
     *
     * @access public
-    * @param string $fontfamily The font family name. Possible values are:
+    * @param string $font_family The font family name. Possible values are:
     *                           'Times New Roman', 'Arial', 'Courier'.
     */
     public function setFontFamily($font_family)

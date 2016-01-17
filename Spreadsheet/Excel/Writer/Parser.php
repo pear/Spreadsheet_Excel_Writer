@@ -108,6 +108,12 @@ define('SPREADSHEET_EXCEL_WRITER_CONCAT', '&');
 class Spreadsheet_Excel_Writer_Parser extends PEAR
 {
     /**
+     * The BIFF version for the workbook
+     * @var integer
+     */
+    public $_BIFF_version;
+
+    /**
     * The index of the character we are currently looking at
     * @var integer
     */
@@ -124,6 +130,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     * @var string
     */
     protected $_formula;
+
+    /**
+    * @var array
+    */
+    protected $_functions;
 
     /**
     * The character ahead of the current char
@@ -156,16 +167,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     protected $_references;
 
     /**
-    * The BIFF version for the workbook
-    * @var integer
-    */
-    protected $_BIFF_version;
-
-    /**
     * The class constructor
     *
     * @param integer $byte_order The byte order (Little endian or Big endian) of the architecture
-                                 (optional). 1 => big endian, 0 (default) little endian.
+    *                            (optional). 1 => big endian, 0 (default) little endian.
+    * @param integer $biff_version
     */
     public function __construct($byte_order, $biff_version)
     {
@@ -597,6 +603,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     *
     * @access private
     * @param mixed $num an integer or double for conversion to its ptg value
+    * @return string
     */
     protected function _convertNumber($num)
     {
@@ -660,11 +667,13 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     }
 
     /**
-    * Convert an Excel range such as A1:D4 to a ptgRefV.
-    *
-    * @access private
-    * @param string $range An Excel range in the A1:A2 or A1..A2 format.
-    */
+     * Convert an Excel range such as A1:D4 to a ptgRefV.
+     *
+     * @access private
+     * @param string $range An Excel range in the A1:A2 or A1..A2 format.
+     * @param int $class
+     * @return array|string
+     */
     protected function _convertRange2d($range, $class=0)
     {
 

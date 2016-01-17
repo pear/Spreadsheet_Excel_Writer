@@ -59,13 +59,13 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
     /**
     * Reference to the (default) Format object for URLs
-    * @var object Format
+    * @var Spreadsheet_Excel_Writer_Format
     */
     protected $_url_format;
 
     /**
     * Reference to the parser used for parsing formulas
-    * @var object Format
+    * @var Spreadsheet_Excel_Writer_Format
     */
     protected $_parser;
 
