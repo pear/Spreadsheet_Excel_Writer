@@ -51,132 +51,132 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Filename for the Workbook
     * @var string
     */
-    protected $fileName;
+    public $fileName;
 
     /**
     * Formula parser
-    * @var object Parser
+    * @var Spreadsheet_Excel_Writer_Parser
     */
-    protected $parser;
+    public $parser;
 
     /**
     * Flag for 1904 date system (0 => base date is 1900, 1 => base date is 1904)
     * @var integer
     */
-    protected $flagFor1904;
+    public $flagFor1904;
 
     /**
     * The active worksheet of the workbook (0 indexed)
     * @var integer
     */
-    protected $activeSheet;
+    public $activeSheet;
 
     /**
     * 1st displayed worksheet in the workbook (0 indexed)
     * @var integer
     */
-    protected $firstSheet;
+    public $firstSheet;
 
     /**
     * Number of workbook tabs selected
     * @var integer
     */
-    protected $selectedWorkBook;
+    public $selectedWorkBook;
 
     /**
     * Index for creating adding new formats to the workbook
     * @var integer
     */
-    protected $xf_index;
+    public $xf_index;
 
     /**
     * Flag for preventing close from being called twice.
     * @var integer
     * @see close()
     */
-    protected $fileIsClosed;
+    public $fileIsClosed;
 
     /**
     * The BIFF file size for the workbook.
     * @var integer
     * @see calcSheetOffsets()
     */
-    protected $biffSize;
+    public $biffSize;
 
     /**
     * The default sheetname for all sheets created.
     * @var string
     */
-    protected $sheetName;
+    public $sheetName;
 
     /**
     * The default XF format.
-    * @var object Format
+    * @var Spreadsheet_Excel_Writer_Format
     */
-    protected $temporaryFormat;
+    public $temporaryFormat;
 
     /**
     * Array containing references to all of this workbook's worksheets
     * @var array
     */
-    protected $workSheet;
+    public $workSheet;
 
     /**
     * Array of sheet names for creating the EXTERNSHEET records
     * @var array
     */
-    protected $sheetNames;
+    public $sheetNames;
 
     /**
     * Array containing references to all of this workbook's formats
     * @var array|Spreadsheet_Excel_Writer_Format[]
     */
-    protected $formats;
+    public $formats;
 
     /**
     * Array containing the colour palette
     * @var array
     */
-    protected $palette;
+    public $palette;
 
     /**
     * The default format for URLs.
-    * @var object Format
+    * @var Spreadsheet_Excel_Writer_Format
     */
-    protected $urlFormat;
+    public $urlFormat;
 
     /**
     * The codepage indicates the text encoding used for strings
     * @var integer
     */
-    protected $codePage;
+    public $codePage;
 
     /**
     * The country code used for localization
     * @var integer
     */
-    protected $countryCode;
+    public $countryCode;
 
     /**
     * number of bytes for size info of strings
     * @var integer
     */
-    protected $stringSizeInfoSize;
+    public $stringSizeInfoSize;
 
     /** @var int */
-    protected $totalStringLength;
+    public $totalStringLength;
 
     /** @var int */
-    protected $uniqueString;
+    public $uniqueString;
 
     /** @var array */
-    protected $tableOfStrings;
+    public $tableOfStrings;
 
     /** @var int */
-    protected $stringSizeInfo;
+    public $stringSizeInfo;
 
     /** @var array */
-    private $blockSize;
+    public $blockSize;
 
     /**
     * Class constructor
