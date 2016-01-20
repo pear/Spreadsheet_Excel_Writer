@@ -61,317 +61,317 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Reference to the (default) Format object for URLs
     * @var Spreadsheet_Excel_Writer_Format
     */
-    protected $_url_format;
+    public $_url_format;
 
     /**
     * Reference to the parser used for parsing formulas
     * @var Spreadsheet_Excel_Writer_Format
     */
-    protected $_parser;
+    public $_parser;
 
     /**
     * Filehandle to the temporary file for storing data
     * @var resource
     */
-    protected $_filehandle;
+    public $_filehandle;
 
     /**
     * Boolean indicating if we are using a temporary file for storing data
     * @var bool
     */
-    protected $_using_tmpfile;
+    public $_using_tmpfile;
 
     /**
     * Maximum number of rows for an Excel spreadsheet (BIFF5)
     * @var integer
     */
-    protected $_xls_rowmax;
+    public $_xls_rowmax;
 
     /**
     * Maximum number of columns for an Excel spreadsheet (BIFF5)
     * @var integer
     */
-    protected $_xls_colmax;
+    public $_xls_colmax;
 
     /**
     * Maximum number of characters for a string (LABEL record in BIFF5)
     * @var integer
     */
-    protected $_xls_strmax;
+    public $_xls_strmax;
 
     /**
     * First row for the DIMENSIONS record
     * @var integer
     * @see _storeDimensions()
     */
-    protected $_dim_rowmin;
+    public $_dim_rowmin;
 
     /**
     * Last row for the DIMENSIONS record
     * @var integer
     * @see _storeDimensions()
     */
-    protected $_dim_rowmax;
+    public $_dim_rowmax;
 
     /**
     * First column for the DIMENSIONS record
     * @var integer
     * @see _storeDimensions()
     */
-    protected $_dim_colmin;
+    public $_dim_colmin;
 
     /**
     * Last column for the DIMENSIONS record
     * @var integer
     * @see _storeDimensions()
     */
-    protected $_dim_colmax;
+    public $_dim_colmax;
 
     /**
     * Array containing format information for columns
     * @var array
     */
-    protected $_colinfo;
+    public $_colinfo;
 
     /**
     * Array containing the selected area for the worksheet
     * @var array
     */
-    protected $_selection;
+    public $_selection;
 
     /**
     * Array containing the panes for the worksheet
     * @var array
     */
-    protected $_panes;
+    public $_panes;
 
     /**
     * The active pane for the worksheet
     * @var integer
     */
-    protected $_active_pane;
+    public $_active_pane;
 
     /**
     * Bit specifying if panes are frozen
     * @var integer
     */
-    protected $_frozen;
+    public $_frozen;
 
     /**
     * Bit specifying if the worksheet is selected
     * @var integer
     */
-    protected $selected;
+    public $selected;
 
     /**
     * The paper size (for printing) (DOCUMENT!!!)
     * @var integer
     */
-    protected $_paper_size;
+    public $_paper_size;
 
     /**
     * Bit specifying paper orientation (for printing). 0 => landscape, 1 => portrait
     * @var integer
     */
-    protected $_orientation;
+    public $_orientation;
 
     /**
     * The page header caption
     * @var string
     */
-    protected $_header;
+    public $_header;
 
     /**
     * The page footer caption
     * @var string
     */
-    protected $_footer;
+    public $_footer;
 
     /**
     * The horizontal centering value for the page
     * @var integer
     */
-    protected $_hcenter;
+    public $_hcenter;
 
     /**
     * The vertical centering value for the page
     * @var integer
     */
-    protected $_vcenter;
+    public $_vcenter;
 
     /**
     * The margin for the header
     * @var float
     */
-    protected $_margin_head;
+    public $_margin_head;
 
     /**
     * The margin for the footer
     * @var float
     */
-    protected $_margin_foot;
+    public $_margin_foot;
 
     /**
     * The left margin for the worksheet in inches
     * @var float
     */
-    protected $_margin_left;
+    public $_margin_left;
 
     /**
     * The right margin for the worksheet in inches
     * @var float
     */
-    protected $_margin_right;
+    public $_margin_right;
 
     /**
     * The top margin for the worksheet in inches
     * @var float
     */
-    protected $_margin_top;
+    public $_margin_top;
 
     /**
     * The bottom margin for the worksheet in inches
     * @var float
     */
-    protected $_margin_bottom;
+    public $_margin_bottom;
 
     /**
     * First row to reapeat on each printed page
     * @var integer
     */
-    protected $title_rowmin;
+    public $title_rowmin;
 
     /**
     * Last row to reapeat on each printed page
     * @var integer
     */
-    protected $title_rowmax;
+    public $title_rowmax;
 
     /**
     * First column to reapeat on each printed page
     * @var integer
     */
-    protected $title_colmin;
+    public $title_colmin;
 
     /**
     * First row of the area to print
     * @var integer
     */
-    protected $print_rowmin;
+    public $print_rowmin;
 
     /**
     * Last row to of the area to print
     * @var integer
     */
-    protected $print_rowmax;
+    public $print_rowmax;
 
     /**
     * First column of the area to print
     * @var integer
     */
-    protected $print_colmin;
+    public $print_colmin;
 
     /**
     * Last column of the area to print
     * @var integer
     */
-    protected $print_colmax;
+    public $print_colmax;
 
     /**
     * Whether to display RightToLeft.
     * @var integer
     */
-    protected $_Arabic;
+    public $_Arabic;
 
     /**
     * Whether to use outline.
     * @var integer
     */
-    protected $_outline_on;
+    public $_outline_on;
 
     /**
     * Auto outline styles.
     * @var bool
     */
-    protected $_outline_style;
+    public $_outline_style;
 
     /**
     * Whether to have outline summary below.
     * @var bool
     */
-    protected $_outline_below;
+    public $_outline_below;
 
     /**
     * Whether to have outline summary at the right.
     * @var bool
     */
-    protected $_outline_right;
+    public $_outline_right;
 
     /**
     * Outline row level.
     * @var integer
     */
-    protected $_outline_row_level;
+    public $_outline_row_level;
 
     /**
     * Whether to fit to page when printing or not.
     * @var bool
     */
-    protected $_fit_page;
+    public $_fit_page;
 
     /**
     * Number of pages to fit wide
     * @var integer
     */
-    protected $_fit_width;
+    public $_fit_width;
 
     /**
     * Number of pages to fit high
     * @var integer
     */
-    protected $_fit_height;
+    public $_fit_height;
 
     /**
     * Reference to the total number of strings in the workbook
     * @var integer
     */
-    protected $_str_total;
+    public $_str_total;
 
     /**
     * Reference to the number of unique strings in the workbook
     * @var integer
     */
-    protected $_str_unique;
+    public $_str_unique;
 
     /**
     * Reference to the array containing all the unique strings in the workbook
     * @var array
     */
-    protected $_str_table;
+    public $_str_table;
 
     /**
      * Number of merged cell ranges in actual record
      * @var int $_merged_cells_counter
      */
-    protected $_merged_cells_counter = 0;
+    public $_merged_cells_counter = 0;
 
     /**
      * Number of actual mergedcells record
      * @var int $_merged_cells_record
      */
-    protected $_merged_cells_record = 0;
+    public $_merged_cells_record = 0;
 
     /**
     * Merged cell ranges
     * @var array
     */
-    protected $_merged_ranges;
+    public $_merged_ranges;
 
     /**
     * Charset encoding currently used when calling writeString()
     * @var string
     */
-    protected $_input_encoding;
+    public $_input_encoding;
 
     public $activesheet;
 
