@@ -43,207 +43,214 @@
 class Spreadsheet_Excel_Writer_Format extends PEAR
 {
     /**
+     * The BIFF version for the workbook
+     * @var integer
+     */
+    public $_BIFF_version;
+
+    /**
+     * Index to the FONT record.
+     * @var integer
+     */
+    public $font_index;
+
+    /**
     * The index given by the workbook when creating a new format.
     * @var integer
     */
-    protected $_xf_index;
-
-    /**
-    * Index to the FONT record.
-    * @var integer
-    */
-    public $font_index;
+    public $_xf_index;
 
     /**
     * The font name (ASCII).
     * @var string
     */
-    protected $_font_name;
+    public $_font_name;
 
     /**
     * Height of font (1/20 of a point)
     * @var integer
     */
-    protected $_size;
+    public $_size;
 
     /**
     * Bold style
     * @var integer
     */
-    protected $_bold;
+    public $_bold;
 
     /**
     * Bit specifiying if the font is italic.
     * @var integer
     */
-    protected $_italic;
+    public $_italic;
 
     /**
     * Index to the cell's color
     * @var integer
     */
-    protected $_color;
+    public $_color;
 
     /**
     * The text underline property
     * @var integer
     */
-    protected $_underline;
+    public $_underline;
 
     /**
     * Bit specifiying if the font has strikeout.
     * @var integer
     */
-    protected $_font_strikeout;
+    public $_font_strikeout;
 
     /**
     * Bit specifiying if the font has outline.
     * @var integer
     */
-    protected $_font_outline;
+    public $_font_outline;
 
     /**
     * Bit specifiying if the font has shadow.
     * @var integer
     */
-    protected $_font_shadow;
+    public $_font_shadow;
 
     /**
     * 2 bytes specifiying the script type for the font.
     * @var integer
     */
-    protected $_font_script;
+    public $_font_script;
 
     /**
     * Byte specifiying the font family.
     * @var integer
     */
-    protected $_font_family;
+    public $_font_family;
 
     /**
     * Byte specifiying the font charset.
     * @var integer
     */
-    protected $_font_charset;
+    public $_font_charset;
 
     /**
     * An index (2 bytes) to a FORMAT record (number format).
     * @var integer
     */
-    protected $_num_format;
+    public $_num_format;
 
     /**
     * Bit specifying if formulas are hidden.
     * @var integer
     */
-    protected $_hidden;
+    public $_hidden;
 
     /**
     * Bit specifying if the cell is locked.
     * @var integer
     */
-    protected $_locked;
+    public $_locked;
 
     /**
     * The three bits specifying the text horizontal alignment.
     * @var integer
     */
-    protected $_text_h_align;
+    public $_text_h_align;
 
     /**
     * Bit specifying if the text is wrapped at the right border.
     * @var integer
     */
-    protected $_text_wrap;
+    public $_text_wrap;
 
     /**
     * The three bits specifying the text vertical alignment.
     * @var integer
     */
-    protected $_text_v_align;
+    public $_text_v_align;
 
     /**
     * 1 bit, apparently not used.
     * @var integer
     */
-    protected $_text_justlast;
+    public $_text_justlast;
 
     /**
     * The two bits specifying the text rotation.
     * @var integer
     */
-    protected $_rotation;
+    public $_rotation;
 
     /**
     * The cell's foreground color.
     * @var integer
     */
-    protected $_fg_color;
+    public $_fg_color;
 
     /**
     * The cell's background color.
     * @var integer
     */
-    protected $_bg_color;
+    public $_bg_color;
 
     /**
     * The cell's background fill pattern.
     * @var integer
     */
-    protected $_pattern;
+    public $_pattern;
 
     /**
     * Style of the bottom border of the cell
     * @var integer
     */
-    protected $_bottom;
+    public $_bottom;
 
     /**
     * Color of the bottom border of the cell.
     * @var integer
     */
-    protected $_bottom_color;
+    public $_bottom_color;
 
     /**
     * Style of the top border of the cell
     * @var integer
     */
-    protected $_top;
+    public $_top;
 
     /**
     * Color of the top border of the cell.
     * @var integer
     */
-    protected $_top_color;
+    public $_top_color;
 
     /**
     * Style of the left border of the cell
     * @var integer
     */
-    protected $_left;
+    public $_left;
 
     /**
     * Color of the left border of the cell.
     * @var integer
     */
-    protected $_left_color;
+    public $_left_color;
 
     /**
     * Style of the right border of the cell
     * @var integer
     */
-    protected $_right;
+    public $_right;
 
     /**
     * Color of the right border of the cell.
     * @var integer
     */
-    protected $_right_color;
+    public $_right_color;
 
     /**
     * Constructor
     *
     * @access private
+    * @param integer $BIFF_version
     * @param integer $index the XF index for the format.
     * @param array   $properties array with properties to be set on initialization.
     */
@@ -1096,7 +1103,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Sets the font family name.
     *
     * @access public
-    * @param string $fontfamily The font family name. Possible values are:
+    * @param string $font_family The font family name. Possible values are:
     *                           'Times New Roman', 'Arial', 'Courier'.
     */
     public function setFontFamily($font_family)
