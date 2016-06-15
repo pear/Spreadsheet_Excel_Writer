@@ -6,12 +6,50 @@
  */
 class Test_Spreadsheet_Excel_WriterTestCase extends PHPUnit_Framework_TestCase
 {
+    const FIXTURES_PATH = 'test/fixture/';
+
     /**
-     * @param string $fileName
-     * @return Spreadsheet_Excel_Writer_Workbook
+     * @param string $filename
+     * @return Spreadsheet_Excel_Writer
      */
-    protected function getNewWorkbook($fileName = 'my_workbook')
+    protected function getNewWorkbook($filename = '')
     {
-        return new Spreadsheet_Excel_Writer_Workbook($fileName);
+        // we're writing to the standard output by defaulr
+        return new Spreadsheet_Excel_Writer($filename);
+    }
+
+    protected function assertSameAsInFixture($filename, Spreadsheet_Excel_Writer $workbook)
+    {
+        $this->assertEmpty($workbook->fileName, "Testing with fixtures works only for standard output");
+
+        // we have to fix timestamp for fixtures to work
+        $workbook->timestamp = 1000000000; // somewhere in 2001
+
+        ob_start();
+        $workbook->close();
+        $data = ob_get_clean();
+
+        $fullPath = self::FIXTURES_PATH.$filename;
+
+        if ($this->shouldUpdateFixtures()) {
+            file_put_contents($fullPath, $data);
+        }
+
+        if (!is_file($fullPath)) {
+            $this->fail("Fixture $filename not found");
+        }
+
+        // TODO: should we save data for future analysis?
+        //file_put_contents("{$fullPath}.work", $data);
+
+        $this->assertEquals(file_get_contents($fullPath), $data, "Output differs for $filename");
+    }
+
+    /**
+     * We should update golden files
+     */
+    private function shouldUpdateFixtures()
+    {
+        return isset($_SERVER['GOLDEN']);
     }
 }
