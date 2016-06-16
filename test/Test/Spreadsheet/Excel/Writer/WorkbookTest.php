@@ -34,4 +34,42 @@ class Test_Spreadsheet_Excel_Writer_WorkbookTest extends Test_Spreadsheet_Excel_
         $this->assertSameAsInFixture('example.xls', $workbook);
     }
 
+    public function testWriteWithFormat()
+    {
+        $workbook = $this->getNewWorkbook();
+        $workbook->setVersion(8);
+
+        $format = $workbook->addFormat();
+        $format->setFontFamily('Helvetica');
+        $format->setSize(16);
+        $format->setVAlign('vcenter');
+        $format->setBorder(1);
+
+        $sheet = $workbook->addWorksheet('Example report');
+        $sheet->setInputEncoding('utf-8');
+
+        $sheet->setColumn(0, 10, 35);
+
+        $sheet->writeString(0, 0, "Test string", $format);
+        $sheet->setRow(0, 40);
+
+        $sheet->writeString(1, 0, "こんにちわ");
+
+        $this->assertSameAsInFixture('with_format.xls', $workbook);
+    }
+
+    public function testWithDefaultVersion()
+    {
+        $workbook = $this->getNewWorkbook();
+
+        $sheet = $workbook->addWorksheet("Example");
+
+        for ($i = 0; $i < 10; $i++) {
+            for ($j = 0; $j < 10; $j++) {
+                $sheet->write($i, $j, "Row $i $j");
+            }
+        }
+
+        $this->assertSameAsInFixture('example2.xls', $workbook);
+    }
 }
