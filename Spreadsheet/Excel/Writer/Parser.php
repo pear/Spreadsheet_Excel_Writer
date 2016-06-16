@@ -171,7 +171,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     * @param integer $byte_order The byte order (Little endian or Big endian) of the architecture
                                  (optional). 1 => big endian, 0 (default) little endian.
     */
-    public function Spreadsheet_Excel_Writer_Parser($byte_order, $biff_version)
+    public function __construct($byte_order, $biff_version)
     {
         $this->_current_char  = 0;
         $this->_BIFF_version  = $biff_version;
