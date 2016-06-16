@@ -31,8 +31,9 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once 'PEAR.php';
-require_once 'Spreadsheet/Excel/Writer/Workbook.php';
+if (!class_exists('Spreadsheet_Excel_Writer_Workbook')) {
+    require_once 'Spreadsheet/Excel/Writer/Workbook.php';
+}
 
 /**
 * Class for writing Excel Spreadsheets. This class should change COMPLETELY.

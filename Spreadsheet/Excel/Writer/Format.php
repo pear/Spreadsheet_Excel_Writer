@@ -32,7 +32,9 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once 'PEAR.php';
+if (!class_exists('PEAR')) {
+    require_once 'PEAR.php';
+}
 
 /**
 * Class for generating Excel XF records (formats)

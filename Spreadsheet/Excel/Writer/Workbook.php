@@ -32,12 +32,20 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once 'Spreadsheet/Excel/Writer/Format.php';
-require_once 'Spreadsheet/Excel/Writer/BIFFwriter.php';
-require_once 'Spreadsheet/Excel/Writer/Worksheet.php';
-require_once 'Spreadsheet/Excel/Writer/Parser.php';
-require_once 'OLE/PPS/Root.php';
-require_once 'OLE/PPS/File.php';
+if (!class_exists('Spreadsheet_Excel_Writer_BIFFwriter')) {
+    require_once 'Spreadsheet/Excel/Writer/Format.php';
+    require_once 'Spreadsheet/Excel/Writer/BIFFwriter.php';
+    require_once 'Spreadsheet/Excel/Writer/Worksheet.php';
+    require_once 'Spreadsheet/Excel/Writer/Parser.php';
+}
+
+if (!class_exists('OLE_PPS_Root')) {
+    require_once 'OLE/PPS/Root.php';
+}
+
+if (!class_exists('OLE_PPS_File')) {
+    require_once 'OLE/PPS/File.php';
+}
 
 /**
 * Class for generating Excel Spreadsheets
@@ -378,7 +386,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
      */
     public function &addValidator()
     {
-        include_once 'Spreadsheet/Excel/Writer/Validator.php';
+        if (!class_exists('Spreadsheet_Excel_Writer_Validator')) {
+            include_once 'Spreadsheet/Excel/Writer/Validator.php';
+        }
         /* FIXME: check for successful inclusion*/
         $valid = new Spreadsheet_Excel_Writer_Validator($this->_parser);
         return $valid;
