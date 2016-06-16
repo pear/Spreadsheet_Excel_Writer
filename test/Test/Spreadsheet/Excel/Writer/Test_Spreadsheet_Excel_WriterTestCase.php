@@ -20,10 +20,10 @@ class Test_Spreadsheet_Excel_WriterTestCase extends PHPUnit_Framework_TestCase
 
     protected function assertSameAsInFixture($filename, Spreadsheet_Excel_Writer $workbook)
     {
-        $this->assertEmpty($workbook->fileName, "Testing with fixtures works only for standard output");
+        $this->assertEmpty($workbook->_filename, "Testing with fixtures works only for standard output");
 
         // we have to fix timestamp for fixtures to work
-        $workbook->timestamp = 1000000000; // somewhere in 2001
+        $workbook->_timestamp = 1000000000; // somewhere in 2001
 
         ob_start();
         $workbook->close();

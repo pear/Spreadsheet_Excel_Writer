@@ -166,7 +166,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     var $_string_sizeinfo_size;
 
     /** @var int */
-    public $timestamp;
+    var $_timestamp;
 
     /**
     * Class constructor
@@ -203,7 +203,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_str_total       = 0;
         $this->_str_unique      = 0;
         $this->_str_table       = array();
-        $this->timestamp            = time();
+        $this->_timestamp       = time();
 
         $this->_setPaletteXl97();
     }
@@ -595,7 +595,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             }
         }
 
-        $root = new OLE_PPS_Root($this->timestamp, $this->timestamp, array($OLE));
+        $root = new OLE_PPS_Root($this->_timestamp, $this->_timestamp, array($OLE));
         if ($this->_tmp_dir != '') {
             $root->setTempDir($this->_tmp_dir);
         }
