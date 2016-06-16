@@ -1,4 +1,4 @@
-<phpunit bootstrap="test/bootstrap.php"
+<phpunit bootstrap="vendor/autoload.php"
          cacheTokens="false"
          colors="true"
          convertErrorsToExceptions="true"
