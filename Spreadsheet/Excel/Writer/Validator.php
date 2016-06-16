@@ -47,27 +47,27 @@ define("OP_LTE",        0x07);
 */
 class Spreadsheet_Excel_Writer_Validator
 {
-   var $_type;
-   var $_style;
-   var $_fixedList;
-   var $_blank;
-   var $_incell;
-   var $_showprompt;
-   var $_showerror;
-   var $_title_prompt;
-   var $_descr_prompt;
-   var $_title_error;
-   var $_descr_error;
-   var $_operator;
-   var $_formula1;
-   var $_formula2;
+   public $_type;
+   public $_style;
+   public $_fixedList;
+   public $_blank;
+   public $_incell;
+   public $_showprompt;
+   public $_showerror;
+   public $_title_prompt;
+   public $_descr_prompt;
+   public $_title_error;
+   public $_descr_error;
+   public $_operator;
+   public $_formula1;
+   public $_formula2;
     /**
     * The parser from the workbook. Used to parse validation formulas also
     * @var Spreadsheet_Excel_Writer_Parser
     */
-    var $_parser;
+    public $_parser;
 
-    function Spreadsheet_Excel_Writer_Validator(&$parser)
+    public function Spreadsheet_Excel_Writer_Validator(&$parser)
     {
         $this->_parser       = $parser;
         $this->_type         = 0x01; // FIXME: add method for setting datatype
@@ -86,41 +86,41 @@ class Spreadsheet_Excel_Writer_Validator
         $this->_formula2    = '';
     }
 
-   function setPrompt($promptTitle = "\x00", $promptDescription = "\x00", $showPrompt = true)
+   public function setPrompt($promptTitle = "\x00", $promptDescription = "\x00", $showPrompt = true)
    {
       $this->_showprompt = $showPrompt;
       $this->_title_prompt = $promptTitle;
       $this->_descr_prompt = $promptDescription;
    }
 
-   function setError($errorTitle = "\x00", $errorDescription = "\x00", $showError = true)
+   public function setError($errorTitle = "\x00", $errorDescription = "\x00", $showError = true)
    {
       $this->_showerror = $showError;
       $this->_title_error = $errorTitle;
       $this->_descr_error = $errorDescription;
    }
 
-   function allowBlank()
+   public function allowBlank()
    {
       $this->_blank = true;
    }
 
-   function onInvalidStop()
+   public function onInvalidStop()
    {
       $this->_style = 0x00;
    }
 
-    function onInvalidWarn()
+    public function onInvalidWarn()
     {
         $this->_style = 0x01;
     }
 
-    function onInvalidInfo()
+    public function onInvalidInfo()
     {
         $this->_style = 0x02;
     }
 
-    function setFormula1($formula)
+    public function setFormula1($formula)
     {
         // Parse the formula using the parser in Parser.php
         $error = $this->_parser->parse($formula);
@@ -135,7 +135,7 @@ class Spreadsheet_Excel_Writer_Validator
         return true;
     }
 
-    function setFormula2($formula)
+    public function setFormula2($formula)
     {
         // Parse the formula using the parser in Parser.php
         $error = $this->_parser->parse($formula);
@@ -150,7 +150,7 @@ class Spreadsheet_Excel_Writer_Validator
         return true;
     }
 
-    function _getOptions()
+    protected function _getOptions()
     {
         $options = $this->_type;
         $options |= $this->_style << 3;
@@ -174,7 +174,7 @@ class Spreadsheet_Excel_Writer_Validator
       return $options;
    }
 
-   function _getData()
+   protected function _getData()
    {
       $title_prompt_len = strlen($this->_title_prompt);
       $descr_prompt_len = strlen($this->_descr_prompt);
@@ -199,13 +199,13 @@ class Spreadsheet_Excel_Writer_Validator
 
 /*class Spreadsheet_Excel_Writer_Validation_List extends Spreadsheet_Excel_Writer_Validation
 {
-   function Spreadsheet_Excel_Writer_Validation_list()
+   public function Spreadsheet_Excel_Writer_Validation_list()
    {
       parent::Spreadsheet_Excel_Writer_Validation();
       $this->_type = 0x03;
    }
 
-   function setList($source, $incell = true)
+   public function setList($source, $incell = true)
    {
       $this->_incell = $incell;
       $this->_fixedList = true;
@@ -214,13 +214,13 @@ class Spreadsheet_Excel_Writer_Validator
       $this->_formula1 = pack("CCC", 0x17, strlen($source), 0x0c) . $source;
    }
 
-   function setRow($row, $col1, $col2, $incell = true)
+   public function setRow($row, $col1, $col2, $incell = true)
    {
       $this->_incell = $incell;
       //$this->_formula1 = ...;
    }
 
-   function setCol($col, $row1, $row2, $incell = true)
+   public function setCol($col, $row1, $row2, $incell = true)
    {
       $this->_incell = $incell;
       //$this->_formula1 = ...;
