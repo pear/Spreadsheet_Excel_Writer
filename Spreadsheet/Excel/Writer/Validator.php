@@ -226,5 +226,3 @@ class Spreadsheet_Excel_Writer_Validator
       //$this->_formula1 = ...;
    }
 }*/
-
-?>
