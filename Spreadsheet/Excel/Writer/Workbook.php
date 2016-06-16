@@ -65,7 +65,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
     /**
     * Formula parser
-    * @var object Parser
+    * @var Spreadsheet_Excel_Writer_Parser
     */
     public $_parser;
 
@@ -121,7 +121,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
     /**
     * The default XF format.
-    * @var object Format
+    * @var Spreadsheet_Excel_Writer_Format
     */
     public $_tmp_format;
 
@@ -151,7 +151,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
     /**
     * The default format for URLs.
-    * @var object Format
+    * @var Spreadsheet_Excel_Writer_Format
     */
     public $_url_format;
 
