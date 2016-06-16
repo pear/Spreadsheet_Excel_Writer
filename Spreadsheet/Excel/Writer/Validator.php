@@ -22,19 +22,21 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+//require_once('PEAR.php');
+
 // Possible operator types
 
 /*
 FIXME: change prefixes
 */
-define('OP_BETWEEN',    0x00);
-define('OP_NOTBETWEEN', 0x01);
-define('OP_EQUAL',      0x02);
-define('OP_NOTEQUAL',   0x03);
-define('OP_GT',         0x04);
-define('OP_LT',         0x05);
-define('OP_GTE',        0x06);
-define('OP_LTE',        0x07);
+define("OP_BETWEEN",    0x00);
+define("OP_NOTBETWEEN", 0x01);
+define("OP_EQUAL",      0x02);
+define("OP_NOTEQUAL",   0x03);
+define("OP_GT",         0x04);
+define("OP_LT",         0x05);
+define("OP_GTE",        0x06);
+define("OP_LTE",        0x07);
 
 /**
 * Baseclass for generating Excel DV records (validations)
@@ -45,27 +47,27 @@ define('OP_LTE',        0x07);
 */
 class Spreadsheet_Excel_Writer_Validator
 {
-   public $_type;
-   public $_style;
-   public $_fixedList;
-   public $_blank;
-   public $_incell;
-   public $_showprompt;
-   public $_showerror;
-   public $_title_prompt;
-   public $_descr_prompt;
-   public $_title_error;
-   public $_descr_error;
-   public $_operator;
-   public $_formula1;
-   public $_formula2;
+   var $_type;
+   var $_style;
+   var $_fixedList;
+   var $_blank;
+   var $_incell;
+   var $_showprompt;
+   var $_showerror;
+   var $_title_prompt;
+   var $_descr_prompt;
+   var $_title_error;
+   var $_descr_error;
+   var $_operator;
+   var $_formula1;
+   var $_formula2;
     /**
     * The parser from the workbook. Used to parse validation formulas also
     * @var Spreadsheet_Excel_Writer_Parser
     */
-    public $_parser;
+    var $_parser;
 
-    public function __construct($parser)
+    function Spreadsheet_Excel_Writer_Validator(&$parser)
     {
         $this->_parser       = $parser;
         $this->_type         = 0x01; // FIXME: add method for setting datatype
@@ -84,41 +86,41 @@ class Spreadsheet_Excel_Writer_Validator
         $this->_formula2    = '';
     }
 
-   public function setPrompt($promptTitle = "\x00", $promptDescription = "\x00", $showPrompt = true)
+   function setPrompt($promptTitle = "\x00", $promptDescription = "\x00", $showPrompt = true)
    {
       $this->_showprompt = $showPrompt;
       $this->_title_prompt = $promptTitle;
       $this->_descr_prompt = $promptDescription;
    }
 
-   public function setError($errorTitle = "\x00", $errorDescription = "\x00", $showError = true)
+   function setError($errorTitle = "\x00", $errorDescription = "\x00", $showError = true)
    {
       $this->_showerror = $showError;
       $this->_title_error = $errorTitle;
       $this->_descr_error = $errorDescription;
    }
 
-   public function allowBlank()
+   function allowBlank()
    {
       $this->_blank = true;
    }
 
-   public function onInvalidStop()
+   function onInvalidStop()
    {
       $this->_style = 0x00;
    }
 
-    public function onInvalidWarn()
+    function onInvalidWarn()
     {
         $this->_style = 0x01;
     }
 
-    public function onInvalidInfo()
+    function onInvalidInfo()
     {
         $this->_style = 0x02;
     }
 
-    public function setFormula1($formula)
+    function setFormula1($formula)
     {
         // Parse the formula using the parser in Parser.php
         $error = $this->_parser->parse($formula);
@@ -133,7 +135,7 @@ class Spreadsheet_Excel_Writer_Validator
         return true;
     }
 
-    public function setFormula2($formula)
+    function setFormula2($formula)
     {
         // Parse the formula using the parser in Parser.php
         $error = $this->_parser->parse($formula);
@@ -148,7 +150,7 @@ class Spreadsheet_Excel_Writer_Validator
         return true;
     }
 
-    public function _getOptions()
+    function _getOptions()
     {
         $options = $this->_type;
         $options |= $this->_style << 3;
@@ -172,7 +174,7 @@ class Spreadsheet_Excel_Writer_Validator
       return $options;
    }
 
-   public function _getData()
+   function _getData()
    {
       $title_prompt_len = strlen($this->_title_prompt);
       $descr_prompt_len = strlen($this->_descr_prompt);
@@ -197,13 +199,13 @@ class Spreadsheet_Excel_Writer_Validator
 
 /*class Spreadsheet_Excel_Writer_Validation_List extends Spreadsheet_Excel_Writer_Validation
 {
-   public function Spreadsheet_Excel_Writer_Validation_list()
+   function Spreadsheet_Excel_Writer_Validation_list()
    {
       parent::Spreadsheet_Excel_Writer_Validation();
       $this->_type = 0x03;
    }
 
-   public function setList($source, $incell = true)
+   function setList($source, $incell = true)
    {
       $this->_incell = $incell;
       $this->_fixedList = true;
@@ -212,13 +214,13 @@ class Spreadsheet_Excel_Writer_Validator
       $this->_formula1 = pack("CCC", 0x17, strlen($source), 0x0c) . $source;
    }
 
-   public function setRow($row, $col1, $col2, $incell = true)
+   function setRow($row, $col1, $col2, $incell = true)
    {
       $this->_incell = $incell;
       //$this->_formula1 = ...;
    }
 
-   public function setCol($col, $row1, $row2, $incell = true)
+   function setCol($col, $row1, $row2, $incell = true)
    {
       $this->_incell = $incell;
       //$this->_formula1 = ...;
