@@ -51,7 +51,7 @@ class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
     * @param string $filename The optional filename for the Workbook.
     * @return Spreadsheet_Excel_Writer_Workbook The Workbook created
     */
-    function __construct($filename = '')
+    public function __construct($filename = '')
     {
         $this->_filename = $filename;
         parent::__construct($filename);
@@ -63,7 +63,7 @@ class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
     * @param string $filename The filename to use for HTTP headers
     * @access public
     */
-    function send($filename)
+    public function send($filename)
     {
         header("Content-type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=\"$filename\"");
