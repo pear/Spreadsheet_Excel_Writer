@@ -380,18 +380,21 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @param string  $name         The name of the new worksheet
     * @param integer $index        The index of the new worksheet
-    * @param mixed   &$activesheet The current activesheet of the workbook we belong to
-    * @param mixed   &$firstsheet  The first worksheet in the workbook we belong to
-    * @param mixed   &$url_format  The default format for hyperlinks
-    * @param mixed   &$parser      The formula parser created for the Workbook
+    * @param mixed   $activesheet The current activesheet of the workbook we belong to
+    * @param mixed   $firstsheet  The first worksheet in the workbook we belong to
+    * @param int     &$str_total Reference to the total number of strings in the workbook
+    * @param int     &$str_unique Reference to the number of unique strings in the workbook
+    * @param array   &$str_table Reference to the array containing all the unique strings in the workbook
+    * @param mixed   $url_format  The default format for hyperlinks
+    * @param mixed   $parser      The formula parser created for the Workbook
     * @param string  $tmp_dir      The path to the directory for temporary files
     * @access private
     */
     public function __construct($BIFF_version, $name,
-                                                $index, &$activesheet,
-                                                &$firstsheet, &$str_total,
+                                                $index, $activesheet,
+                                                $firstsheet, &$str_total,
                                                 &$str_unique, &$str_table,
-                                                &$url_format, &$parser,
+                                                $url_format, $parser,
                                                 $tmp_dir)
     {
         // It needs to call its parent's constructor explicitly
@@ -402,13 +405,15 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $this->name            = $name;
         $this->index           = $index;
-        $this->activesheet     = &$activesheet;
-        $this->firstsheet      = &$firstsheet;
+        $this->activesheet     = $activesheet;
+        $this->firstsheet      = $firstsheet;
+        // _str_total _str_unique _str_table - are actual references
+        // everything breaks if they're not
         $this->_str_total      = &$str_total;
         $this->_str_unique     = &$str_unique;
         $this->_str_table      = &$str_table;
-        $this->_url_format     = &$url_format;
-        $this->_parser         = &$parser;
+        $this->_url_format     = $url_format;
+        $this->_parser         = $parser;
 
         //$this->ext_sheets      = array();
         $this->_filehandle     = '';
@@ -804,7 +809,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
                 // if the new range lies WITHIN the existing range
                 if ($lastcol < $existing_end)
                 { // split the existing range by adding a range after our new range
-                    $this->_colinfo[] = array($lastcol+1, $existing_end, $colinfo[2], &$colinfo[3], $colinfo[4], $colinfo[5]);
+                    $this->_colinfo[] = array($lastcol+1, $existing_end, $colinfo[2], /* format */ $colinfo[3], $colinfo[4], $colinfo[5]);
                 }
             } // if the new range ends inside an existing range
             elseif ($lastcol > $existing_start && $lastcol < $existing_end)
@@ -818,7 +823,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         } // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06
         // regenerate keys
         $this->_colinfo = array_values($this->_colinfo);
-        $this->_colinfo[] = array($firstcol, $lastcol, $width, &$format, $hidden, $level);
+        $this->_colinfo[] = array($firstcol, $lastcol, $width, $format, $hidden, $level);
         // Set width to zero if column is hidden
         $width = ($hidden) ? 0 : $width;
         for ($col = $firstcol; $col <= $lastcol; $col++)
@@ -1309,10 +1314,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Returns an index to the XF record in the workbook
     *
     * @access private
-    * @param mixed &$format The optional XF format
+    * @param mixed $format The optional XF format
     * @return integer The XF record index
     */
-    protected function _XF(&$format)
+    protected function _XF($format)
     {
         if ($format) {
             return($format->getXfIndex());
@@ -3566,7 +3571,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     /**
     * FIXME: add comments
     */
-    public function setValidation($row1, $col1, $row2, $col2, &$validator)
+    public function setValidation($row1, $col1, $row2, $col2, $validator)
     {
         $this->_dv[] = $validator->_getData() .
                        pack("vvvvv", 1, $row1, $row2, $col1, $col2);

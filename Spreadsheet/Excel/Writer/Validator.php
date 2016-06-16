@@ -67,7 +67,7 @@ class Spreadsheet_Excel_Writer_Validator
     */
     public $_parser;
 
-    public function __construct(&$parser)
+    public function __construct($parser)
     {
         $this->_parser       = $parser;
         $this->_type         = 0x01; // FIXME: add method for setting datatype
