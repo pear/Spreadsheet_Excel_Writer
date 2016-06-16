@@ -483,7 +483,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_input_encoding    = '';
 
         $this->_dv                = array();
-        
+
         $this->_tmp_dir           = $tmp_dir;
         $this->_tmp_file          = '';
 
@@ -506,7 +506,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($this->_tmp_dir === '' && ini_get('open_basedir') === true) {
             // open_basedir restriction in effect - store data in memory
             // ToDo: Let the error actually have an effect somewhere
-            $this->_using_tmpfile = false;  
+            $this->_using_tmpfile = false;
             return new PEAR_Error('Temp file could not be opened since open_basedir restriction in effect - please use setTmpDir() - using memory storage instead');
         }
 
@@ -791,40 +791,40 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $hidden   The optional hidden atribute
     * @param integer $level    The optional outline level
     */
-    public function setColumn($firstcol, $lastcol, $width, $format = null, $hidden = 0, $level = 0) 
-    { // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06 
-        // look for any ranges this might overlap and remove, size or split where necessary 
-        foreach ($this->_colinfo as $key => $colinfo) 
+    public function setColumn($firstcol, $lastcol, $width, $format = null, $hidden = 0, $level = 0)
+    { // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06
+        // look for any ranges this might overlap and remove, size or split where necessary
+        foreach ($this->_colinfo as $key => $colinfo)
         {
-            $existing_start = $colinfo[0]; $existing_end = $colinfo[1]; 
-            // if the new range starts within another range 
-            if ($firstcol > $existing_start && $firstcol < $existing_end) 
-            { // trim the existing range to the beginning of the new range 
-                $this->_colinfo[$key][1] = $firstcol - 1; 
-                // if the new range lies WITHIN the existing range 
-                if ($lastcol < $existing_end) 
-                { // split the existing range by adding a range after our new range 
-                    $this->_colinfo[] = array($lastcol+1, $existing_end, $colinfo[2], &$colinfo[3], $colinfo[4], $colinfo[5]); 
-                } 
-            } // if the new range ends inside an existing range 
-            elseif ($lastcol > $existing_start && $lastcol < $existing_end) 
-            { // trim the existing range to the end of the new range 
-                $this->_colinfo[$key][0] = $lastcol + 1; 
-            } // if the new range completely overlaps the existing range 
-            elseif ($firstcol <= $existing_start && $lastcol >= $existing_end) 
-            { 
-                unset($this->_colinfo[$key]); 
-            } 
-        } // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06 
-        // regenerate keys 
-        $this->_colinfo = array_values($this->_colinfo); 
-        $this->_colinfo[] = array($firstcol, $lastcol, $width, &$format, $hidden, $level); 
-        // Set width to zero if column is hidden 
-        $width = ($hidden) ? 0 : $width; 
-        for ($col = $firstcol; $col <= $lastcol; $col++) 
-        { 
-            $this->col_sizes[$col] = $width; 
-        } 
+            $existing_start = $colinfo[0]; $existing_end = $colinfo[1];
+            // if the new range starts within another range
+            if ($firstcol > $existing_start && $firstcol < $existing_end)
+            { // trim the existing range to the beginning of the new range
+                $this->_colinfo[$key][1] = $firstcol - 1;
+                // if the new range lies WITHIN the existing range
+                if ($lastcol < $existing_end)
+                { // split the existing range by adding a range after our new range
+                    $this->_colinfo[] = array($lastcol+1, $existing_end, $colinfo[2], &$colinfo[3], $colinfo[4], $colinfo[5]);
+                }
+            } // if the new range ends inside an existing range
+            elseif ($lastcol > $existing_start && $lastcol < $existing_end)
+            { // trim the existing range to the end of the new range
+                $this->_colinfo[$key][0] = $lastcol + 1;
+            } // if the new range completely overlaps the existing range
+            elseif ($firstcol <= $existing_start && $lastcol >= $existing_end)
+            {
+                unset($this->_colinfo[$key]);
+            }
+        } // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06
+        // regenerate keys
+        $this->_colinfo = array_values($this->_colinfo);
+        $this->_colinfo[] = array($firstcol, $lastcol, $width, &$format, $hidden, $level);
+        // Set width to zero if column is hidden
+        $width = ($hidden) ? 0 : $width;
+        for ($col = $firstcol; $col <= $lastcol; $col++)
+        {
+            $this->col_sizes[$col] = $width;
+        }
     }
 
     /**
@@ -2097,19 +2097,19 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if (preg_match('[^external:\\\\]', $url)) {
             return; //($this->_writeUrlExternal_net($row1, $col1, $row2, $col2, $url, $str, $format));
         }
-    
+
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
-    
+
         if (!$format) {
             $format = $this->_url_format;
         }
-    
+
         // Strip URL type and change Unix dir separator to Dos style (if needed)
         //
         $url = preg_replace('/^external:/', '', $url);
         $url = preg_replace('/\//', "\\", $url);
-    
+
         // Write the visible label
         if ($str == '') {
             $str = preg_replace('/\#/', ' - ', $url);
@@ -2118,12 +2118,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if (($str_error == -2) or ($str_error == -3)) {
             return $str_error;
         }
-    
+
         // Determine if the link is relative or absolute:
         //   relative if link contains no dir separator, "somefile.xls"
         //   relative if link starts with up-dir, "..\..\somefile.xls"
         //   otherwise, absolute
-        
+
         $absolute    = 0x02; // Bit mask
         if (!preg_match("/\\\/", $url)) {
             $absolute    = 0x00;
@@ -2132,7 +2132,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $absolute    = 0x00;
         }
         $link_type               = 0x01 | $absolute;
-    
+
         // Determine if the link contains a sheet reference and change some of the
         // parameters accordingly.
         // Split the dir name and sheet name (if it exists)
@@ -2141,7 +2141,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         } else {
             $dir_long = $url;
         }
-    
+
         if (isset($sheet)) {
             $link_type |= 0x08;
             $sheet_len  = pack("V", strlen($sheet) + 0x01);
@@ -2157,32 +2157,32 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
 
 
-    
+
         // Pack the link type
         $link_type   = pack("V", $link_type);
-    
+
         // Calculate the up-level dir count e.g.. (..\..\..\ == 3)
         $up_count    = preg_match_all("/\.\.\\\/", $dir_long, $useless);
         $up_count    = pack("v", $up_count);
-    
+
         // Store the short dos dir name (null terminated)
         $dir_short   = preg_replace("/\.\.\\\/", '', $dir_long) . "\0";
-    
+
         // Store the long dir name as a wchar string (non-null terminated)
         //$dir_long       = join("\0", split('', $dir_long));
         $dir_long       = $dir_long . "\0";
-    
+
         // Pack the lengths of the dir strings
         $dir_short_len = pack("V", strlen($dir_short)      );
         $dir_long_len  = pack("V", strlen($dir_long)       );
         $stream_len    = pack("V", 0);//strlen($dir_long) + 0x06);
-    
+
         // Pack the undocumented parts of the hyperlink stream
         $unknown1 = pack("H*",'D0C9EA79F9BACE118C8200AA004BA90B02000000'       );
         $unknown2 = pack("H*",'0303000000000000C000000000000046'               );
         $unknown3 = pack("H*",'FFFFADDE000000000000000000000000000000000000000');
         $unknown4 = pack("v",  0x03                                            );
-    
+
         // Pack the main data stream
         $data        = pack("vvvv", $row1, $row2, $col1, $col2) .
                           $unknown1     .
@@ -2198,11 +2198,11 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
                           $dir_long     .
                           $sheet_len    .
                           $sheet        ;*/
-    
+
         // Pack the header data
         $length   = strlen($data);
         $header   = pack("vv", $record, $length);
-    
+
         // Write the packed data
         $this->_append($header. $data);
         return($str_error);
@@ -2488,10 +2488,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $record   = 0x00E5;
         foreach($this->_merged_ranges as $ranges)
           {
-            $length   = 2 + count($ranges) * 8; 
+            $length   = 2 + count($ranges) * 8;
             $header   = pack('vv', $record, $length);
             $data     = pack('v',  count($ranges));
-            foreach ($ranges as $range) 
+            foreach ($ranges as $range)
               $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
             $string = $header.$data;
             $this->_append($string, true);
