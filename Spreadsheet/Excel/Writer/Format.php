@@ -32,6 +32,10 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+if (!class_exists('PEAR')) {
+    require_once 'PEAR.php';
+}
+
 /**
 * Class for generating Excel XF records (formats)
 *
@@ -43,22 +47,16 @@
 class Spreadsheet_Excel_Writer_Format extends PEAR
 {
     /**
-     * The BIFF version for the workbook
-     * @var integer
-     */
-    public $_BIFF_version;
-
-    /**
-     * Index to the FONT record.
-     * @var integer
-     */
-    public $font_index;
-
-    /**
     * The index given by the workbook when creating a new format.
     * @var integer
     */
     public $_xf_index;
+
+    /**
+    * Index to the FONT record.
+    * @var integer
+    */
+    public $font_index;
 
     /**
     * The font name (ASCII).
@@ -250,7 +248,6 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Constructor
     *
     * @access private
-    * @param integer $BIFF_version
     * @param integer $index the XF index for the format.
     * @param array   $properties array with properties to be set on initialization.
     */
@@ -497,7 +494,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
 
     /**
     * Returns a unique hash key for a font.
-    * Used by Spreadsheet_Excel_Writer_Workbook::storeAllFonts()
+    * Used by Spreadsheet_Excel_Writer_Workbook::_storeAllFonts()
     *
     * The elements that form the key are arranged to increase the probability of
     * generating a unique key. Elements that hold a large range of numbers
@@ -651,9 +648,9 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         if (preg_match("/\d/",$location)) {
             return;                      // Ignore numbers
         }
-    
+
         $location = strtolower($location);
-    
+
         if ($location == 'left') {
             $this->_text_h_align = 1;
         }
@@ -691,9 +688,9 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         if (preg_match("/\d/",$location)) {
             return;                      // Ignore numbers
         }
-    
+
         $location = strtolower($location);
- 
+
         if ($location == 'top') {
             $this->_text_v_align = 0;
         }
@@ -1103,7 +1100,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * Sets the font family name.
     *
     * @access public
-    * @param string $font_family The font family name. Possible values are:
+    * @param string $fontfamily The font family name. Possible values are:
     *                           'Times New Roman', 'Arial', 'Courier'.
     */
     public function setFontFamily($font_family)
@@ -1111,4 +1108,3 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->_font_name = $font_family;
     }
 }
-?>

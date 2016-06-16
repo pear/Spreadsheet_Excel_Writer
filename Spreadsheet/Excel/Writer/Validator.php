@@ -22,19 +22,21 @@
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+//require_once('PEAR.php');
+
 // Possible operator types
 
 /*
 FIXME: change prefixes
 */
-define('OP_BETWEEN',    0x00);
-define('OP_NOTBETWEEN', 0x01);
-define('OP_EQUAL',      0x02);
-define('OP_NOTEQUAL',   0x03);
-define('OP_GT',         0x04);
-define('OP_LT',         0x05);
-define('OP_GTE',        0x06);
-define('OP_LTE',        0x07);
+define("OP_BETWEEN",    0x00);
+define("OP_NOTBETWEEN", 0x01);
+define("OP_EQUAL",      0x02);
+define("OP_NOTEQUAL",   0x03);
+define("OP_GT",         0x04);
+define("OP_LT",         0x05);
+define("OP_GTE",        0x06);
+define("OP_LTE",        0x07);
 
 /**
 * Baseclass for generating Excel DV records (validations)
@@ -148,7 +150,7 @@ class Spreadsheet_Excel_Writer_Validator
         return true;
     }
 
-    public function _getOptions()
+    protected function _getOptions()
     {
         $options = $this->_type;
         $options |= $this->_style << 3;
@@ -172,7 +174,7 @@ class Spreadsheet_Excel_Writer_Validator
       return $options;
    }
 
-   public function _getData()
+   protected function _getData()
    {
       $title_prompt_len = strlen($this->_title_prompt);
       $descr_prompt_len = strlen($this->_descr_prompt);
@@ -224,5 +226,3 @@ class Spreadsheet_Excel_Writer_Validator
       //$this->_formula1 = ...;
    }
 }*/
-
-?>

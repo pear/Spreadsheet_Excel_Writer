@@ -23,8 +23,12 @@
     ],
     "autoload": {
         "psr-0": {
-            "Spreadsheet": "./",
-            "Test": "./test"
+            "Spreadsheet": ""
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "Test": "test"
         }
     },
     "description": "More info available on: http://pear.php.net/package/Spreadsheet_Excel_Writer",
