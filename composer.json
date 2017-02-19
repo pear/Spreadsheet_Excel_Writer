@@ -49,6 +49,6 @@
         "php": ">=5.3.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "4.8.*"
     }
 }
