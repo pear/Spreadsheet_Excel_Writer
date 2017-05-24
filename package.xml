@@ -31,11 +31,11 @@
   <email>tuupola@appelsiini.net</email>
   <active>no</active>
  </developer>
- <date>2012-01-26</date>
- <time>12:41:37</time>
+ <date>2017-05-24</date>
+ <time>11:31:45</time>
  <version>
-  <release>0.9.3</release>
-  <api>0.9.3</api>
+  <release>0.9.4</release>
+  <api>0.9.4</api>
  </version>
  <stability>
   <release>beta</release>
@@ -43,20 +43,7 @@
  </stability>
  <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
  <notes>
-QA release
-Bug #18590	Impossible to work from IIS7
-Bug #18024	deprecated line 180, 186 with php 5.3.2
-Bug #16025	MERGEDCELLS record split by CONTINUE record
-Bug #17766	Patch: Avoid deprecated split
-Bug #17572	Temporary files are not removed
-Bug #16938	open_basedir check is wrong in Spreadsheet_Excel_Writer_Worksheet::_initialize
-Bug #14585	open_basedir workaround doesn&apos;t work
-Bug #12362	named worksheets &amp; utf-8
-Bug #14515	writeUrl only uses writeString, never writeNumber
-Bug #14281	Using a row &gt; 16,384 reports error
-Request #13486	Set the worksheet direction to right-to-left (RTL)
-Bug #12720	Notice thrown when using setColumn (undefined colFirst and colLast)
-Bug #12053	With SetVersion(8) setting bottom border color to 0 gives cross borders (!)
+QA release. Comes with support for newer PHP versions. Fixed irritating "pass by reference" errors.
  </notes>
  <contents>
   <dir name="/">
@@ -92,6 +79,34 @@ Bug #12053	With SetVersion(8) setting bottom border color to 0 gives cross borde
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>0.9.3</release>
+    <api>0.9.3</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-01-26</date>
+   <license uri="http://www.gnu.org/copyleft/lesser.html">LGPL</license>
+   <notes>
+QA release
+Bug #18590	Impossible to work from IIS7
+Bug #18024	deprecated line 180, 186 with php 5.3.2
+Bug #16025	MERGEDCELLS record split by CONTINUE record
+Bug #17766	Patch: Avoid deprecated split
+Bug #17572	Temporary files are not removed
+Bug #16938	open_basedir check is wrong in Spreadsheet_Excel_Writer_Worksheet::_initialize
+Bug #14585	open_basedir workaround doesn&apos;t work
+Bug #12362	named worksheets &amp; utf-8
+Bug #14515	writeUrl only uses writeString, never writeNumber
+Bug #14281	Using a row &gt; 16,384 reports error
+Request #13486	Set the worksheet direction to right-to-left (RTL)
+Bug #12720	Notice thrown when using setColumn (undefined colFirst and colLast)
+Bug #12053	With SetVersion(8) setting bottom border color to 0 gives cross borders (!)
+   </notes>
+  </release>
   <release>
    <version>
     <release>0.2</release>
