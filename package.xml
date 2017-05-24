@@ -86,7 +86,7 @@ Bug #12053	With SetVersion(8) setting bottom border color to 0 gives cross borde
    <package>
     <name>OLE</name>
     <channel>pear.php.net</channel>
-    <min>0.5</min>
+    <min>1.0.0RC2</min>
    </package>
   </required>
  </dependencies>
