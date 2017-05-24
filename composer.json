@@ -19,6 +19,11 @@
             "email": "tuupola@appelsiini.net",
             "name": "Mika Tuupola",
             "role": "Developer"
+        },
+        {
+            "email": "alexey@kopytko.com",
+            "name": "Alexey Kopytko",
+            "role": "Lead"
         }
     ],
     "autoload": {
