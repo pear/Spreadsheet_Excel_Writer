@@ -19,6 +19,11 @@
             "email": "tuupola@appelsiini.net",
             "name": "Mika Tuupola",
             "role": "Developer"
+        },
+        {
+            "email": "alexey@kopytko.com",
+            "name": "Alexey Kopytko",
+            "role": "Lead"
         }
     ],
     "autoload": {
@@ -37,6 +42,7 @@
     ],
     "license": "LGPL",
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "name": "pear/spreadsheet_excel_writer",
     "support": {
         "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Spreadsheet_Excel_Writer",
@@ -49,6 +55,6 @@
         "php": ">=5.3.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.8.*"
+        "phpunit/phpunit": "<6.0"
     }
 }
