@@ -19,6 +19,12 @@
   <email>xnoguer@php.net</email>
   <active>no</active>
  </lead>
+ <lead>
+  <name>Alexey Kopytko</name>
+  <user>sanmai</user>
+  <email>alexey@kopytko.com</email>
+  <active>yes</active>
+ </lead>
  <developer>
   <name>Franck Lefevre</name>
   <user>progi1984</user>
@@ -30,12 +36,6 @@
   <user>tuupola</user>
   <email>tuupola@appelsiini.net</email>
   <active>no</active>
- </developer>
- <developer>
-  <name>Alexey Kopytko</name>
-  <user>sanmai</user>
-  <email>alexey@kopytko.com</email>
-  <active>yes</active>
  </developer>
  <date>2017-05-24</date>
  <time>11:31:45</time>
