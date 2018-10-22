@@ -39,6 +39,10 @@ if (!class_exists('Spreadsheet_Excel_Writer_BIFFwriter')) {
     require_once 'Spreadsheet/Excel/Writer/Parser.php';
 }
 
+if (!class_exists('OLE')) {
+    require_once 'OLE.php';
+}
+
 if (!class_exists('OLE_PPS_Root')) {
     require_once 'OLE/PPS/Root.php';
 }
