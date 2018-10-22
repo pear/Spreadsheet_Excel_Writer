@@ -17,3 +17,5 @@ cache:
 install:
   - composer install --prefer-dist
 
+script:
+  - php vendor/bin/phpunit
