@@ -6,6 +6,12 @@
  */
 class Test_Spreadsheet_Excel_Writer_WorkbookTest extends Test_Spreadsheet_Excel_WriterTestCase
 {
+    public static function setUpBeforeClass()
+    {
+        // Preload constants from OLE
+        @class_exists(OLE::class);
+    }
+
     public function testSetVersion()
     {
         $workbook = $this->getNewWorkbook();
