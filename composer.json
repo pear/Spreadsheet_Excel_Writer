@@ -40,7 +40,7 @@
     "include-path": [
         "./"
     ],
-    "license": "LGPL",
+    "license": "LGPL-2.1-or-later",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "name": "pear/spreadsheet_excel_writer",
