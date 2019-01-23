@@ -652,16 +652,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $this->_storeDataValidity();
         }*/
         $this->_storeEof();
-
-        if ( $this->_tmp_file != '' ) {
-          if ( $this->_filehandle ) {
-            fclose($this->_filehandle);
-            $this->_filehandle = '';
-          }
-          @unlink($this->_tmp_file);
-          $this->_tmp_file      = '';
-          $this->_using_tmpfile = true;
-        }
     }
 
     /**
@@ -682,7 +672,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @return string The data
     */
-    public function getData()
+    public function getData($cleanup = true)
     {
         $buffer = 4096;
 
@@ -690,9 +680,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if (isset($this->_data)) {
             $tmp   = $this->_data;
             unset($this->_data);
-            $fh    = $this->_filehandle;
             if ($this->_using_tmpfile) {
-                fseek($fh, 0);
+                fseek($this->_filehandle, 0);
             }
             return $tmp;
         }
@@ -700,6 +689,19 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($this->_using_tmpfile) {
             if ($tmp = fread($this->_filehandle, $buffer)) {
                 return $tmp;
+            }
+
+            // All data has now been read (both from memory & from file) so we
+            // can now trash the file
+            if ($cleanup) {
+                if ( $this->_filehandle ) {
+                    fclose($this->_filehandle);
+                    $this->_filehandle = '';
+                }
+                @unlink($this->_tmp_file);
+                $this->_tmp_file      = '';
+                $this->_using_tmpfile = false;
+                $this->_datasize = 0;
             }
         }
 
