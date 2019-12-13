@@ -5,3 +5,9 @@ vendor
 
 # build logs
 build
+
+# phpstorm
+.idea
+
+# visual studio code
+.vscode
