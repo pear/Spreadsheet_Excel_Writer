@@ -1450,7 +1450,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
          they must be written before the SST records
         */
 
-        $tmp_block_sizes = array();
         $tmp_block_sizes = $this->_block_sizes;
 
         $length  = 12;
