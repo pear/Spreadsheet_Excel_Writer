@@ -1,31 +1,43 @@
 {
+    "name": "pear/spreadsheet_excel_writer",
+    "type": "library",
+    "description": "More info available on: http://pear.php.net/package/Spreadsheet_Excel_Writer",
+    "license": "LGPL-2.1-or-later",
     "authors": [
         {
-            "email": "cschmitz@limesurvey.org",
             "name": "Carsten Schmitz",
+            "email": "cschmitz@limesurvey.org",
             "role": "Lead"
         },
         {
-            "email": "xnoguer@php.net",
             "name": "Xavier Noguer",
+            "email": "xnoguer@php.net",
             "role": "Lead"
         },
         {
-            "email": "progi1984@gmail.com",
             "name": "Franck Lefevre",
+            "email": "progi1984@gmail.com",
             "role": "Developer"
         },
         {
-            "email": "tuupola@appelsiini.net",
             "name": "Mika Tuupola",
+            "email": "tuupola@appelsiini.net",
             "role": "Developer"
         },
         {
-            "email": "alexey@kopytko.com",
             "name": "Alexey Kopytko",
+            "email": "alexey@kopytko.com",
             "role": "Lead"
         }
     ],
+    "require": {
+        "php": ">=5.3.3 <7.5",
+        "pear/ole": ">=1.0.0RC4",
+        "pear/pear-core-minimal": "^1.10"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "<6.0"
+    },
     "autoload": {
         "psr-0": {
             "Spreadsheet": ""
@@ -36,25 +48,13 @@
             "Test": "test"
         }
     },
-    "description": "More info available on: http://pear.php.net/package/Spreadsheet_Excel_Writer",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "include-path": [
         "./"
     ],
-    "license": "LGPL-2.1-or-later",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "name": "pear/spreadsheet_excel_writer",
     "support": {
         "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Spreadsheet_Excel_Writer",
         "source": "https://github.com/pear/Spreadsheet_Excel_Writer"
-    },
-    "type": "library",
-    "require": {
-        "pear/pear-core-minimal": "^1.10",
-        "pear/ole": ">=1.0.0RC4",
-        "php": ">=5.3.3 <7.5"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "<6.0"
     }
 }
