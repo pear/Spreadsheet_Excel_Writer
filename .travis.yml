@@ -12,9 +12,12 @@ php:
 cache:
   directories:
     - $HOME/.composer/cache
+    - build/cache
 
 install:
   - composer install --prefer-dist
+  - mkdir -p build/cache
 
 script:
   - php vendor/bin/phpunit
+  - vendor/bin/php-cs-fixer --cache-file=build/cache/.php_cs.cache --diff --dry-run --stop-on-violation --verbose fix
