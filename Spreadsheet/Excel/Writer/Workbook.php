@@ -604,7 +604,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
         $total_worksheets = count($this->_worksheets);
         for ($i = 0; $i < $total_worksheets; $i++) {
-            while ($tmp = $this->_worksheets[$i]->getData()) {
+            while ($tmp = $this->_worksheets[$i]->getData(true)) {
                 $OLE->append($tmp);
             }
         }
