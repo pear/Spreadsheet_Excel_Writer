@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/pear/Spreadsheet_Excel_Writer.svg?branch=master)](https://travis-ci.org/pear/Spreadsheet_Excel_Writer)
 [![Latest Stable Version](https://poser.pugx.org/pear/spreadsheet_excel_writer/v/stable)](https://packagist.org/packages/pear/spreadsheet_excel_writer)
+[![Coverage Status](https://coveralls.io/repos/github/pear/Spreadsheet_Excel_Writer/badge.svg?branch=master)](https://coveralls.io/github/pear/Spreadsheet_Excel_Writer?branch=master)
 
 This package is [Spreadsheet_Excel_Writer](http://pear.php.net/package/Spreadsheet_Excel_Writer) and has been migrated from [svn.php.net](https://svn.php.net/repository/pear/packages/Spreadsheet_Excel_Writer).
 
