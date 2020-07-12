@@ -163,7 +163,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         if (strlen($data) > $this->_limit) {
             $data = $this->_addContinue($data);
         }
-        $this->_data      = $this->_data.$data;
+        $this->_data .= $data;
         $this->_datasize += strlen($data);
     }
 
