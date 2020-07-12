@@ -57,7 +57,7 @@ Library support only 2 types of format for writing XLS, also known as Binary Int
 
 | Limit | BIFF5 | BIFF8 |
 | --- | --- | --- |
-| Maximum number of rows | 65535 | 65535 |
+| Maximum number of rows | 16384 | 65535 |
 | Maximum number of columns | 255 | 255 |
 | Maximum data size of a record | 2080 bytes | 8224 bytes |
 | Unicode support | CodePage based character encoding | UTF-16LE |
