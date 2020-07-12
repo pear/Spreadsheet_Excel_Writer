@@ -75,9 +75,13 @@ require_once __DIR__ . '/../' . '/vendor/pear/spreadsheet_excel_writer/Spreadshe
 
 $filePath = __DIR__ . '/output/out.xls';
 $xls = new Spreadsheet_Excel_Writer($filePath);
+
+// 8 = BIFF8
 $xls->setVersion(8);
 
 $sheet = $xls->addWorksheet('info');
+
+// only available with BIFF8
 $sheet->setInputEncoding('UTF-8');
 
 $headers = [
