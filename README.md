@@ -65,9 +65,9 @@ Library support only 2 types of format for writing XLS, also known as Binary Int
 Explanation of formats and specifications you can find [here](https://www.loc.gov/preservation/digital/formats/fdd/fdd000510.shtml) (section "Useful references")
 
 
-#Usage
+# Usage
 
-##Basic usage
+## Basic usage
 ```php
 use Spreadsheet_Excel_Writer;
 
@@ -111,7 +111,7 @@ for ($id = 1; $id < $max; $id++) {
 $xls->close();
 ```
 
-##Format usage
+## Format usage
 ```php
 $xls = new Spreadsheet_Excel_Writer();
 
@@ -130,7 +130,7 @@ $sheet = $xls->addWorksheet('info');
 $sheet->write(0, 0, 'Text 123', $titleFormat);
 ```
 
-##Header usage (Sending HTTP header for download dialog)
+## Header usage (Sending HTTP header for download dialog)
 ```php
 $xls = new Spreadsheet_Excel_Writer();
 $xls->send('excel_'.date("Y-m-d__H:i:s").'.xls');
