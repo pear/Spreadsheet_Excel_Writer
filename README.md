@@ -132,7 +132,7 @@ $sheet->write(0, 0, 'Text 123', $titleFormat);
 ```
 
 ##Header usage (Sending HTTP header for download dialog)
-```
+```php
 $xls = new Spreadsheet_Excel_Writer();
 $xls->send('excel_'.date("Y-m-d__H:i:s").'.xls');
 ```
