@@ -68,7 +68,7 @@ Explanation of formats and specifications you can find [here](https://www.loc.go
 #Usage
 
 ##Basic usage
-```
+```php
 use Spreadsheet_Excel_Writer;
 
 require_once __DIR__ . '/../' . '/vendor/pear/spreadsheet_excel_writer/Spreadsheet/Excel/Writer.php';
