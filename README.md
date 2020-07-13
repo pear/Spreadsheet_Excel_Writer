@@ -113,7 +113,7 @@ $xls->close();
 ```
 
 ##Format usage
-```
+```php
 $xls = new Spreadsheet_Excel_Writer();
 
 $titleFormat = $xls->addFormat(); 
