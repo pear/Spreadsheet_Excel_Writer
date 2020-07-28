@@ -64,6 +64,7 @@ Library support only 2 types of format for writing XLS, also known as Binary Int
 
 Explanation of formats and specifications you can find [here](https://www.loc.gov/preservation/digital/formats/fdd/fdd000510.shtml) (section "Useful references")
 
+Correct output only guaranteed with `mbstring.func_overload = 0` otherwise, you should use workround `mb_internal_encoding('latin1');` 
 
 # Usage
 
@@ -97,7 +98,7 @@ foreach ($headers as $header) {
     $col++;
 }
 
-for ($id = 1; $id < $max; $id++) {
+for ($id = 1; $id < 100; $id++) {
     $data = [
         'id' => $id,
         'name' => 'Name Surname',
