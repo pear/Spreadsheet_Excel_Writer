@@ -1,7 +1,7 @@
 {
     "name": "pear/spreadsheet_excel_writer",
     "type": "library",
-    "description": "More info available on: http://pear.php.net/package/Spreadsheet_Excel_Writer",
+    "description": "More info available on: https://github.com/pear/Spreadsheet_Excel_Writer",
     "license": "LGPL-2.1-or-later",
     "authors": [
         {
