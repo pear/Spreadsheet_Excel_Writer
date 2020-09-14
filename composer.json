@@ -1,7 +1,7 @@
 {
     "name": "pear/spreadsheet_excel_writer",
     "type": "library",
-    "description": "More info available on: https://github.com/pear/Spreadsheet_Excel_Writer",
+    "description": "Allows writing of Excel spreadsheets without the need for COM objects. Supports formulas, images (BMP) and all kinds of formatting for text and cells.",
     "license": "LGPL-2.1-or-later",
     "authors": [
         {
