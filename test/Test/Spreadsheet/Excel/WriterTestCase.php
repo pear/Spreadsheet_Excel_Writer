@@ -4,7 +4,7 @@
  * @author stev leibelt <artodeto@bazzline.net>
  * @since 2016-01-17
  */
-class Test_Spreadsheet_Excel_WriterTestCase extends PHPUnit_Framework_TestCase
+class Test_Spreadsheet_Excel_WriterTestCase extends \LegacyPHPUnit\TestCase
 {
     const FIXTURES_PATH = 'test/fixture/';
 
