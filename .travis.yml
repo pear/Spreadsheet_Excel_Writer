@@ -10,6 +10,7 @@ php:
 cache:
   directories:
     - $HOME/.composer/cache
+    - $HOME/.cache/cache
     - build/cache
 
 install:
