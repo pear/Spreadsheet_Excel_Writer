@@ -31,7 +31,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.6",
         "pear/ole": ">=1.0.0RC4",
         "pear/pear-core-minimal": "^1.10"
     },
