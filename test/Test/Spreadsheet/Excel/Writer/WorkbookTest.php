@@ -6,7 +6,7 @@
  */
 class Test_Spreadsheet_Excel_Writer_WorkbookTest extends Test_Spreadsheet_Excel_WriterTestCase
 {
-    public static function setUpBeforeClass()
+    public static function doSetUpBeforeClass()
     {
         // Preload constants from OLE
         @class_exists(OLE::class);
