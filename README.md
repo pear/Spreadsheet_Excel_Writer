@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/pear/Spreadsheet_Excel_Writer.svg?branch=master)](https://travis-ci.org/pear/Spreadsheet_Excel_Writer)
+[![Continuous Integration](https://github.com/pear/Spreadsheet_Excel_Writer/actions/workflows/ci.yaml/badge.svg)](https://github.com/pear/Spreadsheet_Excel_Writer/actions/workflows/ci.yaml)
 [![Latest Stable Version](https://poser.pugx.org/pear/spreadsheet_excel_writer/v/stable)](https://packagist.org/packages/pear/spreadsheet_excel_writer)
 [![Coverage Status](https://coveralls.io/repos/github/pear/Spreadsheet_Excel_Writer/badge.svg?branch=master)](https://coveralls.io/github/pear/Spreadsheet_Excel_Writer?branch=master)
 

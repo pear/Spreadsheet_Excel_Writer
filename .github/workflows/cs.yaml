@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PHP_CS_FIXER_VERSION: v2.17.3
+      PHP_CS_FIXER_VERSION: v2.19.3
 
     steps:
       - name: Checkout
@@ -26,12 +26,9 @@ jobs:
           coverage: none
           tools: php-cs-fixer:${{ env.PHP_CS_FIXER_VERSION }}
 
-      - name: Restore PHP-CS-Fixer cache
-        uses: actions/cache@v2
-        with:
-          path: .php_cs.cache
-          key: "php-cs-fixer"
-          restore-keys: "php-cs-fixer"
+      - name: Verify PHP-CS-Fixer installation
+        run: |
+          php-cs-fixer --version
 
       - name: Run PHP-CS-Fixer, version ${{ env.PHP_CS_FIXER_VERSION }}
         run: |
