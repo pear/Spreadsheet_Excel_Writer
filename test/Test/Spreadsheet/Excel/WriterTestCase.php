@@ -14,16 +14,17 @@ class Test_Spreadsheet_Excel_WriterTestCase extends \LegacyPHPUnit\TestCase
      */
     protected function getNewWorkbook($filename = '')
     {
-        // we're writing to the standard output by defaulr
-        return new Spreadsheet_Excel_Writer($filename);
+        $workbook = new Spreadsheet_Excel_Writer($filename);
+
+        // we have to fix timestamp for fixtures to work
+        $workbook->_timestamp = 1000000000; // somewhere in 2001
+
+        return $workbook;
     }
 
     protected function assertSameAsInFixture($filename, Spreadsheet_Excel_Writer $workbook)
     {
         $this->assertEmpty($workbook->_filename, "Testing with fixtures works only for standard output");
-
-        // we have to fix timestamp for fixtures to work
-        $workbook->_timestamp = 1000000000; // somewhere in 2001
 
         ob_start();
         $workbook->close();
