@@ -10,7 +10,10 @@ use PHPUnit\Framework\TestCase;
  */
 class StaticAnalysisTest extends TestCase
 {
-    public function provideClasses(): iterable
+    /**
+     * @return iterable
+     */
+    public function provideClasses()
     {
         $files = require 'vendor/composer/autoload_classmap.php';
 
