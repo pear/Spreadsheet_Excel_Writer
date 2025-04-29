@@ -380,8 +380,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @param string  $name         The name of the new worksheet
     * @param integer $index        The index of the new worksheet
-    * @param mixed   $activesheet The current activesheet of the workbook we belong to
-    * @param mixed   $firstsheet  The first worksheet in the workbook we belong to
+    * @param mixed   &$activesheet The current activesheet of the workbook we belong to
+    * @param mixed   &$firstsheet  The first worksheet in the workbook we belong to
     * @param int     &$str_total Reference to the total number of strings in the workbook
     * @param int     &$str_unique Reference to the number of unique strings in the workbook
     * @param array   &$str_table Reference to the array containing all the unique strings in the workbook
@@ -391,8 +391,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access private
     */
     public function __construct($BIFF_version, $name,
-                                                $index, $activesheet,
-                                                $firstsheet, &$str_total,
+                                                $index, &$activesheet,
+                                                &$firstsheet, &$str_total,
                                                 &$str_unique, &$str_table,
                                                 $url_format, $parser,
                                                 $tmp_dir)
@@ -405,8 +405,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $this->name            = $name;
         $this->index           = $index;
-        $this->activesheet     = $activesheet;
-        $this->firstsheet      = $firstsheet;
+        $this->activesheet     = &$activesheet;
+        $this->firstsheet      = &$firstsheet;
         // _str_total _str_unique _str_table - are actual references
         // everything breaks if they're not
         $this->_str_total      = &$str_total;
