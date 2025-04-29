@@ -41,21 +41,24 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.dir }}
-          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
           restore-keys: |
             composer-${{ runner.os }}-${{ matrix.php-version }}-
             composer-${{ runner.os }}-
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
-
-      - name: Run tests
-        run: vendor/bin/phpunit
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
 
       - name: Lint code
         run: |
-          if [ -d "Spreadsheet/" ]; then
-            find Spreadsheet/ -type f -name "*.php" -exec php -l {} \;
-          else
-            echo "Directory 'Spreadsheet/' not found. Skipping linting."
-          fi
+          vendor/bin/parallel-lint --exclude .git --exclude vendor .
+
+      - name: Run tests
+        run: |
+          vendor/bin/phpunit
+
+      - name: Run static analysis
+        run: |
+          composer dump-autoload --optimize
+          vendor/bin/phpunit test/Test/StaticAnalysisTest.php
