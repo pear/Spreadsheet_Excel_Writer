@@ -164,6 +164,14 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     * @var integer
     */
     public $_BIFF_version;
+    /**
+     * @var array
+     */
+    private $_functions;
+    /**
+     * @var array|int[]
+     */
+    private $ptg;
 
     /**
     * The class constructor

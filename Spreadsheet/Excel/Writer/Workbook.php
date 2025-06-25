@@ -179,6 +179,26 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
     /** @var int */
     public $_timestamp;
+    /**
+     * @var array
+     */
+    private $_block_sizes;
+    /**
+     * @var array
+     */
+    private $_str_table;
+    /**
+     * @var integer
+     */
+    private $_str_unique;
+    /**
+     * @var integer
+     */
+    private $_str_total;
+    /**
+     * @var integer
+     */
+    private $_string_sizeinfo;
 
     /**
     * Class constructor
