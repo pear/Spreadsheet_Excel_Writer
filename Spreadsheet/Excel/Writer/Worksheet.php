@@ -377,63 +377,63 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     /**
      * @var integer
      */
-    private $firstsheet;
+    public $firstsheet;
     /**
      * @var integer
      */
-    private $activesheet;
+    public $activesheet;
     /**
      * @var array
      */
-    private $_dv;
+    public $_dv;
     /**
      * @var integer
      */
-    private $_print_scale;
+    public $_print_scale;
     /**
      * @var integer
      */
-    private $_zoom;
+    public $_zoom;
     /**
      * @var array
      */
-    private $_row_sizes;
+    public $_row_sizes;
     /**
      * @var array
      */
-    private $col_sizes;
+    public $col_sizes;
     /**
      * @var null
      */
-    private $_password;
+    public $_password;
     /**
      * @var integer
      */
-    private $_protect;
+    public $_protect;
     /**
      * @var array
      */
-    private $_vbreaks;
+    public $_vbreaks;
     /**
      * @var array
      */
-    private $_hbreaks;
+    public $_hbreaks;
     /**
      * @var integer
      */
-    private $_print_headers;
+    public $_print_headers;
     /**
      * @var integer
      */
-    private $_screen_gridlines;
+    public $_screen_gridlines;
     /**
      * @var integer
      */
-    private $_print_gridlines;
+    public $_print_gridlines;
     /**
      * @var null
      */
-    private $title_colmax;
+    public $title_colmax;
 
     /**
     * Constructor

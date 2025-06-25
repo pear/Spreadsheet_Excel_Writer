@@ -167,11 +167,11 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     /**
      * @var array
      */
-    private $_functions;
+    public $_functions;
     /**
      * @var array|int[]
      */
-    private $ptg;
+    public $ptg;
 
     /**
     * The class constructor
