@@ -376,6 +376,81 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     public $_input_encoding;
 
     /**
+     * @var integer
+     */
+    public $firstsheet;
+
+    /**
+     * @var integer
+     */
+    public $activesheet;
+
+    /**
+     * @var array
+     */
+    public $_dv;
+
+    /**
+     * @var integer
+     */
+    public $_print_scale;
+
+    /**
+     * @var integer
+     */
+    public $_zoom;
+
+    /**
+     * @var array
+     */
+    public $_row_sizes;
+
+    /**
+     * @var array
+     */
+    public $col_sizes;
+
+    /**
+     * @var null
+     */
+    public $_password;
+
+    /**
+     * @var integer
+     */
+    public $_protect;
+
+    /**
+     * @var array
+     */
+    public $_vbreaks;
+
+    /**
+     * @var array
+     */
+    public $_hbreaks;
+
+    /**
+     * @var integer
+     */
+    public $_print_headers;
+
+    /**
+     * @var integer
+     */
+    public $_screen_gridlines;
+
+    /**
+     * @var integer
+     */
+    public $_print_gridlines;
+
+    /**
+     * @var null
+     */
+    public $title_colmax;
+
+    /**
     * Constructor
     *
     * @param string  $name         The name of the new worksheet

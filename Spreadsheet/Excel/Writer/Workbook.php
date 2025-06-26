@@ -181,6 +181,31 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     public $_timestamp;
 
     /**
+     * @var array
+     */
+    public $_block_sizes;
+
+    /**
+     * @var array
+     */
+    public $_str_table;
+
+    /**
+     * @var integer
+     */
+    public $_str_unique;
+
+    /**
+     * @var integer
+     */
+    public $_str_total;
+
+    /**
+     * @var integer
+     */
+    public $_string_sizeinfo;
+
+    /**
     * Class constructor
     *
     * @param string filename for storing the workbook. "-" for writing to stdout.

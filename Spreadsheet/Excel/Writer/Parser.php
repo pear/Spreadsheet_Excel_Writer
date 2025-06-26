@@ -166,6 +166,16 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     public $_BIFF_version;
 
     /**
+     * @var array
+     */
+    public $_functions;
+
+    /**
+     * @var array|int[]
+     */
+    public $ptg;
+
+    /**
     * The class constructor
     *
     * @param integer $byte_order The byte order (Little endian or Big endian) of the architecture
