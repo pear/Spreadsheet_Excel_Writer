@@ -164,10 +164,12 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     * @var integer
     */
     public $_BIFF_version;
+
     /**
      * @var array
      */
     public $_functions;
+
     /**
      * @var array|int[]
      */
