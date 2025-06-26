@@ -340,16 +340,16 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         }
 
         // Flags to indicate if attributes have been set.
-        $atr_num     = ($this->_num_format != 0)?1:0;
-        $atr_fnt     = ($this->font_index != 0)?1:0;
-        $atr_alc     = ($this->_text_wrap)?1:0;
+        $atr_num     = ($this->_num_format != 0) ? 1 : 0;
+        $atr_fnt     = ($this->font_index != 0) ? 1 : 0;
+        $atr_alc     = ($this->_text_wrap) ? 1 : 0;
         $atr_bdr     = ($this->_bottom   ||
                         $this->_top      ||
                         $this->_left     ||
-                        $this->_right)?1:0;
+                        $this->_right) ? 1 : 0;
         $atr_pat     = (($this->_fg_color != 0x40) ||
                         ($this->_bg_color != 0x41) ||
-                        $this->_pattern)?1:0;
+                        $this->_pattern) ? 1 : 0;
         $atr_prot    = $this->_locked | $this->_hidden;
 
         // Zero the default border colour if the border has not been set.
@@ -1028,7 +1028,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                     $this->_rotation = 255;
                 }
                 break;
-            default :
+            default:
                 return $this->raiseError("Invalid value for angle.".
                                   " Possible values are: 0, 90, 270 and -1 ".
                                   "for stacking top-to-bottom.");
