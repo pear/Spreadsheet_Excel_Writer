@@ -800,7 +800,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
 
         $max_record_ranges = floor(($this->_limit - 6) / 8);
-        if($this->_merged_cells_counter >= $max_record_ranges)
+        if ($this->_merged_cells_counter >= $max_record_ranges)
           {
             $this->_merged_cells_record++;
             $this->_merged_cells_counter = 0;
@@ -878,7 +878,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // look for any ranges this might overlap and remove, size or split where necessary
         foreach ($this->_colinfo as $key => $colinfo)
         {
-            $existing_start = $colinfo[0]; $existing_end = $colinfo[1];
+            $existing_start = $colinfo[0];
+            $existing_end = $colinfo[1];
             // if the new range starts within another range
             if ($firstcol > $existing_start && $firstcol < $existing_end)
             { // trim the existing range to the beginning of the new range
@@ -1359,7 +1360,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         } else {
             $retval = new PEAR_Error('$val needs to be an array');
         }
-        return($retval);
+        return ($retval);
     }
 
     /**
@@ -1384,7 +1385,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         } else {
             $retval = new PEAR_Error('$val needs to be an array');
         }
-        return($retval);
+        return ($retval);
     }
 
     /**
@@ -1397,9 +1398,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     protected function _XF($format)
     {
         if ($format) {
-            return($format->getXfIndex());
+            return ($format->getXfIndex());
         } else {
-            return(0x0F);
+            return (0x0F);
         }
     }
 
@@ -1450,20 +1451,20 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if (preg_match("/([A-I]?[A-Z]):([A-I]?[A-Z])/", $cell, $match)) {
             list($no_use, $col1) =  $this->_cellToRowcol($match[1] .'1'); // Add a dummy row
             list($no_use, $col2) =  $this->_cellToRowcol($match[2] .'1'); // Add a dummy row
-            return(array($col1, $col2));
+            return (array($col1, $col2));
         }
 
         // Convert a cell range: 'A1:B7'
         if (preg_match("/\$?([A-I]?[A-Z]\$?\d+):\$?([A-I]?[A-Z]\$?\d+)/", $cell, $match)) {
             list($row1, $col1) =  $this->_cellToRowcol($match[1]);
             list($row2, $col2) =  $this->_cellToRowcol($match[2]);
-            return(array($row1, $col1, $row2, $col2));
+            return (array($row1, $col1, $row2, $col2));
         }
 
         // Convert a cell reference: 'A1' or 'AD2000'
         if (preg_match("/\$?([A-I]?[A-Z]\$?\d+)/", $cell)) {
             list($row1, $col1) =  $this->_cellToRowcol($match[1]);
-            return(array($row1, $col1));
+            return (array($row1, $col1));
         }
 
         // TODO use real error codes
@@ -1499,7 +1500,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $row--;
         $col--;
 
-        return(array($row, $col));
+        return (array($row, $col));
     }
 
     /**
@@ -1527,7 +1528,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $password ^= strlen($plaintext);
         $password ^= 0xCE4B;
 
-        return($password);
+        return ($password);
     }
 
     /**
@@ -1593,10 +1594,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Check that row and col are valid and store max and min values
         if ($row >= $this->_xls_rowmax) {
-            return(-2);
+            return (-2);
         }
         if ($col >= $this->_xls_colmax) {
-            return(-2);
+            return (-2);
         }
         if ($row <  $this->_dim_rowmin)  {
             $this->_dim_rowmin = $row;
@@ -1619,7 +1620,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
 
         $this->_append($header.$data.$xl_double);
-        return(0);
+        return (0);
     }
 
     /**
@@ -1651,10 +1652,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Check that row and col are valid and store max and min values
         if ($row >= $this->_xls_rowmax) {
-            return(-2);
+            return (-2);
         }
         if ($col >= $this->_xls_colmax) {
-            return(-2);
+            return (-2);
         }
         if ($row <  $this->_dim_rowmin) {
             $this->_dim_rowmin = $row;
@@ -1679,7 +1680,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $header    = pack("vv",   $record, $length);
         $data      = pack("vvvv", $row, $col, $xf, $strlen);
         $this->_append($header . $data . $str);
-        return($str_error);
+        return ($str_error);
     }
 
     /**
@@ -1722,15 +1723,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         {
             $strlen = (function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str)) / 2;
             $encoding  = 0x1;
-        }
-        elseif ($this->_input_encoding != '')
+        } elseif ($this->_input_encoding != '')
         {
             $str = iconv($this->_input_encoding, 'UTF-16LE', $str);
             $strlen = (function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str)) / 2;
             $encoding  = 0x1;
-        }
-        else
-        {
+        } else {
             $strlen    = function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str);
             $encoding  = 0x0;
         }
@@ -1810,10 +1808,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Check that row and col are valid and store max and min values
         if ($row >= $this->_xls_rowmax) {
-            return(-2);
+            return (-2);
         }
         if ($col >= $this->_xls_colmax) {
-            return(-2);
+            return (-2);
         }
         if ($row <  $this->_dim_rowmin) {
             $this->_dim_rowmin = $row;
@@ -1841,7 +1839,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $data   = pack("vvv", -1, 0, strlen($chunk));
             $this->_append($header.$data.$chunk);
         }
-        return(0);
+        return (0);
     }
 
     /**
@@ -1865,7 +1863,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     {
         // Don't write a blank cell unless it has a format
         if (!$format) {
-            return(0);
+            return (0);
         }
 
         $record    = 0x0201;                 // Record identifier
@@ -1874,10 +1872,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Check that row and col are valid and store max and min values
         if ($row >= $this->_xls_rowmax) {
-            return(-2);
+            return (-2);
         }
         if ($col >= $this->_xls_colmax) {
-            return(-2);
+            return (-2);
         }
         if ($row <  $this->_dim_rowmin) {
             $this->_dim_rowmin = $row;
@@ -1995,7 +1993,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     public function writeUrl($row, $col, $url, $string = '', $format = null)
     {
         // Add start row and col to arg list
-        return($this->_writeUrlRange($row, $col, $row, $col, $url, $string, $format));
+        return ($this->_writeUrlRange($row, $col, $row, $col, $url, $string, $format));
     }
 
     /**
@@ -2021,12 +2019,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Check for internal/external sheet links or default to web link
         if (preg_match('[^internal:]', $url)) {
-            return($this->_writeUrlInternal($row1, $col1, $row2, $col2, $url, $string, $format));
+            return ($this->_writeUrlInternal($row1, $col1, $row2, $col2, $url, $string, $format));
         }
         if (preg_match('[^external:]', $url)) {
-            return($this->_writeUrlExternal($row1, $col1, $row2, $col2, $url, $string, $format));
+            return ($this->_writeUrlExternal($row1, $col1, $row2, $col2, $url, $string, $format));
         }
-        return($this->_writeUrlWeb($row1, $col1, $row2, $col2, $url, $string, $format));
+        return ($this->_writeUrlWeb($row1, $col1, $row2, $col2, $url, $string, $format));
     }
 
 
@@ -2089,7 +2087,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_append($header . $data .
                        $unknown1 . $options .
                        $unknown2 . $url_len . $url);
-        return($str_error);
+        return ($str_error);
     }
 
     /**
@@ -2151,7 +2149,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_append($header . $data .
                        $unknown1 . $options .
                        $url_len . $url);
-        return($str_error);
+        return ($str_error);
     }
 
     /**
@@ -2287,7 +2285,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // Write the packed data
         $this->_append($header. $data);
-        return($str_error);
+        return ($str_error);
     }
 
 
@@ -2568,7 +2566,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             return;
         }
         $record   = 0x00E5;
-        foreach($this->_merged_ranges as $ranges)
+        foreach ($this->_merged_ranges as $ranges)
           {
             $length   = 2 + count($ranges) * 8;
             $header   = pack('vv', $record, $length);
@@ -3424,12 +3422,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Look up the cell value to see if it has been changed
         if (isset($this->col_sizes[$col])) {
             if ($this->col_sizes[$col] == 0) {
-                return(0);
+                return (0);
             } else {
-                return(floor(7 * $this->col_sizes[$col] + 5));
+                return (floor(7 * $this->col_sizes[$col] + 5));
             }
         } else {
-            return(64);
+            return (64);
         }
     }
 
@@ -3448,12 +3446,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Look up the cell value to see if it has been changed
         if (isset($this->_row_sizes[$row])) {
             if ($this->_row_sizes[$row] == 0) {
-                return(0);
+                return (0);
             } else {
-                return(floor(4/3 * $this->_row_sizes[$row]));
+                return (floor(4/3 * $this->_row_sizes[$row]));
             }
         } else {
-            return(17);
+            return (17);
         }
     }
 

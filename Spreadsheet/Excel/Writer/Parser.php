@@ -1169,7 +1169,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     */
     protected function _match($token)
     {
-        switch($token) {
+        switch ($token) {
             case SPREADSHEET_EXCEL_WRITER_ADD:
                 return $token;
                 break;
@@ -1539,8 +1539,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             $result = $this->_current_token;
             $this->_advance();
             return $result;
-        }
-        elseif (is_numeric($this->_current_token))
+        } elseif (is_numeric($this->_current_token))
         {
             $result = $this->_createTree($this->_current_token, '', '');
             $this->_advance();
