@@ -1520,8 +1520,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         //
         if (!empty($tmp_block_sizes)) {
             $length = 8 + array_shift($tmp_block_sizes);
-        }
-        else {
+        } else {
             // No strings
             $length = 8;
         }

@@ -1723,14 +1723,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         {
             $strlen = (function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str)) / 2;
             $encoding  = 0x1;
-        }
-        elseif ($this->_input_encoding != '')
+        } elseif ($this->_input_encoding != '')
         {
             $str = iconv($this->_input_encoding, 'UTF-16LE', $str);
             $strlen = (function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str)) / 2;
             $encoding  = 0x1;
-        }
-        else {
+        } else {
             $strlen    = function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str);
             $encoding  = 0x0;
         }
