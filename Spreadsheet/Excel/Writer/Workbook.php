@@ -1067,7 +1067,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             $length    = 3 + strlen($format);      // Number of bytes to follow
         }
 
-        if ( $this->_BIFF_version == 0x0600 && function_exists('iconv') ) {     // Encode format String
+        if ($this->_BIFF_version == 0x0600 && function_exists('iconv')) {     // Encode format String
             if (mb_detect_encoding($format, 'auto') !== 'UTF-16LE'){
                 $format = iconv(mb_detect_encoding($format, 'auto'),'UTF-16LE',$format);
             }

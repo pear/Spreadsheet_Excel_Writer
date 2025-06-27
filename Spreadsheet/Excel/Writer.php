@@ -89,7 +89,7 @@ class Spreadsheet_Excel_Writer extends Spreadsheet_Excel_Writer_Workbook
             return new PEAR_Error("Maximum column value exceeded: $col");
         }
 
-        $int = (int)($col / 26);
+        $int = (int) ($col / 26);
         $frac = $col % 26;
         $chr1 = '';
 
