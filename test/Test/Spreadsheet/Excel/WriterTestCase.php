@@ -6,7 +6,7 @@
  */
 class Test_Spreadsheet_Excel_WriterTestCase extends \LegacyPHPUnit\TestCase
 {
-    const FIXTURES_PATH = 'test/fixture/';
+    public const FIXTURES_PATH = 'test/fixture/';
 
     /**
      * @param string $filename

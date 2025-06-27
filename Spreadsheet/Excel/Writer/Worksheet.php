@@ -878,7 +878,8 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // look for any ranges this might overlap and remove, size or split where necessary
         foreach ($this->_colinfo as $key => $colinfo)
         {
-            $existing_start = $colinfo[0]; $existing_end = $colinfo[1];
+            $existing_start = $colinfo[0];
+            $existing_end = $colinfo[1];
             // if the new range starts within another range
             if ($firstcol > $existing_start && $firstcol < $existing_end)
             { // trim the existing range to the beginning of the new range
