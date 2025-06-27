@@ -12,6 +12,12 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - '8.2'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,16 +25,17 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: ${{ matrix.php-version }}
           coverage: none
 
-      - name: Cache Composer dependencies
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.composer/cache
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          path: ${{ env.dir }}
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
           restore-keys: |
-            ${{ runner.os }}-composer-
+            composer-${{ runner.os }}-${{ matrix.php-version }}-
+            composer-${{ runner.os }}-
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
