@@ -754,7 +754,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Return data stored in memory
         if (isset($this->_data)) {
             $tmp   = $this->_data;
-            unset($this->_data);
+            $this->_data = null; // Set to null instead of unset for PHP 8.4 compatibility
             if ($this->_using_tmpfile) {
                 fseek($this->_filehandle, 0);
             }
@@ -1455,20 +1455,21 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
 
         // Convert a cell range: 'A1:B7'
-        if (preg_match("/\$?([A-I]?[A-Z]\$?\d+):\$?([A-I]?[A-Z]\$?\d+)/", $cell, $match)) {
+        if (preg_match("/\\$?([A-I]?[A-Z]\\$?\\d+):\\$?([A-I]?[A-Z]\\$?\\d+)/", $cell, $match)) {
             list($row1, $col1) =  $this->_cellToRowcol($match[1]);
             list($row2, $col2) =  $this->_cellToRowcol($match[2]);
             return (array($row1, $col1, $row2, $col2));
         }
 
         // Convert a cell reference: 'A1' or 'AD2000'
-        if (preg_match("/\$?([A-I]?[A-Z]\$?\d+)/", $cell)) {
+        if (preg_match("/\\$?([A-I]?[A-Z]\\$?\\d+)/", $cell, $match)) {
             list($row1, $col1) =  $this->_cellToRowcol($match[1]);
             return (array($row1, $col1));
         }
 
         // TODO use real error codes
         $this->raiseError("Unknown cell reference $cell", 0, PEAR_ERROR_DIE);
+        return array(0, 0); // Return default to satisfy static analysis
     }
 
     /**
@@ -1481,7 +1482,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     protected function _cellToRowcol($cell)
     {
-        preg_match("/\$?([A-I]?[A-Z])\$?(\d+)/",$cell,$match);
+        preg_match("/\\$?([A-I]?[A-Z])\\$?(\\d+)/",$cell,$match);
         $col     = $match[1];
         $row     = $match[2];
 

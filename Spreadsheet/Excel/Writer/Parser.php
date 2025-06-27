@@ -270,13 +270,13 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             'ptgRefNV'     => 0x4C,
             'ptgAreaNV'    => 0x4D,
             'ptgMemAreaNV' => 0x4E,
-            'ptgMemNoMemN' => 0x4F,
+            'ptgMemNoMemNV' => 0x4F,
             'ptgFuncCEV'   => 0x58,
             'ptgNameXV'    => 0x59,
             'ptgRef3dV'    => 0x5A,
             'ptgArea3dV'   => 0x5B,
             'ptgRefErr3dV' => 0x5C,
-            'ptgAreaErr3d' => 0x5D,
+            'ptgAreaErr3dV' => 0x5D,
             'ptgArrayA'    => 0x60,
             'ptgFuncA'     => 0x61,
             'ptgFuncVarA'  => 0x62,
@@ -292,13 +292,13 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             'ptgRefNA'     => 0x6C,
             'ptgAreaNA'    => 0x6D,
             'ptgMemAreaNA' => 0x6E,
-            'ptgMemNoMemN' => 0x6F,
+            'ptgMemNoMemNA' => 0x6F,
             'ptgFuncCEA'   => 0x78,
             'ptgNameXA'    => 0x79,
             'ptgRef3dA'    => 0x7A,
             'ptgArea3dA'   => 0x7B,
             'ptgRefErr3dA' => 0x7C,
-            'ptgAreaErr3d' => 0x7D
+            'ptgAreaErr3dA' => 0x7D
             );
 
         // Thanks to Michael Meeks and Gnumeric for the initial arg values.
@@ -671,6 +671,9 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         if ($args == -1) {
             return pack("CCv", $this->ptg['ptgFuncVarV'], $num_args, $this->_functions[$token][0]);
         }
+        
+        // Default return for safety
+        return pack("Cv", $this->ptg['ptgFuncV'], $this->_functions[$token][0]);
     }
 
     /**

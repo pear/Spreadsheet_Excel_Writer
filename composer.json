@@ -40,7 +40,8 @@
         "php-coveralls/php-coveralls": "^2.2",
         "phpunit/phpunit": ">=5 <10",
         "sanmai/phpunit-legacy-adapter": "^6 || ^8",
-        "php-parallel-lint/php-parallel-lint": "^1.4"
+        "php-parallel-lint/php-parallel-lint": "^1.4",
+        "phpstan/phpstan": "^2.1"
     },
     "autoload": {
         "psr-0": {

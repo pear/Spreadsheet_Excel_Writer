@@ -59,7 +59,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer remove --no-update --dev friendsofphp/php-cs-fixer
+          composer remove --no-update --dev friendsofphp/php-cs-fixer phpstan/phpstan
           composer install --no-interaction --prefer-dist --no-progress
 
       - name: Lint code
