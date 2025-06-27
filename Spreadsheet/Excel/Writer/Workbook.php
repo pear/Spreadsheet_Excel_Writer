@@ -365,7 +365,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                 return $this->raiseError("Sheetname $name must be <= 31 chars");
             }
         } else {
-            if(function_exists('iconv')) {
+            if (function_exists('iconv')) {
                 $name = iconv('UTF-8','UTF-16LE',$name);
             }
         }
@@ -458,7 +458,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
         // Set the RGB value
         $this->_palette[$index] = array($red, $green, $blue, 0);
-        return($index + 8);
+        return ($index + 8);
     }
 
     /**
@@ -613,7 +613,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     */
     protected function _storeOLEFile()
     {
-        if($this->_BIFF_version == 0x0600) {
+        if ($this->_BIFF_version == 0x0600) {
             $OLE = new OLE_PPS_File(OLE::Asc2Ucs('Workbook'));
         } else {
             $OLE = new OLE_PPS_File(OLE::Asc2Ucs('Book'));
@@ -760,7 +760,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             if (isset($hash_num_formats[$num_format])) {
                 // FORMAT has already been used
                 $this->_formats[$i]->_num_format = $hash_num_formats[$num_format];
-            } else{
+            } else {
                 // Add a new FORMAT
                 $hash_num_formats[$num_format]  = $index;
                 $this->_formats[$i]->_num_format = $index;

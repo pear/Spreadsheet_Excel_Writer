@@ -453,7 +453,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
             $data .= pack("VVv", $border1, $border2, $icv);
         }
 
-        return($header . $data);
+        return ($header . $data);
     }
 
     /**
@@ -504,7 +504,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                                            $sss, $uls, $bFamily,
                                            $bCharSet, $reserved, $cch, $encoding);
         }
-        return($header . $data . $this->_font_name);
+        return ($header . $data . $this->_font_name);
     }
 
     /**
@@ -535,7 +535,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     */
     public function getXfIndex()
     {
-        return($this->_xf_index);
+        return ($this->_xf_index);
     }
 
     /**
@@ -572,26 +572,26 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
 
         // Return the default color, 0x7FFF, if undef,
         if ($name_color === '') {
-            return(0x7FFF);
+            return (0x7FFF);
         }
 
         // or the color string converted to an integer,
         if (isset($colors[$name_color])) {
-            return($colors[$name_color]);
+            return ($colors[$name_color]);
         }
 
         // or the default color if string is unrecognised,
         if (preg_match("/\D/",$name_color)) {
-            return(0x7FFF);
+            return (0x7FFF);
         }
 
         // or the default color if arg is outside range,
         if ($name_color > 63) {
-            return(0x7FFF);
+            return (0x7FFF);
         }
 
         // or an integer in the valid range
-        return($name_color);
+        return ($name_color);
     }
 
     /**
