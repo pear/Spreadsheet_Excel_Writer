@@ -28,7 +28,7 @@ class ParserTest extends \LegacyPHPUnit\TestCase
         // Test variable args path - SUM has variable args
         $result = $method->invoke($parser, 'SUM', 2);
         $this->assertNotEmpty($result);
-        $this->assertIsString($result);
+        $this->assertTrue(is_string($result));
 
         // Test that invalid argument counts throw an exception
         // Create a function with invalid args value
