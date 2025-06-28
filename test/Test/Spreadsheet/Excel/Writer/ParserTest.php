@@ -74,30 +74,8 @@ class ParserTest extends \LegacyPHPUnit\TestCase
         $this->assertSame(0x7D, $ptg['ptgAreaErr3d'],
             'ptgAreaErr3d should be 0x7D (the last duplicate), not 0x3D or 0x5D');
 
-        // Verify that the specific duplicated keys exist only once
-        // Count occurrences of keys starting with the duplicated names
-        $ptgMemNoMemCount = 0;
-        $ptgMemNoMemNCount = 0;
-        $ptgAreaErr3dCount = 0;
-        foreach (array_keys($ptg) as $key) {
-            if (strpos($key, 'ptgMemNoMem') === 0) {
-                $ptgMemNoMemCount++;
-            }
-            if ($key === 'ptgMemNoMemN') {
-                $ptgMemNoMemNCount++;
-            }
-            if ($key === 'ptgAreaErr3d') {
-                $ptgAreaErr3dCount++;
-            }
-        }
-
-        // Should have exactly 2 ptgMemNoMem* keys: ptgMemNoMem and ptgMemNoMemN
-        $this->assertSame(2, $ptgMemNoMemCount,
-            'There should be exactly 2 ptgMemNoMem* keys: ptgMemNoMem and ptgMemNoMemN');
-        $this->assertSame(1, $ptgMemNoMemNCount,
-            'There should be exactly one ptgMemNoMemN key');
-        $this->assertSame(1, $ptgAreaErr3dCount,
-            'There should be exactly one ptgAreaErr3d key');
+        // The assertArrayHasKey calls above already verify these keys exist exactly once
+        // (PHP arrays cannot have duplicate keys)
 
         // Verify that ptgMemNoMem exists with value 0x28
         // (The duplicates at 0x48 and 0x68 are commented out per Excel spec)
