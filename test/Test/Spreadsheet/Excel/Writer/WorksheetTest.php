@@ -10,19 +10,28 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
     private $workbook;
     private $worksheet;
 
-    public function setUp()
+    public function doSetUp()
     {
-        parent::setUp();
+        parent::doSetUp();
         $this->workbook = new Spreadsheet_Excel_Writer_Workbook('php://memory');
-        $this->worksheet = new Spreadsheet_Excel_Writer_Worksheet(0x0500, 'Test', 0, 0, $this->workbook->_url_format);
+
+        $activesheet = 0;
+        $str_total = 0;
+        $str_unique = 0;
+        $str_table = 0;
+        $url_format = '';
+        $parser = '';
+        $tmp_dir = '';
+
+        $this->worksheet = new Spreadsheet_Excel_Writer_Worksheet(0x0500, 'Test', 0, $activesheet, $this->workbook->_url_format, $str_total, $str_unique, $str_table, $url_format, $parser, $tmp_dir);
     }
 
-    public function tearDown()
+    public function doTearDown()
     {
         if ($this->workbook) {
             $this->workbook->close();
         }
-        parent::tearDown();
+        parent::doTearDown();
     }
 
     /**
