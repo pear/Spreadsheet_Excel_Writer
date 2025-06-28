@@ -14,7 +14,8 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
     {
         parent::doSetUp();
         $this->workbook = new Spreadsheet_Excel_Writer_Workbook('php://memory');
-        $this->worksheet = new Spreadsheet_Excel_Writer_Worksheet(0x0500, 'Test', 0, 0, $this->workbook->_url_format);
+        $activesheet = 0;
+        $this->worksheet = new Spreadsheet_Excel_Writer_Worksheet(0x0500, 'Test', 0, $activesheet, $this->workbook->_url_format);
     }
 
     public function doTearDown()
@@ -22,7 +23,7 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
         if ($this->workbook) {
             $this->workbook->close();
         }
-        parent::doTearDown();
+        parent::tearDown();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Test\Spreadsheet\Excel\Writer;
 
 use Spreadsheet_Excel_Writer_Parser;
+use function is_string;
 
 class ParserTest extends \LegacyPHPUnit\TestCase
 {
@@ -21,12 +22,12 @@ class ParserTest extends \LegacyPHPUnit\TestCase
         // TIME has 3 fixed arguments
         $result = $method->invoke($parser, 'TIME', 3);
         $this->assertNotEmpty($result);
-        $this->assertInternalType('string', $result);
+        $this->assertTrue(is_string($result));
 
         // Test variable args path - SUM has variable args
         $result = $method->invoke($parser, 'SUM', 2);
         $this->assertNotEmpty($result);
-        $this->assertInternalType('string', $result);
+        $this->assertTrue(is_string($result));
     }
 
     /**
