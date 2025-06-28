@@ -1469,7 +1469,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         // TODO use real error codes
         $this->raiseError("Unknown cell reference $cell", 0, PEAR_ERROR_DIE);
-        return array(0, 0); // Return default to satisfy static analysis
     }
 
     /**

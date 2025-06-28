@@ -2,4 +2,7 @@ parameters:
     level: 0
     paths:
         - Spreadsheet
-        - test
+    ignoreErrors:
+        -
+            message: '#Method .*_substituteCellref.* should return array but return statement is missing#'
+            path: Spreadsheet/Excel/Writer/Worksheet.php
