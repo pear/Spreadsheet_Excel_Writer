@@ -263,7 +263,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             'ptgAreaV'     => 0x45,
             'ptgMemAreaV'  => 0x46,
             'ptgMemErrV'   => 0x47,
-            // 'ptgMemNoMem' => 0x48, // Duplicate of 0x28 in Excel spec
+            // 'ptgMemNoMemV' => 0x48, // Duplicate of 0x28 (ptgMemNoMem) in Excel spec
             'ptgMemFuncV'  => 0x49,
             'ptgRefErrV'   => 0x4A,
             'ptgAreaErrV'  => 0x4B,
@@ -285,7 +285,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             'ptgAreaA'     => 0x65,
             'ptgMemAreaA'  => 0x66,
             'ptgMemErrA'   => 0x67,
-            // 'ptgMemNoMem' => 0x68, // Duplicate of 0x28 in Excel spec
+            // 'ptgMemNoMemA' => 0x68, // Duplicate of 0x28 (ptgMemNoMem) in Excel spec
             'ptgMemFuncA'  => 0x69,
             'ptgRefErrA'   => 0x6A,
             'ptgAreaErrA'  => 0x6B,
