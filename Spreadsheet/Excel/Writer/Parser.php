@@ -249,12 +249,12 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             'ptgRefN'      => 0x2C,
             'ptgAreaN'     => 0x2D,
             'ptgMemAreaN'  => 0x2E,
-            'ptgMemNoMemN' => 0x2F,
+            // 'ptgMemNoMemN' => 0x2F, // Overwritten by 0x6F
             'ptgNameX'     => 0x39,
             'ptgRef3d'     => 0x3A,
             'ptgArea3d'    => 0x3B,
             'ptgRefErr3d'  => 0x3C,
-            'ptgAreaErr3d' => 0x3D,
+            // 'ptgAreaErr3d' => 0x3D, // Overwritten by 0x7D
             'ptgArrayV'    => 0x40,
             'ptgFuncV'     => 0x41,
             'ptgFuncVarV'  => 0x42,
@@ -263,20 +263,20 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             'ptgAreaV'     => 0x45,
             'ptgMemAreaV'  => 0x46,
             'ptgMemErrV'   => 0x47,
-            'ptgMemNoMemV' => 0x48,
+            // 'ptgMemNoMem' => 0x48, // Duplicate of 0x28 in Excel spec
             'ptgMemFuncV'  => 0x49,
             'ptgRefErrV'   => 0x4A,
             'ptgAreaErrV'  => 0x4B,
             'ptgRefNV'     => 0x4C,
             'ptgAreaNV'    => 0x4D,
             'ptgMemAreaNV' => 0x4E,
-            'ptgMemNoMemNV' => 0x4F,
+            // 'ptgMemNoMemN' => 0x4F, // Overwritten by 0x6F
             'ptgFuncCEV'   => 0x58,
             'ptgNameXV'    => 0x59,
             'ptgRef3dV'    => 0x5A,
             'ptgArea3dV'   => 0x5B,
             'ptgRefErr3dV' => 0x5C,
-            'ptgAreaErr3dV' => 0x5D,
+            // 'ptgAreaErr3d' => 0x5D, // Duplicate of 0x3D
             'ptgArrayA'    => 0x60,
             'ptgFuncA'     => 0x61,
             'ptgFuncVarA'  => 0x62,
@@ -285,20 +285,20 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             'ptgAreaA'     => 0x65,
             'ptgMemAreaA'  => 0x66,
             'ptgMemErrA'   => 0x67,
-            'ptgMemNoMemA' => 0x68,
+            // 'ptgMemNoMem' => 0x68, // Duplicate of 0x28 in Excel spec
             'ptgMemFuncA'  => 0x69,
             'ptgRefErrA'   => 0x6A,
             'ptgAreaErrA'  => 0x6B,
             'ptgRefNA'     => 0x6C,
             'ptgAreaNA'    => 0x6D,
             'ptgMemAreaNA' => 0x6E,
-            'ptgMemNoMemNA' => 0x6F,
+            'ptgMemNoMemN' => 0x6F,
             'ptgFuncCEA'   => 0x78,
             'ptgNameXA'    => 0x79,
             'ptgRef3dA'    => 0x7A,
             'ptgArea3dA'   => 0x7B,
             'ptgRefErr3dA' => 0x7C,
-            'ptgAreaErr3dA' => 0x7D
+            'ptgAreaErr3d' => 0x7D
             );
 
         // Thanks to Michael Meeks and Gnumeric for the initial arg values.
