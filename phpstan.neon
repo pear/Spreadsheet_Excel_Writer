@@ -6,4 +6,3 @@ parameters:
         -
             message: '#Method .*_substituteCellref.* should return array but return statement is missing#'
             path: Spreadsheet/Excel/Writer/Worksheet.php
-
