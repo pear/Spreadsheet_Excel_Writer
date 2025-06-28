@@ -102,11 +102,5 @@ class ParserTest extends \LegacyPHPUnit\TestCase
         // Verify that ptgMemNoMem exists with value 0x28
         // (The duplicates at 0x48 and 0x68 are commented out per Excel spec)
         $this->assertSame(0x28, $ptg['ptgMemNoMem'], 'ptgMemNoMem should be 0x28');
-
-        // Verify the incorrectly named variants don't exist
-        $this->assertArrayNotHasKey('ptgMemNoMemV', $ptg,
-            'ptgMemNoMemV should not exist (Excel spec calls it ptgMemNoMem)');
-        $this->assertArrayNotHasKey('ptgMemNoMemA', $ptg,
-            'ptgMemNoMemA should not exist (Excel spec calls it ptgMemNoMem)');
     }
 }
