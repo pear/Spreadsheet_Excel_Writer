@@ -1,4 +1,5 @@
 <?php
+
 /*
 *  Module written/ported by Xavier Noguer <xnoguer@rezebra.com>
 *
@@ -322,7 +323,6 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         }
     }
 
-
     /**
     * Generate an Excel BIFF XF record (style or cell).
     *
@@ -567,7 +567,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                           'red'     => 0x02,
                           'silver'  => 0x16,
                           'white'   => 0x01,
-                          'yellow'  => 0x05
+                          'yellow'  => 0x05,
                        );
 
         // Return the default color, 0x7FFF, if undef,
@@ -763,7 +763,6 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->_bold = $weight;
     }
 
-
     /************************************
     * FUNCTIONS FOR SETTING CELLS BORDERS
     */
@@ -812,7 +811,6 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->_right = $style;
     }
 
-
     /**
     * Set cells borders to the same style
     *
@@ -826,7 +824,6 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->setLeft($style);
         $this->setRight($style);
     }
-
 
     /*******************************************
     * FUNCTIONS FOR SETTING CELLS BORDERS COLORS
@@ -894,7 +891,6 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $value = $this->_getColor($color);
         $this->_right_color = $value;
     }
-
 
     /**
     * Sets the cell's foreground color
