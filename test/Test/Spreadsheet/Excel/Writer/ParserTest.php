@@ -3,6 +3,7 @@
 namespace Test\Spreadsheet\Excel\Writer;
 
 use Spreadsheet_Excel_Writer_Parser;
+
 use function is_string;
 
 class ParserTest extends \LegacyPHPUnit\TestCase
