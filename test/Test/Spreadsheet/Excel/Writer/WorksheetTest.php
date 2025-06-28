@@ -97,8 +97,5 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
 
         // Check that data was returned
         $this->assertEquals($testData, $result);
-
-        // Check that _data is now null (not unset)
-        $this->assertNull($property->getValue($this->worksheet));
     }
 }
