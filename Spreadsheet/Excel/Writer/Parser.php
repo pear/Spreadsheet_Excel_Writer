@@ -671,7 +671,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         if ($args == -1) {
             return pack("CCv", $this->ptg['ptgFuncVarV'], $num_args, $this->_functions[$token][0]);
         }
-        
+
         // Default return for safety
         return pack("Cv", $this->ptg['ptgFuncV'], $this->_functions[$token][0]);
     }
