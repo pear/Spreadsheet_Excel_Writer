@@ -754,7 +754,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Return data stored in memory
         if (isset($this->_data)) {
             $tmp   = $this->_data;
-            unset($this->_data);
+            $this->_data = null;
             if ($this->_using_tmpfile) {
                 fseek($this->_filehandle, 0);
             }
