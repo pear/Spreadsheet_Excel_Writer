@@ -267,7 +267,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     * @param integer $index the XF index for the format.
     * @param array   $properties array with properties to be set on initialization.
     */
-    public function __construct($BIFF_version, $index = 0, $properties =  array())
+    public function __construct($BIFF_version, $index = 0, $properties =  [])
     {
         $this->_xf_index       = $index;
         $this->_BIFF_version   = $BIFF_version;
@@ -548,7 +548,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     */
     protected function _getColor($name_color = '')
     {
-        $colors = array(
+        $colors = [
             'aqua'    => 0x07,
             'cyan'    => 0x07,
             'black'   => 0x00,
@@ -567,7 +567,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
             'silver'  => 0x16,
             'white'   => 0x01,
             'yellow'  => 0x05,
-        );
+        ];
 
         // Return the default color, 0x7FFF, if undef,
         if ($name_color === '') {
