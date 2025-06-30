@@ -409,8 +409,8 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
 
             $header      = pack("vv",       $record, $length);
             $data        = pack("vvvvvvvv", $ifnt, $ifmt, $style, $align,
-                                            $icv, $fill,
-                                            $border1, $border2);
+                $icv, $fill,
+                $border1, $border2);
         } elseif ($this->_BIFF_version == 0x0600) {
             $align          = $this->_text_h_align;       // Alignment
             $align         |= $this->_text_wrap     << 3;
@@ -497,12 +497,12 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $header  = pack("vv",         $record, $length);
         if ($this->_BIFF_version == 0x0500) {
             $data    = pack("vvvvvCCCCC", $dyHeight, $grbit, $icv, $bls,
-                                          $sss, $uls, $bFamily,
-                                          $bCharSet, $reserved, $cch);
+                $sss, $uls, $bFamily,
+                $bCharSet, $reserved, $cch);
         } elseif ($this->_BIFF_version == 0x0600) {
             $data    = pack("vvvvvCCCCCC", $dyHeight, $grbit, $icv, $bls,
-                                           $sss, $uls, $bFamily,
-                                           $bCharSet, $reserved, $cch, $encoding);
+                $sss, $uls, $bFamily,
+                $bCharSet, $reserved, $cch, $encoding);
         }
         return ($header . $data . $this->_font_name);
     }
@@ -1005,21 +1005,21 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                 break;
             case 90:
                 if ($this->_BIFF_version == 0x0500) {
-                $this->_rotation = 3;
+                    $this->_rotation = 3;
                 } elseif ($this->_BIFF_version == 0x0600) {
                     $this->_rotation = 180;
                 }
                 break;
             case 270:
                 if ($this->_BIFF_version == 0x0500) {
-                $this->_rotation = 2;
+                    $this->_rotation = 2;
                 } elseif ($this->_BIFF_version == 0x0600) {
                     $this->_rotation = 90;
                 }
                 break;
             case -1:
                 if ($this->_BIFF_version == 0x0500) {
-                $this->_rotation = 1;
+                    $this->_rotation = 1;
                 } elseif ($this->_BIFF_version == 0x0600) {
                     $this->_rotation = 255;
                 }
@@ -1087,15 +1087,15 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->_font_script = $script;
     }
 
-     /**
-     * Locks a cell.
-     *
-     * @access public
-     */
-     public function setLocked()
-     {
-         $this->_locked = 1;
-     }
+    /**
+    * Locks a cell.
+    *
+    * @access public
+    */
+    public function setLocked()
+    {
+        $this->_locked = 1;
+    }
 
     /**
     * Unlocks a cell. Useful for unprotecting particular cells of a protected sheet.

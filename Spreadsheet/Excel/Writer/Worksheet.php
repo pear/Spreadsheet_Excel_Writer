@@ -467,11 +467,11 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access private
     */
     public function __construct($BIFF_version, $name,
-                                                $index, &$activesheet,
-                                                &$firstsheet, &$str_total,
-                                                &$str_unique, &$str_table,
-                                                $url_format, $parser,
-                                                $tmp_dir)
+        $index, &$activesheet,
+        &$firstsheet, &$str_total,
+        &$str_unique, &$str_table,
+        $url_format, $parser,
+        $tmp_dir)
     {
         // It needs to call its parent's constructor explicitly
         parent::__construct();
@@ -675,7 +675,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // Prepend GRIDSET
         $this->_storeGridset();
 
-         //  Prepend GUTS
+        //  Prepend GUTS
         if ($this->_BIFF_version == 0x0500) {
             $this->_storeGuts();
         }
@@ -802,10 +802,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $max_record_ranges = floor(($this->_limit - 6) / 8);
         if ($this->_merged_cells_counter >= $max_record_ranges)
-          {
+        {
             $this->_merged_cells_record++;
             $this->_merged_cells_counter = 0;
-          }
+        }
 
         // don't check rowmin, rowmax, etc... because we don't know when this
         // is going to be called
@@ -1547,7 +1547,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($this->_outline_on) {
             $this->_outline_on = 1;
         }
-     }
+    }
 
     /**
     * This method sets the worksheet direction to right-to-left (RTL)
@@ -1557,7 +1557,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     public function setRTL($rtl = true)
     {
         $this->_Arabic = ($rtl ? 1 : 0);
-     }
+    }
 
     /******************************************************************************
     *******************************************************************************
@@ -1686,10 +1686,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     public function setInputEncoding($encoding)
     {
-         if ($encoding != 'UTF-16LE' && !function_exists('iconv')) {
-             $this->raiseError("Using an input encoding other than UTF-16LE requires PHP support for iconv");
-         }
-         $this->_input_encoding = $encoding;
+        if ($encoding != 'UTF-16LE' && !function_exists('iconv')) {
+            $this->raiseError("Using an input encoding other than UTF-16LE requires PHP support for iconv");
+        }
+        $this->_input_encoding = $encoding;
     }
 
     /**
@@ -1955,7 +1955,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header    = pack("vv",      $record, $length);
         $data      = pack("vvvdvVv", $row, $col, $xf, $num,
-                                     $grbit, $unknown, $formlen);
+            $grbit, $unknown, $formlen);
 
         $this->_append($header . $data . $formula);
         return 0;
@@ -2333,7 +2333,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header   = pack("vv",       $record, $length);
         $data     = pack("vvvvvvvv", $row, $colMic, $colMac, $miyRw,
-                                     $irwMac,$reserved, $grbit, $ixfe);
+            $irwMac,$reserved, $grbit, $ixfe);
         $this->_append($header.$data);
     }
 
@@ -2354,11 +2354,11 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($this->_BIFF_version == 0x0500) {
             $length    = 0x000A;               // Number of bytes to follow
             $data      = pack("vvvvv", $row_min, $row_max,
-                                       $col_min, $col_max, $reserved);
+                $col_min, $col_max, $reserved);
         } elseif ($this->_BIFF_version == 0x0600) {
             $length    = 0x000E;
             $data      = pack("VVvvv", $row_min, $row_max,
-                                       $col_min, $col_max, $reserved);
+                $col_min, $col_max, $reserved);
         }
         $header = pack("vv", $record, $length);
         $this->_prepend($header.$data);
@@ -2495,7 +2495,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header   = pack("vv",     $record, $length);
         $data     = pack("vvvvvC", $colFirst, $colLast, $coldx,
-                                   $ixfe, $grbit, $reserved);
+            $ixfe, $grbit, $reserved);
         $this->_prepend($header.$data);
     }
 
@@ -2536,9 +2536,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header   = pack("vv",         $record, $length);
         $data     = pack("CvvvvvvCC",  $pnn, $rwAct, $colAct,
-                                       $irefAct, $cref,
-                                       $rwFirst, $rwLast,
-                                       $colFirst, $colLast);
+            $irefAct, $cref,
+            $rwFirst, $rwLast,
+            $colFirst, $colLast);
         $this->_append($header . $data);
     }
 
@@ -2555,16 +2555,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
         $record   = 0x00E5;
         foreach ($this->_merged_ranges as $ranges)
-          {
+        {
             $length   = 2 + count($ranges) * 8;
             $header   = pack('vv', $record, $length);
             $data     = pack('v',  count($ranges));
             foreach ($ranges as $range) {
-              $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
+                $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
             }
             $string = $header.$data;
             $this->_append($string, true);
-          }
+        }
     }
 
     /**
@@ -2751,13 +2751,13 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header = pack("vv", $record, $length);
         $data1  = pack("vvvvvvvv", $iPaperSize,
-                                   $iScale,
-                                   $iPageStart,
-                                   $iFitWidth,
-                                   $iFitHeight,
-                                   $grbit,
-                                   $iRes,
-                                   $iVRes);
+            $iScale,
+            $iPageStart,
+            $iFitWidth,
+            $iFitHeight,
+            $grbit,
+            $iRes,
+            $iVRes);
         $data2  = $numHdr.$numFtr;
         $data3  = pack("v", $iCopies);
         $this->_prepend($header . $data1 . $data2 . $data3);
@@ -2966,7 +2966,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header   = pack("vv",    $record, $length);
         $data     = pack("vvvvv", $cref, $first_row, $last_row,
-                                  $first_col, $last_col);
+            $first_col, $last_col);
 
         $this->_append($header.$data);
     }
@@ -3047,10 +3047,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // for the row outline level is carried out in setRow().
         $colcount = count($this->_colinfo);
         for ($i = 0; $i < $colcount; $i++) {
-           // Skip cols without outline level info.
-           if (count($this->_colinfo[$i]) >= 6) {
-              $col_level = max($this->_colinfo[$i][5], $col_level);
-           }
+            // Skip cols without outline level info.
+            if (count($this->_colinfo[$i]) >= 6) {
+                $col_level = max($this->_colinfo[$i][5], $col_level);
+            }
         }
 
         // Set the limits for the outline levels (0 <= x <= 7).
@@ -3388,9 +3388,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $y2 = $height / $this->_sizeRow($row_end)     *  256; // Distance to bottom of object
 
         $this->_storeObjPicture($col_start, $x1,
-                                 $row_start, $y1,
-                                 $col_end, $x2,
-                                 $row_end, $y2);
+            $row_start, $y1,
+            $col_end, $x2,
+            $row_end, $y2);
     }
 
     /**
@@ -3653,7 +3653,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $header      = pack('vv', $record, $length);
         $data        = pack('vVVVV', $grbit, $horPos, $verPos, $objId,
-                                     count($this->_dv));
+            count($this->_dv));
         $this->_append($header.$data);
 
         $record = 0x01be;              // Record identifier

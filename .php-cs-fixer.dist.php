@@ -10,7 +10,6 @@ return (new PhpCsFixer\Config())
         'method_argument_space' => false,
         'array_indentation' => false,
         'braces_position' => false,
-        'statement_indentation' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

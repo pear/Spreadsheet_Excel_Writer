@@ -380,11 +380,11 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
 
         $worksheet = new Spreadsheet_Excel_Writer_Worksheet($this->_BIFF_version,
-                                   $name, $index,
-                                   $this->_activesheet, $this->_firstsheet,
-                                   $this->_str_total, $this->_str_unique,
-                                   $this->_str_table, $this->_url_format,
-                                   $this->_parser, $this->_tmp_dir);
+            $name, $index,
+            $this->_activesheet, $this->_firstsheet,
+            $this->_str_total, $this->_str_unique,
+            $this->_str_table, $this->_url_format,
+            $this->_parser, $this->_tmp_dir);
 
         $this->_worksheets[$index] = $worksheet;    // Store ref for iterator
         $this->_sheetnames[$index] = $name;          // Store EXTERNSHEET names
@@ -852,7 +852,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     $this->_worksheets[$i]->print_rowmax,
                     $this->_worksheets[$i]->print_colmin,
                     $this->_worksheets[$i]->print_colmax
-                    );
+                );
             }
         }
 
@@ -877,7 +877,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     $rowmax,
                     $colmin,
                     $colmax
-                    );
+                );
             } elseif (isset($rowmin)) {
                 // Row title has been defined.
                 $this->_storeNameShort(
@@ -887,7 +887,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     $rowmax,
                     0x00,
                     0xff
-                    );
+                );
             } elseif (isset($colmin)) {
                 // Column title has been defined.
                 $this->_storeNameShort(
@@ -897,7 +897,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                     0x3fff,
                     $colmin,
                     $colmax
-                    );
+                );
             } else {
                 // Print title hasn't been defined.
             }
@@ -951,9 +951,9 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
         $header    = pack("vv",        $record, $length);
         $data      = pack("vvvvvvvvv", $xWn, $yWn, $dxWn, $dyWn,
-                                       $grbit,
-                                       $itabCur, $itabFirst,
-                                       $ctabsel, $wTabRatio);
+            $grbit,
+            $itabCur, $itabFirst,
+            $ctabsel, $wTabRatio);
         $this->_append($header . $data);
     }
 
