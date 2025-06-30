@@ -11,7 +11,6 @@ return (new PhpCsFixer\Config())
         'array_indentation' => false,
         'braces_position' => false,
         'statement_indentation' => false,
-        'binary_operator_spaces' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
