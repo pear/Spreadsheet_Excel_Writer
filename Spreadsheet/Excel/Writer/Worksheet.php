@@ -1,4 +1,5 @@
 <?php
+
 /*
 *  Module written/ported by Xavier Noguer <xnoguer@rezebra.com>
 *
@@ -503,7 +504,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_dim_colmin     = $colmax + 1;
         $this->_dim_colmax     = 0;
         $this->_colinfo        = array();
-        $this->_selection      = array(0,0,0,0);
+        $this->_selection      = array(0, 0, 0, 0);
         $this->_panes          = array();
         $this->_active_pane    = 3;
         $this->_frozen         = 0;
@@ -921,7 +922,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     public function setSelection($first_row,$first_column,$last_row,$last_column)
     {
-        $this->_selection = array($first_row,$first_column,$last_row,$last_column);
+        $this->_selection = array($first_row, $first_column, $last_row, $last_column);
     }
 
     /**
@@ -988,7 +989,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     {
         $this->_paper_size = $size;
     }
-
 
     /**
     * Set the page header caption and optional margin.
@@ -1179,7 +1179,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->print_colmax  = $last_col;
     }
 
-
     /**
     * Set the option to hide gridlines on the printed page.
     *
@@ -1254,7 +1253,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             array_push($this->_vbreaks, $break);
         }
     }
-
 
     /**
     * Set the worksheet zoom factor.
@@ -1404,13 +1402,11 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
     }
 
-
     /******************************************************************************
     *******************************************************************************
     *
     * Internal methods
     */
-
 
     /**
     * Store Worksheet data in memory using the parent's class append() or to a
@@ -1568,7 +1564,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * BIFF RECORDS
     */
-
 
     /**
     * Write a double to the specified row and column (zero indexed).
@@ -1926,7 +1921,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $grbit     = 0x03;                // Option flags
         $unknown   = 0x0000;              // Must be zero
 
-
         // Check that row and col are valid and store max and min values
         if ($this->_checkRowCol($row, $col) == false) {
             return -2;
@@ -2026,7 +2020,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
         return ($this->_writeUrlWeb($row1, $col1, $row2, $col2, $url, $string, $format));
     }
-
 
     /**
     * Used to write http, ftp and mailto hyperlinks.
@@ -2236,8 +2229,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $link_type |= 0x08;
         }
 
-
-
         // Pack the link type
         $link_type   = pack("V", $link_type);
 
@@ -2288,7 +2279,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         return ($str_error);
     }
 
-
     /**
     * This method is used to set the height and format for a row.
     *
@@ -2324,7 +2314,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $level = max(0, min($level, 7));  // level should be between 0 and 7
         $this->_outline_row_level = max($level, $this->_outline_row_level);
-
 
         // Set the options flags. fUnsynced is used to show that the font and row
         // heights are not compatible. This is usually the case for WriteExcel.
@@ -2392,7 +2381,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $grbit          = 0x00B6;     // Option flags
         $rwTop          = 0x0000;     // Top row visible in window
         $colLeft        = 0x0000;     // Leftmost column visible in window
-
 
         // The options flags that comprise $grbit
         $fDspFmla       = 0;                     // 0 - bit
@@ -2571,8 +2559,9 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $length   = 2 + count($ranges) * 8;
             $header   = pack('vv', $record, $length);
             $data     = pack('v',  count($ranges));
-            foreach ($ranges as $range)
+            foreach ($ranges as $range) {
               $data .= pack('vvvv', $range[0], $range[2], $range[1], $range[3]);
+            }
             $string = $header.$data;
             $this->_append($string, true);
           }
@@ -2687,7 +2676,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $y = 20*$y      + 255;
             $x = 113.879*$x + 390;
         }
-
 
         // Determine which pane should be active. There is also the undocumented
         // option to override this should it be necessary: may be removed later.
@@ -3082,7 +3070,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_prepend($header.$data);
     }
 
-
     /**
     * Write the WSBOOL BIFF record, mainly for fit-to-page. Used in conjunction
     * with the SETUP record.
@@ -3167,7 +3154,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $this->_prepend($header.$data);
     }
-
 
     /**
     * Write the VERTICALPAGEBREAKS BIFF record.
@@ -3259,7 +3245,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
         $this->_prepend($header . $data);
     }
-
 
     /**
     * Insert a 24bit bitmap image in a worksheet.
@@ -3498,7 +3483,6 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $Reserved4   = 0x0000;   // Reserved
         $grbit2      = 0x0001;   // Option flags
         $Reserved5   = 0x0000;   // Reserved
-
 
         $header      = pack("vv", $record, $length);
         $data        = pack("V", $cObj);

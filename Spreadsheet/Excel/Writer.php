@@ -1,4 +1,5 @@
 <?php
+
 /*
 *  Module written/ported by Xavier Noguer <xnoguer@rezebra.com>
 *

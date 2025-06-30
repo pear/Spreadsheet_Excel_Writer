@@ -1,4 +1,5 @@
 <?php
+
 /*
 *  Module written/ported by Xavier Noguer <xnoguer@rezebra.com>
 *
@@ -903,9 +904,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
     }
 
-
-
-
     /******************************************************************************
     *
     * BIFF RECORDS
@@ -1048,7 +1046,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_append($header . $data);
     }
 
-
     /**
     * Writes Excel FORMAT record for non "built-in" numerical formats.
     *
@@ -1106,7 +1103,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_append($header . $data);
     }
 
-
     /**
     * Write BIFF record EXTERNCOUNT to indicate the number of external sheet
     * references in the workbook.
@@ -1130,7 +1126,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $this->_append($header . $data);
     }
 
-
     /**
     * Writes the Excel BIFF EXTERNSHEET record. These references are used by
     * formulas. NAME record is required to define the print area and the repeat
@@ -1153,7 +1148,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $data        = pack("CC", $cch, $rgch);
         $this->_append($header . $data . $sheetname);
     }
-
 
     /**
     * Store the NAME record in the short format that is used for storing the print
@@ -1217,7 +1211,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $data              .= pack("C", $colmax);
         $this->_append($header . $data);
     }
-
 
     /**
     * Store the NAME record in the long format that is used for storing the repeat
@@ -1395,7 +1388,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                 $header_length   = 3; // Min string + header size -1
                 $space_remaining = $continue_limit - $written - $continue;
 
-
                 /* TODO: Unicode data should only be split on char (2 byte)
                 boundaries. Therefore, in some cases we need to reduce the
                 amount of available
@@ -1422,7 +1414,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                         $split_string = 1;
                     }
                 }
-
 
                 if ($space_remaining > $header_length) {
                     // Write as much as possible of the string in the current block
@@ -1467,7 +1458,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         if ($written + $continue) {
             $this->_block_sizes[] = $written + $continue;
         }
-
 
         /* Calculate the total length of the SST and associated CONTINUEs (if any).
          The SST record will have a length even if it contains no strings.
@@ -1525,15 +1515,10 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             $length = 8;
         }
 
-
-
         // Write the SST block header information
         $header      = pack("vv", $record, $length);
         $data        = pack("VV", $this->_str_total, $this->_str_unique);
         $this->_append($header . $data);
-
-
-
 
         /* TODO: not good for performance */
         foreach (array_keys($this->_str_table) as $string) {
@@ -1547,7 +1532,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
             // written out in a single SST or CONTINUE block.
             //
             $block_length += $string_length;
-
 
             // We can write the string if it doesn't cross a CONTINUE boundary
             if ($block_length < $continue_limit) {
@@ -1567,7 +1551,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                 //
                 $header_length   = 3; // Min string + header size -1
                 $space_remaining = $continue_limit - $written - $continue;
-
 
                 // Unicode data should only be split on char (2 byte) boundaries.
                 // Therefore, in some cases we need to reduce the amount of available
@@ -1594,7 +1577,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
                         $split_string = 1;
                     }
                 }
-
 
                 if ($space_remaining > $header_length) {
                     // Write as much as possible of the string in the current block
@@ -1648,6 +1630,4 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
     }
 
-
 }
-
