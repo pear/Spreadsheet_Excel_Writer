@@ -315,8 +315,8 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
 
         // Set properties passed to Spreadsheet_Excel_Writer_Workbook::addFormat()
         foreach ($properties as $property => $value) {
-            if (method_exists($this, 'set'.ucwords($property))) {
-                $method_name = 'set'.ucwords($property);
+            if (method_exists($this, 'set' . ucwords($property))) {
+                $method_name = 'set' . ucwords($property);
                 $this->$method_name($value);
             }
         }
@@ -1023,8 +1023,8 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
                 }
                 break;
             default:
-                return $this->raiseError("Invalid value for angle.".
-                                  " Possible values are: 0, 90, 270 and -1 ".
+                return $this->raiseError("Invalid value for angle." .
+                                  " Possible values are: 0, 90, 270 and -1 " .
                                   "for stacking top-to-bottom.");
                 $this->_rotation = 0;
                 break;

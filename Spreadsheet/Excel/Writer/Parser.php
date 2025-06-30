@@ -643,10 +643,10 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         }
 
         if ($this->_BIFF_version == 0x0500) {
-            return pack("CC", $this->ptg['ptgStr'], strlen($string)).$string;
+            return pack("CC", $this->ptg['ptgStr'], strlen($string)) . $string;
         } elseif ($this->_BIFF_version == 0x0600) {
             $encoding = 0;   // TODO: Unicode support
-            return pack("CCC", $this->ptg['ptgStr'], strlen($string), $encoding).$string;
+            return pack("CCC", $this->ptg['ptgStr'], strlen($string), $encoding) . $string;
         }
     }
 
@@ -720,7 +720,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             // TODO: use real error codes
             return $this->raiseError("Unknown class $class", 0, PEAR_ERROR_DIE);
         }
-        return $ptgArea . $row1 . $row2 . $col1. $col2;
+        return $ptgArea . $row1 . $row2 . $col1 . $col2;
     }
 
     /**
@@ -767,7 +767,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             }
             list($row2, $col2) = $cell_array2;
         } else { // It's a rows range (like 26:27)
-            $cells_array = $this->_rangeToPackedRange($cell1.':'.$cell2);
+            $cells_array = $this->_rangeToPackedRange($cell1 . ':' . $cell2);
             if (PEAR::isError($cells_array)) {
                 return $cells_array;
             }
@@ -785,7 +785,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return $this->raiseError("Unknown class $class", 0, PEAR_ERROR_DIE);
         }
 
-        return $ptgArea . $ext_ref . $row1 . $row2 . $col1. $col2;
+        return $ptgArea . $ext_ref . $row1 . $row2 . $col1 . $col2;
     }
 
     /**
@@ -817,7 +817,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             // TODO: use real error codes
             return $this->raiseError("Unknown class $class");
         }
-        return $ptgRef.$row.$col;
+        return $ptgRef . $row . $col;
     }
 
     /**
@@ -862,7 +862,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             return $this->raiseError("Unknown class $class", 0, PEAR_ERROR_DIE);
         }
 
-        return $ptgRef . $ext_ref. $row . $col;
+        return $ptgRef . $ext_ref . $row . $col;
     }
 
     /**
@@ -1267,7 +1267,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 }
                 // If it's a number (check that it's not a sheet name or range)
                 elseif (is_numeric($token) and
-                        (!is_numeric($token.$this->_lookahead) or ($this->_lookahead == '')) and
+                        (!is_numeric($token . $this->_lookahead) or ($this->_lookahead == '')) and
                         ($this->_lookahead != '!') and ($this->_lookahead != ':')) {
                     return $token;
                 }
@@ -1536,9 +1536,9 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             $result = $this->_func();
             return $result;
         }
-        return $this->raiseError("Syntax error: ".$this->_current_token.
-                                 ", lookahead: ".$this->_lookahead.
-                                 ", current char: ".$this->_current_char);
+        return $this->raiseError("Syntax error: " . $this->_current_token .
+                                 ", lookahead: " . $this->_lookahead .
+                                 ", current char: " . $this->_current_char);
     }
 
     /**
@@ -1562,7 +1562,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                     $this->_current_token == SPREADSHEET_EXCEL_WRITER_SEMICOLON) {
                     $this->_advance();  // eat the "," or ";"
                 } else {
-                    return $this->raiseError("Syntax error: comma expected in ".
+                    return $this->raiseError("Syntax error: comma expected in " .
                                       "public function $function, arg #{$num_args}");
                 }
                 $result2 = $this->_condition();
@@ -1683,7 +1683,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
                 return $left_tree;
             }
             // add it's left subtree and return.
-            return $left_tree.$this->_convertFunction($tree['value'], $tree['right']);
+            return $left_tree . $this->_convertFunction($tree['value'], $tree['right']);
         } else {
             $converted_tree = $this->_convert($tree['value']);
             if (PEAR::isError($converted_tree)) {

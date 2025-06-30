@@ -356,7 +356,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $sheetname = $this->_sheetname;
 
         if ($name == '') {
-            $name = $sheetname.($index + 1);
+            $name = $sheetname . ($index + 1);
         }
 
         // Check that sheetname is <= 31 chars (Excel limit before BIFF8).
@@ -622,7 +622,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
         $res = $OLE->init();
         if ($this->isError($res)) {
-            return $this->raiseError("OLE Error: ".$res->getMessage());
+            return $this->raiseError("OLE Error: " . $res->getMessage());
         }
         $OLE->append($this->_data);
 
@@ -640,7 +640,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
 
         $res = $root->save($this->_filename);
         if ($this->isError($res)) {
-            return $this->raiseError("OLE Error: ".$res->getMessage());
+            return $this->raiseError("OLE Error: " . $res->getMessage());
         }
         return true;
     }
@@ -984,7 +984,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         } else {
             $data      = pack("VvC", $offset, $grbit, $cch);
         }
-        $this->_append($header.$data.$sheetname);
+        $this->_append($header . $data . $sheetname);
     }
 
     /**
