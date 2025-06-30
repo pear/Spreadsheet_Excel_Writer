@@ -356,7 +356,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $sheetname = $this->_sheetname;
 
         if ($name == '') {
-            $name = $sheetname.($index+1);
+            $name = $sheetname.($index + 1);
         }
 
         // Check that sheetname is <= 31 chars (Excel limit before BIFF8).
@@ -1179,7 +1179,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $rgch            = $type;        // Built-in name type
 
         $unknown03       = 0x3b;
-        $unknown04       = 0xffff-$index;
+        $unknown04       = 0xffff - $index;
         $unknown05       = 0x0000;
         $unknown06       = 0x0000;
         $unknown07       = 0x1087;
@@ -1245,7 +1245,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         $unknown01       = 0x29;
         $unknown02       = 0x002b;
         $unknown03       = 0x3b;
-        $unknown04       = 0xffff-$index;
+        $unknown04       = 0xffff - $index;
         $unknown05       = 0x0000;
         $unknown06       = 0x0000;
         $unknown07       = 0x1087;

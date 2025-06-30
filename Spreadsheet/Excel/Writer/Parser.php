@@ -682,7 +682,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
     * @access private
     * @param string $range An Excel range in the A1:A2 or A1..A2 format.
     */
-    protected function _convertRange2d($range, $class=0)
+    protected function _convertRange2d($range, $class = 0)
     {
 
         // TODO: possible class value 0,1,2 check Formula.pm
@@ -1131,7 +1131,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             }
 
             if ($i < ($formula_length - 1)) {
-                $this->_lookahead = $this->_formula[$i+1];
+                $this->_lookahead = $this->_formula[$i + 1];
             }
             $token = '';
         }
@@ -1139,7 +1139,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
         while ($i < $formula_length) {
             $token .= $this->_formula[$i];
             if ($i < ($formula_length - 1)) {
-                $this->_lookahead = $this->_formula[$i+1];
+                $this->_lookahead = $this->_formula[$i + 1];
             } else {
                 $this->_lookahead = '';
             }
@@ -1154,7 +1154,7 @@ class Spreadsheet_Excel_Writer_Parser extends PEAR
             }
 
             if ($i < ($formula_length - 2)) {
-                $this->_lookahead = $this->_formula[$i+2];
+                $this->_lookahead = $this->_formula[$i + 2];
             } else { // if we run out of characters _lookahead becomes empty
                 $this->_lookahead = '';
             }

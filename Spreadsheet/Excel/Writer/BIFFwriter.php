@@ -232,7 +232,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
 
         // The first 2080/8224 bytes remain intact. However, we have to change
         // the length field of the record.
-        $tmp = substr($data, 0, 2).pack("v", $limit-4).substr($data, 4, $limit - 4);
+        $tmp = substr($data, 0, 2).pack("v", $limit - 4).substr($data, 4, $limit - 4);
 
         $header = pack("vv", $record, $limit);  // Headers for continue records
 
