@@ -360,8 +360,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
 
         // Check that sheetname is <= 31 chars (Excel limit before BIFF8).
-        if ($this->_BIFF_version != 0x0600)
-        {
+        if ($this->_BIFF_version != 0x0600) {
             if (strlen($name) > 31) {
                 return $this->raiseError("Sheetname $name must be <= 31 chars");
             }
@@ -450,8 +449,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         // Check that the colour components are in the right range
         if (($red   < 0 or $red   > 255) ||
             ($green < 0 or $green > 255) ||
-            ($blue  < 0 or $blue  > 255))
-        {
+            ($blue  < 0 or $blue  > 255)) {
             return $this->raiseError("Color component outside range: 0 <= color <= 255");
         }
 
@@ -700,7 +698,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         // Note: Fonts are 0-indexed. According to the SDK there is no index 4,
         // so the following fonts are 0, 1, 2, 3, 5
         //
-        for ($i = 1; $i <= 5; $i++){
+        for ($i = 1; $i <= 5; $i++) {
             $this->_append($font);
         }
 
@@ -822,7 +820,6 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @access private
     */
     protected function _storeExterns()
-
     {
         // Create EXTERNCOUNT with number of worksheets
         $this->_storeExterncount(count($this->_worksheets));
@@ -1065,7 +1062,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
         }
 
         if ($this->_BIFF_version == 0x0600 && function_exists('iconv')) {     // Encode format String
-            if (mb_detect_encoding($format, 'auto') !== 'UTF-16LE'){
+            if (mb_detect_encoding($format, 'auto') !== 'UTF-16LE') {
                 $format = iconv(mb_detect_encoding($format, 'auto'),'UTF-16LE',$format);
             }
             $encoding = 1;

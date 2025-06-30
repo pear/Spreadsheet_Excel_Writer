@@ -9,7 +9,6 @@ return (new PhpCsFixer\Config())
         'trailing_comma_in_multiline' => ['elements' => ['arrays']],
         'method_argument_space' => false,
         'array_indentation' => false,
-        'braces_position' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

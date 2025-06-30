@@ -801,8 +801,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
 
         $max_record_ranges = floor(($this->_limit - 6) / 8);
-        if ($this->_merged_cells_counter >= $max_record_ranges)
-        {
+        if ($this->_merged_cells_counter >= $max_record_ranges) {
             $this->_merged_cells_record++;
             $this->_merged_cells_counter = 0;
         }
@@ -877,26 +876,21 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     public function setColumn($firstcol, $lastcol, $width, $format = null, $hidden = 0, $level = 0)
     { // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06
         // look for any ranges this might overlap and remove, size or split where necessary
-        foreach ($this->_colinfo as $key => $colinfo)
-        {
+        foreach ($this->_colinfo as $key => $colinfo) {
             $existing_start = $colinfo[0];
             $existing_end = $colinfo[1];
             // if the new range starts within another range
-            if ($firstcol > $existing_start && $firstcol < $existing_end)
-            { // trim the existing range to the beginning of the new range
+            if ($firstcol > $existing_start && $firstcol < $existing_end) { // trim the existing range to the beginning of the new range
                 $this->_colinfo[$key][1] = $firstcol - 1;
                 // if the new range lies WITHIN the existing range
-                if ($lastcol < $existing_end)
-                { // split the existing range by adding a range after our new range
+                if ($lastcol < $existing_end) { // split the existing range by adding a range after our new range
                     $this->_colinfo[] = array($lastcol + 1, $existing_end, $colinfo[2], /* format */ $colinfo[3], $colinfo[4], $colinfo[5]);
                 }
             } // if the new range ends inside an existing range
-            elseif ($lastcol > $existing_start && $lastcol < $existing_end)
-            { // trim the existing range to the end of the new range
+            elseif ($lastcol > $existing_start && $lastcol < $existing_end) { // trim the existing range to the end of the new range
                 $this->_colinfo[$key][0] = $lastcol + 1;
             } // if the new range completely overlaps the existing range
-            elseif ($firstcol <= $existing_start && $lastcol >= $existing_end)
-            {
+            elseif ($firstcol <= $existing_start && $lastcol >= $existing_end) {
                 unset($this->_colinfo[$key]);
             }
         } // added by Dan Lynn <dan@spiderweblabs.com) on 2006-12-06
@@ -905,8 +899,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $this->_colinfo[] = array($firstcol, $lastcol, $width, $format, $hidden, $level);
         // Set width to zero if column is hidden
         $width = ($hidden) ? 0 : $width;
-        for ($col = $firstcol; $col <= $lastcol; $col++)
-        {
+        for ($col = $firstcol; $col <= $lastcol; $col++) {
             $this->col_sizes[$col] = $width;
         }
     }
@@ -1594,16 +1587,16 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($col >= $this->_xls_colmax) {
             return (-2);
         }
-        if ($row <  $this->_dim_rowmin)  {
+        if ($row <  $this->_dim_rowmin) {
             $this->_dim_rowmin = $row;
         }
-        if ($row >  $this->_dim_rowmax)  {
+        if ($row >  $this->_dim_rowmax) {
             $this->_dim_rowmax = $row;
         }
-        if ($col <  $this->_dim_colmin)  {
+        if ($col <  $this->_dim_colmin) {
             $this->_dim_colmin = $col;
         }
-        if ($col >  $this->_dim_colmax)  {
+        if ($col >  $this->_dim_colmax) {
             $this->_dim_colmax = $col;
         }
 
@@ -1714,12 +1707,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         // (apparently the length is expected to be the number of 16-bit code points, not the number of characters).
         // Instead, always use the byte length divided by two for Unicode strings, and if mb_strlen() exists use
         // mb_strlen($str, '8bit') just in case mbstring.func_overload is set to overload strlen().
-        if ($this->_input_encoding == 'UTF-16LE')
-        {
+        if ($this->_input_encoding == 'UTF-16LE') {
             $strlen = (function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str)) / 2;
             $encoding  = 0x1;
-        } elseif ($this->_input_encoding != '')
-        {
+        } elseif ($this->_input_encoding != '') {
             $str = iconv($this->_input_encoding, 'UTF-16LE', $str);
             $strlen = (function_exists('mb_strlen') ? mb_strlen($str, '8bit') : strlen($str)) / 2;
             $encoding  = 0x1;
@@ -2554,8 +2545,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             return;
         }
         $record   = 0x00E5;
-        foreach ($this->_merged_ranges as $ranges)
-        {
+        foreach ($this->_merged_ranges as $ranges) {
             $length   = 2 + count($ranges) * 8;
             $header   = pack('vv', $record, $length);
             $data     = pack('v',  count($ranges));

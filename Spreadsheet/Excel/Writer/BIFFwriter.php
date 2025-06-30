@@ -128,7 +128,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter extends PEAR
         $number  = pack("C8", 0x8D, 0x97, 0x6E, 0x12, 0x83, 0xC0, 0xF3, 0x3F);
         if ($number == $teststr) {
             $byte_order = 0;    // Little Endian
-        } elseif ($number == strrev($teststr)){
+        } elseif ($number == strrev($teststr)) {
             $byte_order = 1;    // Big Endian
         } else {
             // Give up. I'll fix this in a later version.

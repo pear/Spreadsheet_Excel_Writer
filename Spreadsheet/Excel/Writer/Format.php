@@ -314,8 +314,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
         $this->_diag_color     = 0x40;
 
         // Set properties passed to Spreadsheet_Excel_Writer_Workbook::addFormat()
-        foreach ($properties as $property => $value)
-        {
+        foreach ($properties as $property => $value) {
             if (method_exists($this, 'set'.ucwords($property))) {
                 $method_name = 'set'.ucwords($property);
                 $this->$method_name($value);
@@ -998,8 +997,7 @@ class Spreadsheet_Excel_Writer_Format extends PEAR
     */
     public function setTextRotation($angle)
     {
-        switch ($angle)
-        {
+        switch ($angle) {
             case 0:
                 $this->_rotation = 0;
                 break;
