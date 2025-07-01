@@ -29,7 +29,7 @@ class ParserTest extends \LegacyPHPUnit\TestCase
         $this->assertTrue(is_string($result));
 
         // Array structure: [function_number, arg_count, unknown, volatile_flag]
-        $parser->_functions['INVALID'] = array(999, -2, 0, 0); // -2 is not valid
+        $parser->_functions['INVALID'] = [999, -2, 0, 0]; // -2 is not valid
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid argument count -2 for function INVALID');

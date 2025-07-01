@@ -30,7 +30,7 @@ class Test_Spreadsheet_Excel_WriterTestCase extends \LegacyPHPUnit\TestCase
         $workbook->close();
         $data = ob_get_clean();
 
-        $fullPath = self::FIXTURES_PATH.$filename;
+        $fullPath = self::FIXTURES_PATH . $filename;
 
         if ($this->shouldUpdateFixtures()) {
             file_put_contents($fullPath, $data);

@@ -44,18 +44,18 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
 
         // Test absolute cell reference
         $result = $method->invoke($this->worksheet, '$A$1');
-        $this->assertEquals(array(0, 0), $result);
+        $this->assertEquals([0, 0], $result);
 
         // Test mixed references
         $result = $method->invoke($this->worksheet, 'A$1');
-        $this->assertEquals(array(0, 0), $result);
+        $this->assertEquals([0, 0], $result);
 
         $result = $method->invoke($this->worksheet, '$A1');
-        $this->assertEquals(array(0, 0), $result);
+        $this->assertEquals([0, 0], $result);
 
         // Test cell range with dollar signs
         $result = $method->invoke($this->worksheet, '$A$1:$B$2');
-        $this->assertEquals(array(0, 0, 1, 1), $result);
+        $this->assertEquals([0, 0, 1, 1], $result);
     }
 
     /**
@@ -68,15 +68,15 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
 
         // Test with absolute reference
         $result = $method->invoke($this->worksheet, '$A$1');
-        $this->assertEquals(array(0, 0), $result);
+        $this->assertEquals([0, 0], $result);
 
         // Test with relative reference
         $result = $method->invoke($this->worksheet, 'B2');
-        $this->assertEquals(array(1, 1), $result);
+        $this->assertEquals([1, 1], $result);
 
         // Test with mixed reference
         $result = $method->invoke($this->worksheet, '$C3');
-        $this->assertEquals(array(2, 2), $result);
+        $this->assertEquals([2, 2], $result);
     }
 
     /**
