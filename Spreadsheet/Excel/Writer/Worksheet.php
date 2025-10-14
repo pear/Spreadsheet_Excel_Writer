@@ -779,7 +779,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
                     fclose($this->_filehandle);
                     $this->_filehandle = '';
                 }
-                @unlink($this->_tmp_file);
+                file_exists($this->_tmp_file) && @unlink($this->_tmp_file);
                 $this->_tmp_file      = '';
                 $this->_using_tmpfile = false;
                 $this->_datasize = 0;
