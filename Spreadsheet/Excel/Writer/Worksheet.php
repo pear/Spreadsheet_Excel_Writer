@@ -452,6 +452,11 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     public $title_colmax;
 
     /**
+     * @var integer
+     */
+    public $offset;
+
+    /**
     * Constructor
     *
     * @param string  $name         The name of the new worksheet
