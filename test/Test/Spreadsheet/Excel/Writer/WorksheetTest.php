@@ -40,7 +40,9 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
     public function testSubstituteCellrefWithDollarSigns()
     {
         $method = new \ReflectionMethod($this->worksheet, '_substituteCellref');
-        $method->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $method->setAccessible(true);
+        }
 
         // Test absolute cell reference
         $result = $method->invoke($this->worksheet, '$A$1');
@@ -64,7 +66,9 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
     public function testCellToRowcolWithDollarSigns()
     {
         $method = new \ReflectionMethod($this->worksheet, '_cellToRowcol');
-        $method->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $method->setAccessible(true);
+        }
 
         // Test with absolute reference
         $result = $method->invoke($this->worksheet, '$A$1');
@@ -86,7 +90,9 @@ class WorksheetTest extends \LegacyPHPUnit\TestCase
     {
         // Access protected property
         $property = new \ReflectionProperty($this->worksheet, '_data');
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
 
         // Set some data
         $testData = 'test data';
