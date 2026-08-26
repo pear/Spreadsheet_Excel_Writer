@@ -16,7 +16,9 @@ class ParserTest extends \LegacyPHPUnit\TestCase
         $parser = new Spreadsheet_Excel_Writer_Parser(0, 0x0500);
 
         $method = new \ReflectionMethod($parser, '_convertFunction');
-        $method->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $method->setAccessible(true);
+        }
 
         // Fixed args (TIME=3) should return without issue
         $result = $method->invoke($parser, 'TIME', 3);
@@ -52,7 +54,9 @@ class ParserTest extends \LegacyPHPUnit\TestCase
         $parser = new Spreadsheet_Excel_Writer_Parser(0, 0x0500);
 
         $property = new \ReflectionProperty($parser, 'ptg');
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
         $ptg = $property->getValue($parser);
 
         // ptgMemNoMemN: last duplicate at 0x6F wins (0x2F, 0x4F were overwritten)
